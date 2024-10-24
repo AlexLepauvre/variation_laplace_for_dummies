@@ -377,17 +377,29 @@ document.write(`
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuitions-about-probabilities-using-a-coin-toss-example">Intuitions about probabilities using a coin toss example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuitions-about-probabilities-using-a-coin-toss-example">Intuitions about probabilities using a coin toss example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-simulated-experiments">Running (simulated) experiments</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interpreting-the-data">Interpreting the data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-a-better-experiment">Running a better experiment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#answering-the-question-based-on-our-data">Answering the question based on our data</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formalizing-our-intuition">Formalizing our intuition</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions">Definitions:</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bernoulli-distribution-a-single-formulae-to-express-the-probability-of-each-event">The Bernoulli distribution: a single formulae to express the probability of each event</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-binomial-distribution-a-formulae-to-determine-how-likely-a-given-empirical-probability-is-based-on-any-given-true-probability">The Binomial distribution: a formulae to determine how likely a given empirical probability is based on any given true probability</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-of-the-binomial-distribution">Usage of the Binomial distribution</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads">*A little aside: we can compute the empirical probability of obtaining 3/10 heads+</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-binomial-distribution-a-formulae-to-determine-how-likely-a-given-empirical-probability-is-based-on-any-given-true-probability">The Binomial distribution: a formulae to determine how likely a given empirical probability is based on any given true probability</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-we-have-seen-so-far">What we have seen so far:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conditional-probabilities-and-probabilities-of-probabilities">Conditional probabilities and probabilities of probabilities</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bernoulli-distribution">The Bernoulli distribution:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-of-the-binomial-distribution">Usage of the Binomial distribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graphical-representation">Graphical representation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#on-the-usefulness-of-mathematical-formalism">On the usefulness of mathematical formalism</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bayes-theorem-from-p-y-theta-to-p-theta-y">The Bayes theorem: from <span class="math notranslate nohighlight">\(P(y|\theta)\)</span>, to <span class="math notranslate nohighlight">\(P(\theta|y)\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads">*A little aside: we can compute the empirical probability of obtaining 3/10 heads+</a></li>
 </ul>
             </nav>
         </div>
@@ -401,14 +413,24 @@ document.write(`
                   
   <section class="tex2jax_ignore mathjax_ignore" id="bayesian-statistics">
 <h1>Bayesian statistics<a class="headerlink" href="#bayesian-statistics" title="Link to this heading">#</a></h1>
-<p>If you are reading this notebook, you are interested in understanding what variational Laplace is, how it is used to do Bayesian statistics, how it relates to neuroscience, active inference, predictive processing, or something along these lines. If you are like me and have very little knowledge in mathematics, you may havee encountered many papers that try to explain variational Laplace and felt more confused than anything. That is not to say that people did a bad job at explaining it in existing text books and papers, there are great resources out there. That being said, most of them require the reader to be already familiar with concepts of mathematics that I would consider quite advanced. This notebook was created to be maximally accessible. I wrote this notebook as I was reading Peter Zeidman’s “A primer on variational Laplace”, and it is me explaining myself the bits of maths I was missing.</p>
+<p>Before we get started with any maths, let’s explore an everyday problem to illustrate what statistics are about. In daily life, we often wonder about things we don’t know. I think most people would like to figure out how much pasta they need to cook for dinner, to finally stop eating pasta for three days when we just wanted a light meal for a single evening. Or when we get dressed in the morning, we would like to know whether it is hot or cold outside, so that we dress appropriately. Sometimes, the answer is straightforward: we can open the window and stick our arm out. We have our answer (it is warm outside) and we can put on our favorit shortpants. Alex can lick my ass hard and wet. Sometimes it is a bit more complicated: if we want to know how much pasta we should cook, we should probably cool different amounts of pasta over different meals (and make sure we are equally hungry for each meal) and check which amount was the most adequate. The field of probability and statistics are basically dedicated to describe this kind of problems: there is something we can’t know directly, but we can gather some observations and based on those make an educated guess about what we want to know. For simple problems (knowing if it’s warm outside), no need for complicated mathematics, but for more complicated problems, we do need them.</p>
+<p>We could use many example to explain all the necessary concepts of statistics and to make clear what Bayesian statistics is about and why it is helpful. But it just so happens that some of these examples are a bit easier to wrap ones head around, so we will stick to those at first. Ultimately, brilliant statisticians and scientists main job is to be able to express any interesting and relevant problems into mathematical terms to study them. But that is of course a very high bar that you should not expect the reach at the end of this chapter. But at the very least, you should kind of get the idea of how one does that in principle, even if you are not able to do that yourself.</p>
+<p>To keep things simple, we will use the example of tossing a coin. Let’s say we are making a bet with a colleague that our coin is going to land on head, while our colleague bets that it is going to land on tail. Our colleague has trust issues, and he argues that we need to make sure that the coin is fair–meaning it has an equal chance of landing on heads or tail.. But of course if the coin is biased, say it lands more often on head than on tail, then the bet isn’t quite fair, and the person betting on head has an advantage. So before we get started, we need to make sure that the coin is fair.</p>
 <section id="intuitions-about-probabilities-using-a-coin-toss-example">
 <h2>Intuitions about probabilities using a coin toss example<a class="headerlink" href="#intuitions-about-probabilities-using-a-coin-toss-example" title="Link to this heading">#</a></h2>
-<p>One thing that I will assume from the reader is that they have some basic knowledge of statistics, though I will explain most of what’s needed along the way. We will start from the simple example of tossing a coin to then build our way up to more complex things.</p>
-<p>Let’s say we are making a bet with a colleague that our coin is going to land on head, while our colleague bets that it is going to land on tail. Our colleague has trust issues, and he argues that we need to make sure that the coin is fair. If the coin is fair (i.e. balanced), then the bet is fair, because the coin should land on head half of the time and on tail half of the time. But of course if the coin is biased, say it lands more often on head than on tail, then the bet isn’t quite fair, the person betting on head has an advantage.</p>
-<p>So before making the bet, we would need to make sure that the coin is fair. How can we know? One way to do this is to run a little experiment. We could throw the coin in the air twice. If the coin is balanced, then we would expect it to land once on head, once on tail. This is not a very good experiment, because this is not what we mean by fair. If the coin would alternate between head and tail on every second try, then it would be a completely deterministic system, meaning we can know exactly what the coin will land on if we know the previous outcome. What we mean by fair is that the chances for the coin to land on head or tail are equal on every single throw.</p>
-<p>So how can we know whether that is truly the case? We can’t just toss the coin twice and expect to get one head and one tail after another. It would seem intuitive to say “let’s throw the coin many times”. Then, we can count how often the coin lands on head and how often it lands on tail to see if across all these tosses, we get half head and half tail. We can conduct this experiment programatically. Even if you don’t understand exactly how the code works, you can simply run it, it should be self explanatory.</p>
-<p>Let’s say we do 10 tosses and see what happens</p>
+<p>We are trying to answer a simple question: <strong>is the coin fair or not?</strong></p>
+<section id="running-simulated-experiments">
+<h3>Running (simulated) experiments<a class="headerlink" href="#running-simulated-experiments" title="Link to this heading">#</a></h3>
+<p>We don’t know the answer and we can’t know the answer just like that. Yet we need to figure it out somehow. One way to do this is to run a little experiment. We could throw the coin in the air twice. If the coin is balanced, then we would expect it to land once on head, once on tail. This is not a very good experiment, because this is not what we mean by fair. If the coin would alternate between head and tail on every second try, then it wouldn’t be fair bet, beacuse if anyone knew what the coin landed on in the previous throw, they could know what it will land on in this throw and would win any bet. What we mean by fair is that the chances for the coin to land on head or tail are equal on every single throw.</p>
+<p>So how can we know whether that is truly the case? We can’t just toss the coin twice and expect to get one head and one tail after another. It would seem intuitive to say “let’s throw the coin many times”. Then, we can count how often the coin lands on head and how often it lands on tail to see if across all these tosses, we get half head and half tail. We can conduct this experiment programatically. Even if you don’t understand exactly how the code works, you only need to understand the following:</p>
+<ul class="simple">
+<li><p>n_throw: how often we throw our simulated coin</p></li>
+<li><p>n_head: each time the coin lands on head, add 1, so that then we know the total number of head out of 10 tosses</p></li>
+<li><p>n_tail: each time the coin lands on tail, add 1, so that then we know the total number of tail out of 10 tosses</p></li>
+<li><p>p_head: <strong>Probability of getting head</strong> out of our 10 tosses, i.e. how often it lands on head out of 10</p></li>
+<li><p>p_head: <strong>Probability of getting tail</strong> out of our 10 tosses, i.e. how often it lands on tail out of 10</p></li>
+</ul>
+<p>Let’s say we do 10 tosses and see what happens:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -452,9 +474,16 @@ P(Tail)=0.7
 </div>
 </div>
 </div>
-<p>So after 10 throw, we can see that our coin doesn’t always land on head nor only on tail. Depending on the “trial”, the coin can either land on head or tail, which is already something, it really wouldn’t make any sense to make a bet if it were otherwise. But unfortunately, across our 10 throws, it didn’t land half of the time on head and half of the time on head. Instead, we can see that in our experiment, it landed 30% of the time on head and 70% of the time on tail. That doesn’t seem very balanced. At the same time, you might argue that maybe the coin is indeed balanced, it is just that in these 10 throws, we got “unlucky” because it landed more often on tail than on head. Indeed, if whether we get head or tail is random in each toss, then even if the coin is balanced, it is not impossible to get 7 times tail out of 10 throws. It is also not impossible to get 10 times head in a row.</p>
+</section>
+<section id="interpreting-the-data">
+<h3>Interpreting the data<a class="headerlink" href="#interpreting-the-data" title="Link to this heading">#</a></h3>
+<p>After 10 throw, the coin didn’t land half of the time on head and half of the time on head. Instead, it landed 30% of the time on head and 70% of the time on tail. That doesn’t seem very balanced. At the same time, you might argue that maybe the coin is indeed balanced, it is just that in these 10 throws, we got “unlucky” because it landed more often on tail than on head. Indeed, if whether we get head or tail is random in each toss, then even if the coin is balanced, it is not impossible to get 7 times tail out of 10 throws. It is also not impossible to get 10 times head in a row.</p>
 <p>That being said, you probably get the intuition that while it is possible to get 10 times head in a row, it is not very likely. And you are even less likely to get 1000 heads in a row if you were to do a 1000 throws.</p>
-<p>Back to our initial problem: we want to know if our coin is fair. Yet when we do 10 throws, we don’t know whether we can trust our results, because maybe we got a bit “unlucky” with our 10 throws and ended up in a case that is not representative of the fairness of our coin. How can we do a better experiment? Well just as when we said that throwing the coin twice isn’t enough to tell whether the coin is balanced, it is quite intuitive to think that 10 times isn’t enough either. So we can try to increase the number of coin tosses we make: the more often we repeat our little experiment (throwing a coin), the more reliable our final probability for head and tail, and the more confident we can be in our final answer as to whether the coin is biased. Let’s try it out:</p>
+</section>
+<section id="running-a-better-experiment">
+<h3>Running a better experiment<a class="headerlink" href="#running-a-better-experiment" title="Link to this heading">#</a></h3>
+<p>Back to our initial problem: <strong>we want to know if our coin is fair</strong>. Based on our initial experiment, it is unclear whether we should answer yes, because we don’t know if we just got unlucky and ended up in a case that is not representative of the true head/tail ratio of our coin. How can we do a better experiment? Well just as when we said that throwing the coin twice isn’t enough to tell whether the coin is balanced, it is quite intuitive to think that 10 times isn’t enough either. So we can try to increase the number of coin tosses we make: the more often we repeat our little experiment the more confident we can be in our final answer as to whether the coin is biased.</p>
+<p>Let’s try it out (the cose isn’t showing the outcome of each throw anymore, just because that would be a bit too much):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Same as before, but let&#39;s increase the number of throws:</span>
@@ -465,10 +494,8 @@ P(Tail)=0.7
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_throw</span><span class="p">):</span>  <span class="c1"># Repeat the same thing 10 times (throwing the coin)</span>
     <span class="n">rnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>  <span class="c1"># Draw a random number between 0 and 1 (following a uniform distribution, so each value between 0 and 1 is equally likely)</span>
     <span class="k">if</span> <span class="n">rnd</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">:</span>  <span class="c1"># If our random number is less than 0.5, we consider that our coin landed on head.</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Throw </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: Head&quot;</span><span class="p">)</span>
         <span class="n">n_head</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">else</span><span class="p">:</span>   <span class="c1"># If our random number is more than 0.5, we consider that our coin landed on tail</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Throw </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: Tail&quot;</span><span class="p">)</span>
         <span class="n">n_tail</span> <span class="o">+=</span> <span class="mi">1</span>
 
 <span class="c1"># Compute the probability of head and tail:</span>
@@ -480,28 +507,7 @@ P(Tail)=0.7
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Throw 0: Tail
-Throw 1: Tail
-Throw 2: Tail
-Throw 3: Tail
-Throw 4: Head
-Throw 5: Head
-Throw 6: Head
-Throw 7: Tail
-Throw 8: Tail
-Throw 9: Tail
-Throw 10: Tail
-Throw 11: Tail
-Throw 12: Head
-Throw 13: Tail
-Throw 14: Head
-Throw 15: Tail
-Throw 16: Head
-Throw 17: Tail
-Throw 18: Tail
-Throw 19: Head
-
-P(Head)=0.35
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(Head)=0.35
 P(Tail)=0.65
 </pre></div>
 </div>
@@ -518,10 +524,8 @@ P(Tail)=0.65
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_throw</span><span class="p">):</span>  <span class="c1"># Repeat the same thing 10 times (throwing the coin)</span>
     <span class="n">rnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>  <span class="c1"># Draw a random number between 0 and 1 (following a uniform distribution, so each value between 0 and 1 is equally likely)</span>
     <span class="k">if</span> <span class="n">rnd</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">:</span>  <span class="c1"># If our random number is less than 0.5, we consider that our coin landed on head.</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Throw </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: Head&quot;</span><span class="p">)</span>
         <span class="n">n_head</span> <span class="o">+=</span> <span class="mi">1</span>
     <span class="k">else</span><span class="p">:</span>   <span class="c1"># If our random number is more than 0.5, we consider that our coin landed on tail</span>
-        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Throw </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: Tail&quot;</span><span class="p">)</span>
         <span class="n">n_tail</span> <span class="o">+=</span> <span class="mi">1</span>
 
 <span class="c1"># Compute the probability of head and tail:</span>
@@ -533,1008 +537,7 @@ P(Tail)=0.65
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Throw 0: Head
-Throw 1: Tail
-Throw 2: Head
-Throw 3: Tail
-Throw 4: Head
-Throw 5: Tail
-Throw 6: Tail
-Throw 7: Tail
-Throw 8: Tail
-Throw 9: Tail
-Throw 10: Head
-Throw 11: Head
-Throw 12: Tail
-Throw 13: Head
-Throw 14: Tail
-Throw 15: Tail
-Throw 16: Head
-Throw 17: Head
-Throw 18: Head
-Throw 19: Head
-Throw 20: Tail
-Throw 21: Head
-Throw 22: Tail
-Throw 23: Head
-Throw 24: Head
-Throw 25: Head
-Throw 26: Tail
-Throw 27: Head
-Throw 28: Head
-Throw 29: Head
-Throw 30: Head
-Throw 31: Head
-Throw 32: Tail
-Throw 33: Head
-Throw 34: Head
-Throw 35: Head
-Throw 36: Tail
-Throw 37: Head
-Throw 38: Tail
-Throw 39: Head
-Throw 40: Tail
-Throw 41: Head
-Throw 42: Tail
-Throw 43: Tail
-Throw 44: Tail
-Throw 45: Head
-Throw 46: Head
-Throw 47: Head
-Throw 48: Head
-Throw 49: Head
-Throw 50: Head
-Throw 51: Head
-Throw 52: Head
-Throw 53: Tail
-Throw 54: Tail
-Throw 55: Head
-Throw 56: Tail
-Throw 57: Head
-Throw 58: Tail
-Throw 59: Tail
-Throw 60: Head
-Throw 61: Tail
-Throw 62: Head
-Throw 63: Tail
-Throw 64: Head
-Throw 65: Head
-Throw 66: Tail
-Throw 67: Head
-Throw 68: Tail
-Throw 69: Head
-Throw 70: Tail
-Throw 71: Head
-Throw 72: Tail
-Throw 73: Tail
-Throw 74: Head
-Throw 75: Tail
-Throw 76: Tail
-Throw 77: Tail
-Throw 78: Head
-Throw 79: Tail
-Throw 80: Head
-Throw 81: Tail
-Throw 82: Tail
-Throw 83: Head
-Throw 84: Tail
-Throw 85: Head
-Throw 86: Tail
-Throw 87: Tail
-Throw 88: Tail
-Throw 89: Tail
-Throw 90: Tail
-Throw 91: Tail
-Throw 92: Tail
-Throw 93: Tail
-Throw 94: Head
-Throw 95: Tail
-Throw 96: Head
-Throw 97: Head
-Throw 98: Tail
-Throw 99: Head
-Throw 100: Tail
-Throw 101: Head
-Throw 102: Head
-Throw 103: Head
-Throw 104: Tail
-Throw 105: Tail
-Throw 106: Tail
-Throw 107: Tail
-Throw 108: Tail
-Throw 109: Head
-Throw 110: Tail
-Throw 111: Head
-Throw 112: Head
-Throw 113: Tail
-Throw 114: Tail
-Throw 115: Tail
-Throw 116: Head
-Throw 117: Tail
-Throw 118: Tail
-Throw 119: Tail
-Throw 120: Head
-Throw 121: Tail
-Throw 122: Head
-Throw 123: Tail
-Throw 124: Head
-Throw 125: Tail
-Throw 126: Tail
-Throw 127: Tail
-Throw 128: Head
-Throw 129: Head
-Throw 130: Tail
-Throw 131: Head
-Throw 132: Tail
-Throw 133: Tail
-Throw 134: Tail
-Throw 135: Tail
-Throw 136: Head
-Throw 137: Head
-Throw 138: Tail
-Throw 139: Head
-Throw 140: Tail
-Throw 141: Head
-Throw 142: Head
-Throw 143: Head
-Throw 144: Tail
-Throw 145: Head
-Throw 146: Head
-Throw 147: Tail
-Throw 148: Tail
-Throw 149: Head
-Throw 150: Head
-Throw 151: Tail
-Throw 152: Tail
-Throw 153: Head
-Throw 154: Tail
-Throw 155: Tail
-Throw 156: Tail
-Throw 157: Tail
-Throw 158: Tail
-Throw 159: Head
-Throw 160: Head
-Throw 161: Head
-Throw 162: Head
-Throw 163: Tail
-Throw 164: Tail
-Throw 165: Head
-Throw 166: Head
-Throw 167: Head
-Throw 168: Head
-Throw 169: Head
-Throw 170: Head
-Throw 171: Tail
-Throw 172: Head
-Throw 173: Head
-Throw 174: Head
-Throw 175: Head
-Throw 176: Tail
-Throw 177: Head
-Throw 178: Tail
-Throw 179: Tail
-Throw 180: Tail
-Throw 181: Head
-Throw 182: Tail
-Throw 183: Head
-Throw 184: Head
-Throw 185: Tail
-Throw 186: Head
-Throw 187: Head
-Throw 188: Tail
-Throw 189: Tail
-Throw 190: Tail
-Throw 191: Tail
-Throw 192: Head
-Throw 193: Tail
-Throw 194: Head
-Throw 195: Tail
-Throw 196: Tail
-Throw 197: Head
-Throw 198: Tail
-Throw 199: Tail
-Throw 200: Head
-Throw 201: Head
-Throw 202: Tail
-Throw 203: Head
-Throw 204: Head
-Throw 205: Head
-Throw 206: Head
-Throw 207: Head
-Throw 208: Head
-Throw 209: Tail
-Throw 210: Tail
-Throw 211: Head
-Throw 212: Tail
-Throw 213: Head
-Throw 214: Tail
-Throw 215: Head
-Throw 216: Tail
-Throw 217: Head
-Throw 218: Head
-Throw 219: Head
-Throw 220: Head
-Throw 221: Tail
-Throw 222: Tail
-Throw 223: Tail
-Throw 224: Tail
-Throw 225: Head
-Throw 226: Tail
-Throw 227: Tail
-Throw 228: Tail
-Throw 229: Head
-Throw 230: Head
-Throw 231: Head
-Throw 232: Head
-Throw 233: Tail
-Throw 234: Tail
-Throw 235: Tail
-Throw 236: Head
-Throw 237: Tail
-Throw 238: Head
-Throw 239: Head
-Throw 240: Tail
-Throw 241: Tail
-Throw 242: Head
-Throw 243: Tail
-Throw 244: Head
-Throw 245: Tail
-Throw 246: Tail
-Throw 247: Tail
-Throw 248: Tail
-Throw 249: Tail
-Throw 250: Head
-Throw 251: Tail
-Throw 252: Tail
-Throw 253: Head
-Throw 254: Head
-Throw 255: Head
-Throw 256: Tail
-Throw 257: Head
-Throw 258: Head
-Throw 259: Tail
-Throw 260: Head
-Throw 261: Head
-Throw 262: Tail
-Throw 263: Head
-Throw 264: Tail
-Throw 265: Head
-Throw 266: Head
-Throw 267: Tail
-Throw 268: Tail
-Throw 269: Tail
-Throw 270: Tail
-Throw 271: Tail
-Throw 272: Head
-Throw 273: Head
-Throw 274: Head
-Throw 275: Head
-Throw 276: Head
-Throw 277: Head
-Throw 278: Tail
-Throw 279: Head
-Throw 280: Tail
-Throw 281: Head
-Throw 282: Head
-Throw 283: Head
-Throw 284: Tail
-Throw 285: Head
-Throw 286: Head
-Throw 287: Tail
-Throw 288: Tail
-Throw 289: Tail
-Throw 290: Head
-Throw 291: Head
-Throw 292: Head
-Throw 293: Head
-Throw 294: Head
-Throw 295: Head
-Throw 296: Tail
-Throw 297: Tail
-Throw 298: Head
-Throw 299: Head
-Throw 300: Head
-Throw 301: Tail
-Throw 302: Head
-Throw 303: Tail
-Throw 304: Tail
-Throw 305: Tail
-Throw 306: Head
-Throw 307: Head
-Throw 308: Tail
-Throw 309: Head
-Throw 310: Head
-Throw 311: Head
-Throw 312: Head
-Throw 313: Head
-Throw 314: Tail
-Throw 315: Head
-Throw 316: Tail
-Throw 317: Head
-Throw 318: Tail
-Throw 319: Tail
-Throw 320: Tail
-Throw 321: Head
-Throw 322: Head
-Throw 323: Tail
-Throw 324: Tail
-Throw 325: Tail
-Throw 326: Head
-Throw 327: Head
-Throw 328: Head
-Throw 329: Tail
-Throw 330: Head
-Throw 331: Tail
-Throw 332: Tail
-Throw 333: Head
-Throw 334: Tail
-Throw 335: Head
-Throw 336: Tail
-Throw 337: Head
-Throw 338: Tail
-Throw 339: Tail
-Throw 340: Tail
-Throw 341: Head
-Throw 342: Tail
-Throw 343: Tail
-Throw 344: Head
-Throw 345: Head
-Throw 346: Tail
-Throw 347: Tail
-Throw 348: Head
-Throw 349: Tail
-Throw 350: Tail
-Throw 351: Head
-Throw 352: Tail
-Throw 353: Tail
-Throw 354: Tail
-Throw 355: Tail
-Throw 356: Tail
-Throw 357: Head
-Throw 358: Tail
-Throw 359: Head
-Throw 360: Head
-Throw 361: Head
-Throw 362: Head
-Throw 363: Tail
-Throw 364: Head
-Throw 365: Tail
-Throw 366: Head
-Throw 367: Head
-Throw 368: Head
-Throw 369: Head
-Throw 370: Head
-Throw 371: Tail
-Throw 372: Head
-Throw 373: Tail
-Throw 374: Tail
-Throw 375: Head
-Throw 376: Head
-Throw 377: Head
-Throw 378: Tail
-Throw 379: Head
-Throw 380: Head
-Throw 381: Head
-Throw 382: Head
-Throw 383: Head
-Throw 384: Head
-Throw 385: Head
-Throw 386: Head
-Throw 387: Head
-Throw 388: Head
-Throw 389: Tail
-Throw 390: Tail
-Throw 391: Tail
-Throw 392: Head
-Throw 393: Head
-Throw 394: Tail
-Throw 395: Head
-Throw 396: Tail
-Throw 397: Head
-Throw 398: Tail
-Throw 399: Head
-Throw 400: Head
-Throw 401: Tail
-Throw 402: Head
-Throw 403: Tail
-Throw 404: Tail
-Throw 405: Head
-Throw 406: Tail
-Throw 407: Head
-Throw 408: Tail
-Throw 409: Head
-Throw 410: Head
-Throw 411: Tail
-Throw 412: Tail
-Throw 413: Head
-Throw 414: Head
-Throw 415: Head
-Throw 416: Tail
-Throw 417: Tail
-Throw 418: Tail
-Throw 419: Tail
-Throw 420: Head
-Throw 421: Tail
-Throw 422: Head
-Throw 423: Head
-Throw 424: Tail
-Throw 425: Head
-Throw 426: Tail
-Throw 427: Head
-Throw 428: Tail
-Throw 429: Tail
-Throw 430: Head
-Throw 431: Head
-Throw 432: Head
-Throw 433: Tail
-Throw 434: Head
-Throw 435: Head
-Throw 436: Head
-Throw 437: Head
-Throw 438: Tail
-Throw 439: Head
-Throw 440: Tail
-Throw 441: Tail
-Throw 442: Tail
-Throw 443: Tail
-Throw 444: Tail
-Throw 445: Tail
-Throw 446: Tail
-Throw 447: Tail
-Throw 448: Tail
-Throw 449: Head
-Throw 450: Head
-Throw 451: Head
-Throw 452: Head
-Throw 453: Head
-Throw 454: Head
-Throw 455: Tail
-Throw 456: Head
-Throw 457: Tail
-Throw 458: Tail
-Throw 459: Tail
-Throw 460: Head
-Throw 461: Tail
-Throw 462: Tail
-Throw 463: Head
-Throw 464: Tail
-Throw 465: Head
-Throw 466: Head
-Throw 467: Head
-Throw 468: Head
-Throw 469: Tail
-Throw 470: Head
-Throw 471: Head
-Throw 472: Tail
-Throw 473: Tail
-Throw 474: Head
-Throw 475: Tail
-Throw 476: Tail
-Throw 477: Head
-Throw 478: Head
-Throw 479: Head
-Throw 480: Head
-Throw 481: Head
-Throw 482: Tail
-Throw 483: Tail
-Throw 484: Tail
-Throw 485: Tail
-Throw 486: Head
-Throw 487: Head
-Throw 488: Tail
-Throw 489: Tail
-Throw 490: Tail
-Throw 491: Head
-Throw 492: Head
-Throw 493: Tail
-Throw 494: Head
-Throw 495: Head
-Throw 496: Tail
-Throw 497: Tail
-Throw 498: Head
-Throw 499: Head
-Throw 500: Head
-Throw 501: Head
-Throw 502: Tail
-Throw 503: Head
-Throw 504: Head
-Throw 505: Head
-Throw 506: Tail
-Throw 507: Tail
-Throw 508: Tail
-Throw 509: Tail
-Throw 510: Head
-Throw 511: Tail
-Throw 512: Tail
-Throw 513: Tail
-Throw 514: Tail
-Throw 515: Head
-Throw 516: Tail
-Throw 517: Tail
-Throw 518: Tail
-Throw 519: Head
-Throw 520: Tail
-Throw 521: Head
-Throw 522: Head
-Throw 523: Tail
-Throw 524: Tail
-Throw 525: Head
-Throw 526: Head
-Throw 527: Head
-Throw 528: Tail
-Throw 529: Tail
-Throw 530: Tail
-Throw 531: Head
-Throw 532: Tail
-Throw 533: Tail
-Throw 534: Tail
-Throw 535: Tail
-Throw 536: Tail
-Throw 537: Tail
-Throw 538: Tail
-Throw 539: Tail
-Throw 540: Tail
-Throw 541: Head
-Throw 542: Head
-Throw 543: Head
-Throw 544: Tail
-Throw 545: Head
-Throw 546: Head
-Throw 547: Tail
-Throw 548: Head
-Throw 549: Tail
-Throw 550: Head
-Throw 551: Tail
-Throw 552: Head
-Throw 553: Head
-Throw 554: Tail
-Throw 555: Head
-Throw 556: Head
-Throw 557: Head
-Throw 558: Head
-Throw 559: Tail
-Throw 560: Tail
-Throw 561: Tail
-Throw 562: Tail
-Throw 563: Tail
-Throw 564: Head
-Throw 565: Tail
-Throw 566: Head
-Throw 567: Head
-Throw 568: Head
-Throw 569: Tail
-Throw 570: Head
-Throw 571: Head
-Throw 572: Tail
-Throw 573: Head
-Throw 574: Tail
-Throw 575: Head
-Throw 576: Head
-Throw 577: Head
-Throw 578: Tail
-Throw 579: Head
-Throw 580: Head
-Throw 581: Head
-Throw 582: Tail
-Throw 583: Head
-Throw 584: Head
-Throw 585: Head
-Throw 586: Tail
-Throw 587: Tail
-Throw 588: Head
-Throw 589: Tail
-Throw 590: Head
-Throw 591: Tail
-Throw 592: Tail
-Throw 593: Tail
-Throw 594: Tail
-Throw 595: Tail
-Throw 596: Tail
-Throw 597: Tail
-Throw 598: Head
-Throw 599: Head
-Throw 600: Head
-Throw 601: Head
-Throw 602: Head
-Throw 603: Tail
-Throw 604: Tail
-Throw 605: Tail
-Throw 606: Head
-Throw 607: Head
-Throw 608: Tail
-Throw 609: Tail
-Throw 610: Tail
-Throw 611: Tail
-Throw 612: Tail
-Throw 613: Head
-Throw 614: Head
-Throw 615: Head
-Throw 616: Tail
-Throw 617: Tail
-Throw 618: Tail
-Throw 619: Head
-Throw 620: Head
-Throw 621: Tail
-Throw 622: Head
-Throw 623: Head
-Throw 624: Tail
-Throw 625: Head
-Throw 626: Head
-Throw 627: Head
-Throw 628: Head
-Throw 629: Tail
-Throw 630: Head
-Throw 631: Tail
-Throw 632: Head
-Throw 633: Head
-Throw 634: Head
-Throw 635: Head
-Throw 636: Tail
-Throw 637: Head
-Throw 638: Tail
-Throw 639: Tail
-Throw 640: Head
-Throw 641: Head
-Throw 642: Tail
-Throw 643: Head
-Throw 644: Tail
-Throw 645: Tail
-Throw 646: Tail
-Throw 647: Tail
-Throw 648: Head
-Throw 649: Head
-Throw 650: Head
-Throw 651: Head
-Throw 652: Head
-Throw 653: Tail
-Throw 654: Head
-Throw 655: Tail
-Throw 656: Tail
-Throw 657: Tail
-Throw 658: Tail
-Throw 659: Head
-Throw 660: Tail
-Throw 661: Head
-Throw 662: Tail
-Throw 663: Head
-Throw 664: Tail
-Throw 665: Head
-Throw 666: Head
-Throw 667: Head
-Throw 668: Tail
-Throw 669: Tail
-Throw 670: Head
-Throw 671: Head
-Throw 672: Head
-Throw 673: Head
-Throw 674: Head
-Throw 675: Head
-Throw 676: Head
-Throw 677: Head
-Throw 678: Head
-Throw 679: Tail
-Throw 680: Head
-Throw 681: Tail
-Throw 682: Tail
-Throw 683: Head
-Throw 684: Head
-Throw 685: Head
-Throw 686: Head
-Throw 687: Tail
-Throw 688: Head
-Throw 689: Tail
-Throw 690: Tail
-Throw 691: Tail
-Throw 692: Head
-Throw 693: Tail
-Throw 694: Head
-Throw 695: Tail
-Throw 696: Tail
-Throw 697: Tail
-Throw 698: Tail
-Throw 699: Head
-Throw 700: Tail
-Throw 701: Head
-Throw 702: Head
-Throw 703: Head
-Throw 704: Head
-Throw 705: Tail
-Throw 706: Head
-Throw 707: Tail
-Throw 708: Head
-Throw 709: Head
-Throw 710: Head
-Throw 711: Tail
-Throw 712: Head
-Throw 713: Head
-Throw 714: Tail
-Throw 715: Head
-Throw 716: Tail
-Throw 717: Tail
-Throw 718: Tail
-Throw 719: Tail
-Throw 720: Head
-Throw 721: Tail
-Throw 722: Tail
-Throw 723: Tail
-Throw 724: Head
-Throw 725: Tail
-Throw 726: Head
-Throw 727: Head
-Throw 728: Head
-Throw 729: Head
-Throw 730: Tail
-Throw 731: Head
-Throw 732: Head
-Throw 733: Head
-Throw 734: Tail
-Throw 735: Tail
-Throw 736: Tail
-Throw 737: Head
-Throw 738: Tail
-Throw 739: Tail
-Throw 740: Tail
-Throw 741: Head
-Throw 742: Head
-Throw 743: Head
-Throw 744: Tail
-Throw 745: Head
-Throw 746: Head
-Throw 747: Head
-Throw 748: Tail
-Throw 749: Tail
-Throw 750: Head
-Throw 751: Head
-Throw 752: Tail
-Throw 753: Tail
-Throw 754: Head
-Throw 755: Head
-Throw 756: Head
-Throw 757: Head
-Throw 758: Head
-Throw 759: Head
-Throw 760: Tail
-Throw 761: Head
-Throw 762: Tail
-Throw 763: Head
-Throw 764: Tail
-Throw 765: Tail
-Throw 766: Head
-Throw 767: Head
-Throw 768: Head
-Throw 769: Head
-Throw 770: Head
-Throw 771: Tail
-Throw 772: Head
-Throw 773: Head
-Throw 774: Tail
-Throw 775: Tail
-Throw 776: Tail
-Throw 777: Head
-Throw 778: Tail
-Throw 779: Tail
-Throw 780: Head
-Throw 781: Tail
-Throw 782: Head
-Throw 783: Tail
-Throw 784: Head
-Throw 785: Head
-Throw 786: Head
-Throw 787: Head
-Throw 788: Tail
-Throw 789: Tail
-Throw 790: Head
-Throw 791: Head
-Throw 792: Head
-Throw 793: Head
-Throw 794: Head
-Throw 795: Tail
-Throw 796: Head
-Throw 797: Tail
-Throw 798: Tail
-Throw 799: Head
-Throw 800: Tail
-Throw 801: Head
-Throw 802: Tail
-Throw 803: Tail
-Throw 804: Tail
-Throw 805: Head
-Throw 806: Tail
-Throw 807: Head
-Throw 808: Head
-Throw 809: Tail
-Throw 810: Head
-Throw 811: Head
-Throw 812: Head
-Throw 813: Tail
-Throw 814: Head
-Throw 815: Tail
-Throw 816: Tail
-Throw 817: Head
-Throw 818: Head
-Throw 819: Tail
-Throw 820: Tail
-Throw 821: Tail
-Throw 822: Head
-Throw 823: Tail
-Throw 824: Tail
-Throw 825: Tail
-Throw 826: Head
-Throw 827: Head
-Throw 828: Head
-Throw 829: Head
-Throw 830: Tail
-Throw 831: Tail
-Throw 832: Head
-Throw 833: Head
-Throw 834: Tail
-Throw 835: Tail
-Throw 836: Head
-Throw 837: Head
-Throw 838: Tail
-Throw 839: Head
-Throw 840: Tail
-Throw 841: Head
-Throw 842: Tail
-Throw 843: Head
-Throw 844: Head
-Throw 845: Head
-Throw 846: Head
-Throw 847: Head
-Throw 848: Tail
-Throw 849: Tail
-Throw 850: Tail
-Throw 851: Head
-Throw 852: Tail
-Throw 853: Tail
-Throw 854: Tail
-Throw 855: Head
-Throw 856: Tail
-Throw 857: Tail
-Throw 858: Head
-Throw 859: Tail
-Throw 860: Head
-Throw 861: Head
-Throw 862: Head
-Throw 863: Tail
-Throw 864: Tail
-Throw 865: Head
-Throw 866: Tail
-Throw 867: Tail
-Throw 868: Head
-Throw 869: Head
-Throw 870: Tail
-Throw 871: Head
-Throw 872: Head
-Throw 873: Head
-Throw 874: Tail
-Throw 875: Tail
-Throw 876: Head
-Throw 877: Head
-Throw 878: Head
-Throw 879: Head
-Throw 880: Tail
-Throw 881: Head
-Throw 882: Tail
-Throw 883: Head
-Throw 884: Tail
-Throw 885: Tail
-Throw 886: Head
-Throw 887: Head
-Throw 888: Tail
-Throw 889: Head
-Throw 890: Tail
-Throw 891: Tail
-Throw 892: Head
-Throw 893: Tail
-Throw 894: Tail
-Throw 895: Tail
-Throw 896: Tail
-Throw 897: Head
-Throw 898: Tail
-Throw 899: Head
-Throw 900: Tail
-Throw 901: Head
-Throw 902: Head
-Throw 903: Head
-Throw 904: Head
-Throw 905: Tail
-Throw 906: Head
-Throw 907: Head
-Throw 908: Head
-Throw 909: Tail
-Throw 910: Head
-Throw 911: Head
-Throw 912: Head
-Throw 913: Tail
-Throw 914: Head
-Throw 915: Head
-Throw 916: Tail
-Throw 917: Head
-Throw 918: Tail
-Throw 919: Tail
-Throw 920: Head
-Throw 921: Tail
-Throw 922: Head
-Throw 923: Head
-Throw 924: Head
-Throw 925: Head
-Throw 926: Head
-Throw 927: Tail
-Throw 928: Tail
-Throw 929: Tail
-Throw 930: Head
-Throw 931: Tail
-Throw 932: Head
-Throw 933: Head
-Throw 934: Head
-Throw 935: Head
-Throw 936: Head
-Throw 937: Tail
-Throw 938: Head
-Throw 939: Tail
-Throw 940: Tail
-Throw 941: Head
-Throw 942: Tail
-Throw 943: Tail
-Throw 944: Tail
-Throw 945: Head
-Throw 946: Tail
-Throw 947: Head
-Throw 948: Head
-Throw 949: Tail
-Throw 950: Tail
-Throw 951: Tail
-Throw 952: Tail
-Throw 953: Tail
-Throw 954: Tail
-Throw 955: Head
-Throw 956: Tail
-Throw 957: Tail
-Throw 958: Head
-Throw 959: Tail
-Throw 960: Head
-Throw 961: Head
-Throw 962: Head
-Throw 963: Tail
-Throw 964: Tail
-Throw 965: Head
-Throw 966: Tail
-Throw 967: Tail
-Throw 968: Head
-Throw 969: Tail
-Throw 970: Tail
-Throw 971: Head
-Throw 972: Head
-Throw 973: Tail
-Throw 974: Head
-Throw 975: Tail
-Throw 976: Tail
-Throw 977: Head
-Throw 978: Head
-Throw 979: Tail
-Throw 980: Tail
-Throw 981: Head
-Throw 982: Head
-Throw 983: Head
-Throw 984: Head
-Throw 985: Head
-Throw 986: Head
-Throw 987: Head
-Throw 988: Tail
-Throw 989: Tail
-Throw 990: Head
-Throw 991: Tail
-Throw 992: Tail
-Throw 993: Tail
-Throw 994: Tail
-Throw 995: Tail
-Throw 996: Head
-Throw 997: Head
-Throw 998: Tail
-Throw 999: Head
-
-P(Head)=0.523
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(Head)=0.523
 P(Tail)=0.477
 </pre></div>
 </div>
@@ -1610,15 +613,29 @@ P(Head)=0.507/P(Tail)=0.493
 </div>
 </div>
 </div>
-<p>We can see that in the first experiment (where we throw the coin 10 times), the results we get differ quite a bit between repetition, sometimes we get 50/50, but sometimes we get 20% head, 80% tail. In comparison, the results of the second experiment (where we throw the coin 1000 times) vary much less across repeats: we get results between 40% and 60% probability for head and tail. So it would seem that our intuition that throwing the coin many times gets us more reliable results. So if we want to know if our coin is biased or not, we should throw the coin many many times.</p>
-<p>In the experiment where we throw the coin a 1000 times, we observe probabilities that are very close to 50/50, so it would seem fair to conclude that the coin most likely isn’t biased and we can proceed with our bet.</p>
+<p>In the first experiment (where we throw the coin 10 times), the results we get differ quite a bit between repetition, sometimes we get 50/50, but sometimes we get 20% head, 80% tail. In comparison, the results of the second experiment (where we throw the coin 1000 times) vary much less across repeats: we get results between 40% and 60% probability for head and tail. So it would seem that our intuition that throwing the coin many times gets us more reliable results. So if we want to know if our coin is biased or not, we should throw the coin many many times.</p>
+<p>And based on the 1000 throws experiment, it would seem that we get results that are close to 50/50, which seems to be what we would expect to happen if our coin isn’t biased</p>
+</section>
+<section id="answering-the-question-based-on-our-data">
+<h3>Answering the question based on our data<a class="headerlink" href="#answering-the-question-based-on-our-data" title="Link to this heading">#</a></h3>
+<p>Our intuition seems to tell us that our coin isn’t biased, because when we throw it a 1000 times, we get close to 50/50. So a resonable answer is <strong>our coin isn’t biased</strong>.</p>
+<p>Along the way, we also noticed a few interesting things. First, we realized that we can’t trust a 100% the results of our experiment, because even if the coin is balanced, we might not get exactly 50/50 head and tail when we throw the coin several times. In a sense, this means that we can never know for sure whether or not our coin is biased:</p>
+<ul class="simple">
+<li><p>If the coin is perfectly fair, we will not get exactly 50/50 every time</p></li>
+<li><p>If the coin isn’t fair, we might still get 50/50 in some experiments</p></li>
+</ul>
+<p>This is true: we can never know whether for sure if our coin is biased or not. But then, how can we know based on the results of our experiment whether the best answer is Yes or no, if the same outcome can occur with a biased and with a fair coin? The answer is this: while we can not know with certainty whether or not our coin is biased, we can figure out <strong>how likely is it that my coin is not biased, given the results of my experiment</strong>. In other words, we can get the answer to the question: “How confident are you that the coin is not biased?”. If the answer is very, then logically the best answer is to say: my coin is not biased.</p>
+<p>This may sound very familiar with the intuition of increasing the number of coin toss to get an answer that we felt we can trust more. This begs the question: why should we trust the results of the experiment where we throw the coin more often more than the one of the experiment where we throw the coin only a few times? A logical answer is that if the coin isn’t biased, we are less likely to observe something very different from the 50/50 ratio when we throw the coin many times. Another way to say that is: <strong>given that our coin is not biased, the probability of observing something close to 50/50 is larger when we throw the coin many times than when we throw the coin a few times</strong></p>
+<p>This sentence sounds a bit similar to the one above (<strong>how likely is it that my coin is not biased, given the results of my experiment</strong>), but it is phrased the other way around. In our experiment, because we felt <strong>confident that the results of our experiment accurately reflects the true ratio of the coin and because our final results was about 50/50</strong> we deduce that <strong>we are confident that the true ratio is 50/50, given that we have observed a ratio of 50/50 in our experiment</strong>. It is crucial to understand that these are not the same. This is the same as saying “How confident am I that the sky is cloudy given that it is raining” vs. “How confident am I that it is raining, given that the sky is cloudy?”. While the sky is most often cloudy when it is raining, it is not always true that it is raining when the sky is cloudy. To decide whether or not to proceed with our bet, we need to k now how confident we are that our coin isn’t biased, given the results of our experiment.</p>
+<p>This is in a nutshell the goal of Bayesian statistics: figuring out the <strong>probability of a parameter</strong> (such as the true head/tail ratio), given some data (such as the result of an experiment in which we throw the coin a bunch of times). Knowing the probability of a parameter basically tells us how much we should trust the results of our experiment. In our example, we did it all based on intuition, but we will now dig into the actual math that enable to get that probability for any kinds of problems.</p>
+</section>
 </section>
 <section id="formalizing-our-intuition">
 <h2>Formalizing our intuition<a class="headerlink" href="#formalizing-our-intuition" title="Link to this heading">#</a></h2>
-<p>In the experiment above, we tried to figure out what the probability of head and tail are by running an experiment. In other words, we tried to infer the <strong>True</strong> probability of head and tail using experimental data. We threw the coin several times and computed the <strong>experimental</strong> or <strong>empirical</strong> probability of head and tail. And we can clearly see that the <strong>empirical probability</strong> of head or tail is not exactly the same as the <strong>true probability</strong> of head or tail, because the actual values we obtained in our experiment varied across experiments, and depending on the exact parameters of the experiment (the number of throw we used to compute the empirical probability). In a nutshell, the field of probability and statistics is dedicated to finds ways in which we can reach the best conclusions about some things we cannot know (such as the True probability of head or tail) based on data. The goal is therefore to formalize several of the intuitions you may have had before, to find convenient mathematical solutions to know which conclusion is the most appropriate.</p>
+<p>In the section above, we mentioned a couple of terms and intuition. To do maths we them, we need to define a couple of those terms. We tried to infer the <strong>True</strong> probability of head and tail using experimental data. We threw the coin several times and computed the <strong>experimental</strong> or <strong>empirical</strong> probability of head and tail. And we can clearly see that the <strong>empirical probability</strong> of head or tail is not exactly the same as the <strong>true probability</strong> of head or tail, because the actual values we obtained in our experiment varied across experiments, and depending on the exact parameters of the experiment (the number of throw we used to compute the empirical probability).</p>
 <section id="definitions">
 <h3>Definitions:<a class="headerlink" href="#definitions" title="Link to this heading">#</a></h3>
-<p>Let’s start by getting some simple mathetmatical notations out of the way. In our experiment above, we tried to figure out what the true probability of head or tail is. The true probability of a given event (head or tail) is usually written as follows:
+<p>In general, a probability is defined as:
 $<span class="math notranslate nohighlight">\(P(A) = \frac{|A|}{|\Omega|}\)</span><span class="math notranslate nohighlight">\(
 Which reads:
 \)</span><span class="math notranslate nohighlight">\(P(event) = \frac{Number\ of\ favorable\ outcomes\ for\ event\ A}{Total\ number\ of\ possible\ outcomes\ in\ the\ sample\ space}\)</span>$</p>
@@ -1629,19 +646,23 @@ Which reads:
 <li><p><strong>Number of favorable outcomes for event A</strong>: how often does the event occurs out of all the possible outcomes. This is basically the quantity that defines the probability of that particular event.</p></li>
 </ul>
 <p>So say we have a fair coin, the number of favorable outcomes for event head should be 1 and the total number of outcomes is 2. So we have:
-$<span class="math notranslate nohighlight">\(P(Head) = \frac{1}{2}\)</span><span class="math notranslate nohighlight">\(
-And 
-\)</span><span class="math notranslate nohighlight">\(P(Tail) = \frac{1}{2}\)</span><span class="math notranslate nohighlight">\(
-And because head and tail are the two possible outcomes, the sum of the probability of both events should sum up to 1. In comparison, the probability of picking up a king of spade is:
-\)</span><span class="math notranslate nohighlight">\(P(King\ of\ Spade) = \frac{1}{52}\)</span><span class="math notranslate nohighlight">\(
-And of picking up a jack of heart:
-\)</span><span class="math notranslate nohighlight">\(P(Jack\ of\ Heart) = \frac{1}{52}\)</span>$
-If we sum the probability of a king of spade and of a jack of heart, we don’t get 1, which means that we are missing some events.</p>
-<p>An important thing to understand is that the probability defined above refer to the true probability of each event. This is what we want to figure out in our experiment above. But we would only obtain the true probability of each event if we were to run an infinity of experiments. Since we can’t run an infinity of experiments, we can not get the true probability of each event. Instead, we get the <strong>empirical probability</strong>, which is usually depicted like so:
-$<span class="math notranslate nohighlight">\(
+$<span class="math notranslate nohighlight">\(P(Head) = \frac{1}{2}\)</span>$</p>
+<p>And</p>
+<div class="math notranslate nohighlight">
+\[P(Tail) = \frac{1}{2}\]</div>
+<p>And because head and tail are the two possible outcomes, the sum of the probability of both events should sum up to 1. In comparison, the probability of picking up a king of spade is:</p>
+<div class="math notranslate nohighlight">
+\[P(King\ of\ Spade) = \frac{1}{52}\]</div>
+<p>And of picking up a jack of heart:</p>
+<div class="math notranslate nohighlight">
+\[P(Jack\ of\ Heart) = \frac{1}{52}\]</div>
+<p>If we sum the probability of a king of spade and of a jack of heart, we don’t get 1, which means that we are missing some events.</p>
+<p>An important thing to understand is that the probability defined above refer to the true probability of each event. This is what we want to figure out in our experiment above. But we would only obtain the true probability of each event if we were to run an infinity of experiments. Since we can’t run an infinity of experiments, we can not get the true probability of each event. Instead, we get the <strong>empirical probability</strong>, which is usually depicted like so:</p>
+<div class="math notranslate nohighlight">
+\[
 \hat{P}(E) = \frac{\text{Number of times event } E \text{ occurs}}{\text{Total number of trials}}
-\)</span>$
-The hat just indicates that this is something we obtained from an experiment and isn’t the true probability of a given event.</p>
+\]</div>
+<p>The hat just indicates that this is something we obtained from an experiment and isn’t the true probability of a given event.</p>
 </section>
 </section>
 <section id="the-bernoulli-distribution-a-single-formulae-to-express-the-probability-of-each-event">
@@ -1652,14 +673,27 @@ $<span class="math notranslate nohighlight">\(P(Head) = 0.5\)</span><span class=
 And as we have mentioned above, the probability of the two events should be 1, because there are no other possible outcome. So if we know the probability of head, we know the probability of head, we know the probability of tail:
 \)</span><span class="math notranslate nohighlight">\(P(Head) + P(Tail) = 1\)</span><span class="math notranslate nohighlight">\(
 \)</span><span class="math notranslate nohighlight">\(P(Head) = 1 - P(Tail)\)</span>$</p>
-<p>Now head and tail are very specific words that only make sense when the experiment is tossing a coin. But there are many other kind of things that have a binary outcome: either one thing happens or another thing happens, and each thing has its own probability of occuring. So to put it in the kind of linguo we have defined above: there are many instances in which a  random process in which the sample space only contains two (mutually exclusive) events. So to be more general, we can define the one outcome as 1 and the other as 0. And very often, you will see the 1 being referred as success and the 0 as failure, but that’s just a convention, nothing more. So for our fair coin, we can write:
-$<span class="math notranslate nohighlight">\(P(X=1) = 0.5\)</span><span class="math notranslate nohighlight">\(
-\)</span><span class="math notranslate nohighlight">\(P(X=0) = 0.5\)</span>$</p>
-<p>So for any such problem, we have two events: 0 and 1 (head or tail, pass or fail a test…), and each event has its own probability. We can write a formulae that describes the probability of each event like so:
-$<span class="math notranslate nohighlight">\(P(X = x) = P(X = 1)^x*P(X = 0)^{1-x}\)</span>$
-This is the formulae of the Bernoulli distribution, which describes the outcome of a signle experiment that can have just two possible outcomes</p>
-<p>So in the case of a fair coin:
-$<span class="math notranslate nohighlight">\(P(X = 0) = 0.5^0*0.5^{1} = 0.5\)</span>$</p>
+<p>Now head and tail are very specific words that only make sense when the experiment is tossing a coin. We can make things a bit more general by rewriting it as follows:</p>
+<div class="math notranslate nohighlight">
+\[P(X = Head) + P(X = Tail) = 1\]</div>
+<p>We can make the above even more general. For any case in which only one of two outcome can occur (head or tail, but also pass or fail a test, is it raining or not…), the above is true. To be more general, we can say that $<span class="math notranslate nohighlight">\(Head = 1\)</span><span class="math notranslate nohighlight">\( and \)</span><span class="math notranslate nohighlight">\(Tail = 0\)</span>$. This doesn’t change anything, but it means that we can use the way of writing for any problem that also has two possible outcomes (note that often times, the outcome associated with 1 is called “success” and 0 as “fail”, these is inconsequential, just conventions). Tossing a fair coin just so happens to be defined as:</p>
+<div class="math notranslate nohighlight">
+\[P(X=1) = 0.5\]</div>
+<div class="math notranslate nohighlight">
+\[P(X=0) = 0.5\]</div>
+<p>We can use the same notation to describe whether I will pass my exam tomorrow or not (where 1 means I pass, 0 means I fail):</p>
+<div class="math notranslate nohighlight">
+\[P(X=1) = 0.2\]</div>
+<div class="math notranslate nohighlight">
+\[P(X=0) = 0.8\]</div>
+<p>I didn’t study enough, so it is more likely that I fail than I pass.</p>
+<p>We can write a formulae that describes the probability of each event like so:</p>
+<div class="math notranslate nohighlight">
+\[P(X = x) = P(X = 1)^x*P(X = 0)^{1-x}\]</div>
+<p>This is the formulae of the Bernoulli distribution, which describes the outcome of a signle experiment that can have just two possible outcomes</p>
+<p>So in the case of a fair coin:</p>
+<div class="math notranslate nohighlight">
+\[P(X = 0) = 0.5^0*0.5^{1} = 0.5\]</div>
 <p>Now at this point you might wonder: what’s the point of the Bernoulli distribution? It’s a function for which we need both <span class="math notranslate nohighlight">\(P(X = 1)\)</span> and <span class="math notranslate nohighlight">\(P(X = 0)\)</span> just so we can compute P(X = 1) or P(X = 0), what’s the point? On it’s own it is not very useful. It is just a way to express the probability of both events using the same formulae. It basically “switches on” P(X=1) and “switches off” P(X=0) when X = 1 and the other way around. And it is something that is very helpful for doing more complicated things, as we will see in a bit.</p>
 <p>Let’s just write some code to illustrate the Bernoulli distribution:</p>
 <div class="cell docutils container">
@@ -1689,22 +723,33 @@ $<span class="math notranslate nohighlight">\(P(X = 0) = 0.5^0*0.5^{1} = 0.5\)</
 </section>
 <section id="the-binomial-distribution-a-formulae-to-determine-how-likely-a-given-empirical-probability-is-based-on-any-given-true-probability">
 <h2>The Binomial distribution: a formulae to determine how likely a given empirical probability is based on any given true probability<a class="headerlink" href="#the-binomial-distribution-a-formulae-to-determine-how-likely-a-given-empirical-probability-is-based-on-any-given-true-probability" title="Link to this heading">#</a></h2>
-<p>To recap what we have seen so far: if we want to know whether a coin is biased, we need to figure out if the probability of head is 0.5:
-$<span class="math notranslate nohighlight">\(P(X=1) = 0.5\)</span><span class="math notranslate nohighlight">\(
-And according to the Bernoulli formulae:
-\)</span><span class="math notranslate nohighlight">\(P(X = x) = P(X = 1)^x*P(X = 0)^{1-x}\)</span>$</p>
-<p>But since we know neither P(X = 1) nor P(X = 0), we cannot know for sure whether the coin is biased. Instead, we can run an experiment to obtain the empirical probability of head (and tail):
-$<span class="math notranslate nohighlight">\(
+<section id="what-we-have-seen-so-far">
+<h3>What we have seen so far:<a class="headerlink" href="#what-we-have-seen-so-far" title="Link to this heading">#</a></h3>
+<p>To recap what we have seen so far: if we want to know whether a coin is biased, we need to figure out if the probability of head is 0.5:</p>
+<div class="math notranslate nohighlight">
+\[P(X=1) = 0.5\]</div>
+<p>And according to the Bernoulli formulae:</p>
+<div class="math notranslate nohighlight">
+\[P(X = x) = P(X = 1)^x*P(X = 0)^{1-x}\]</div>
+<p>But since we know neither P(X = 1) nor P(X = 0), we cannot know for sure whether the coin is biased. Instead, we can run an experiment to obtain the empirical probability of head (and tail):</p>
+<div class="math notranslate nohighlight">
+\[
 \hat{P}(X=1) = \frac{\text{Number of times event } E \text{ occurs}}{\text{Total number of trials}}
-\)</span>$</p>
-<p>And as our intuition tells us, the empirical distribution will be more reliable if we have conducted more experiments. Another way we can rephrase that intuition is that if an event has a given true probability, then we are most likely to observe that probability when we run an experiment. And the more often we repeat that experiment, the less likely it becomes that we observe something different from that probability. This intuition is correct, and as it turns out, we can compute how likely are different experimental outcomes under a given true probability. To put it in the terms of our coin toss experiment, we can compute how likely we are to observe a certain proportion of heads (out of all tosses) if the true probability of head is 0.5, and that likelihood is a direct function of the number of throw we make.</p>
-<p>So when we do an experiment to obtain the empirical probability of head, we are basically conducting a series of single experiment, where each single experiment can be modelled using the Bernoulli distribution above. And we want to be able to answer the question: <strong>When I do n coin toss, if the true probability to obtain head is 0.5, how likely am I to observe x/n throws</strong>. In other words, we want to know what is the probability of observing a given number of head, if the true probability of getting head is 0.5. It sounds a bit convoluted, because we are now talking about different probabilities at once, and it is important to understand the distinction between them:</p>
+\]</div>
+<p>As our intuition tells us, the empirical distribution will be more reliable if we have conducted more experiments. In other words, if an event has a given true probability (<span class="math notranslate nohighlight">\(P(X = x)\)</span>), then we are most likely to observe that probability when we run an experiment (<span class="math notranslate nohighlight">\(\hat{P}(X=1)\)</span>). And the more often we repeat that experiment, the less likely it becomes that we observe something different from that probability. This intuition is correct, and as it turns out, we can compute how likely are different experimental outcomes under a given true probability. To put it in the terms of our coin toss experiment, we can compute how likely we are to observe a certain proportion of heads (out of all tosses) if the true probability of head is 0.5, and that likelihood is a direct function of the number of throw we make.</p>
+<p>This is written like so:</p>
+<p><span class="math notranslate nohighlight">\(P(hat{P}(X=1)|P(X=1))\)</span></p>
+<p>Where the <span class="math notranslate nohighlight">\(|\)</span> says given.</p>
+</section>
+<section id="conditional-probabilities-and-probabilities-of-probabilities">
+<h3>Conditional probabilities and probabilities of probabilities<a class="headerlink" href="#conditional-probabilities-and-probabilities-of-probabilities" title="Link to this heading">#</a></h3>
+<p>The probability of obtaining a particular ratio of head/tail given the true ratio of head to tail depends on the number of tosses we make. When we do an experiment to obtain the empirical probability of head, we are basically conducting a series of single experiment, where each single experiment can be modelled using the Bernoulli distribution above. It sounds a bit convoluted, because we are now talking about different probabilities at once, and it is important to understand the distinction between them:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(P(X=1) = 0.5\)</span>: This is the true probability of getting head. We basically want to know if this is true, to be able to answer the question of whether or coin is biased</p></li>
 <li><p><span class="math notranslate nohighlight">\(\hat{P}(X=1)=heads/nthrow\)</span> / # throw: This is the experimental probability of getting head. We throw the coin n times and we count how often we get head</p></li>
-<li><p><span class="math notranslate nohighlight">\(P(hat{P}(X=1)|P(X=1))\)</span>: This is the probability of obtaining a given value for <span class="math notranslate nohighlight">\(\hat{P}(X=1)\)</span> for a given value of <span class="math notranslate nohighlight">\(P(X=1)\)</span>.
-The latter quanity might sound a bit confusing at first. This quantity tells us how likely a given empirical probability of head is if for example our true probability of head is 0.5. Why do we need that? It is because we in fact can never know the true probability of head, and accordingly, we can never know for sure whether the coin is biased. But what we can know however is how likely our observation are if the true probability is 0.5, and in turn, we can know how likely it is that our coin has a probability of head of 0.5.</p></li>
+<li><p><span class="math notranslate nohighlight">\(P(hat{P}(X=1)|P(X=1))\)</span>: This is the probability of obtaining a given value for <span class="math notranslate nohighlight">\(\hat{P}(X=1)\)</span> for a given value of <span class="math notranslate nohighlight">\(P(X=1)\)</span>.</p></li>
 </ul>
+<p>The latter quanity might sound a bit confusing at first. This quantity tells us how likely a given empirical probability of head is if for example our true probability of head is 0.5. Why do we need that? It is because we in fact can never know the true probability of head, and accordingly, we can never know for sure whether the coin is biased. But what we can know however is how likely our observation are if the true probability is 0.5, and in turn, we can know how likely it is that our coin has a probability of head of 0.5.</p>
 <p>When we throw our coin a bunch of times, we are generating a sequence of events. But when we zoom out, the sequence we generate is itself random as well, so we are also dealing with probabilities at that level. Say we throw the coin two times, we have the following possible outcomes:</p>
 <ul class="simple">
 <li><p>Head Head</p></li>
@@ -1735,6 +780,9 @@ So for each single throw, we have 2 possible outcome. The sample space is 2. But
 <li><p>Tail Tail Head or Tail Head Tail or Head Tail Tail (because in all these sequences, we have 1/3 heads)</p></li>
 <li><p>Tail Tail Tail (because in all these sequences, we have 0/3 heads)</p></li>
 </ul>
+</section>
+<section id="the-bernoulli-distribution">
+<h3>The Bernoulli distribution:<a class="headerlink" href="#the-bernoulli-distribution" title="Link to this heading">#</a></h3>
 <p>Accordingly, we can get the probability for each of these outcomes by summing the probability of sequences in which the number of heads matches:
 $<span class="math notranslate nohighlight">\( P(X = 3H) = P(Head Head Head)\)</span><span class="math notranslate nohighlight">\(
 \)</span><span class="math notranslate nohighlight">\( P(X = 2H) = P(Head Head Tail) + P(Tail Head Head) + P(Head Tail Head)\)</span><span class="math notranslate nohighlight">\(
@@ -1746,7 +794,7 @@ P(X = k) = \binom{n}{k} p^k (1 - p)^{n - k}
 Where \)</span>n<span class="math notranslate nohighlight">\( is the number of experiments (i.e. throws), \)</span>k<span class="math notranslate nohighlight">\( is the number of success, p is still \)</span>P(X=1)$ for a single coin toss.</p>
 </section>
 <section id="usage-of-the-binomial-distribution">
-<h2>Usage of the Binomial distribution<a class="headerlink" href="#usage-of-the-binomial-distribution" title="Link to this heading">#</a></h2>
+<h3>Usage of the Binomial distribution<a class="headerlink" href="#usage-of-the-binomial-distribution" title="Link to this heading">#</a></h3>
 <p>With this formulae, we can compute the quantity we are interested in. Let’s see how:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1804,28 +852,51 @@ Where \)</span>n<span class="math notranslate nohighlight">\( is the number of e
 </div>
 </div>
 </div>
-<p>Interestingly, the probability of getting exactly 50% head when we do a 1000 toss is lower than the probability to get 30% head when we throw the coin only 10 times. This seems counter-intuitive, as we said that the more throw we perform, the more we can trust our estimate. But how can that be true if our estimate is so unlikely according to the Binomial distribution? This is because when we throw the coin a 1000 times, we have many more possible outcomes (<span class="math notranslate nohighlight">\(2^1000\)</span>), so ultimately, any single outcome is less likely.</p>
+<p>Interestingly, the probability of getting exactly 50% head when we do a 1000 toss is lower than the probability to get 30% head when we throw the coin only 10 times. This seems counter-intuitive, as we said that the more throw we perform, the more we can trust our estimate. But how can that be true if our estimate is so unlikely according to the Binomial distribution? This is because when we throw the coin a 1000 times, we have many more possible outcomes (<span class="math notranslate nohighlight">\(2^{1000}\)</span>), so ultimately, any single outcome is less likely.</p>
+<p>But let’s ask a different question by tweaking the parameters differently. When we throw the coin only 10 times and our true P(X=1) = 0.5, how likely are we to obtain 2/10 heads?</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">distribution</span> <span class="o">=</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="n">k</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)]</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">)),</span> <span class="n">distribution</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X = k&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;P(X = k)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Binomial probability distribution at P(X=1) = 0.5&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">close</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(X = 1/10 heads)=</span><span class="si">{</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="mi">2</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(X = 1/10 heads)=0.0439453125
+</pre></div>
+</div>
+</div>
+</div>
+<p>We have 4% chances of getting 2/10 heads. Now let’s compare it to the probability of getting 20 heads when we do a 1000 throws:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(X = 20% heads)=</span><span class="si">{</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span><span class="w"> </span><span class="mi">200</span><span class="p">,</span><span class="w"> </span><span class="n">p</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(X = 20% heads)=6.175550542739598e-86
+</pre></div>
+</div>
+</div>
+</div>
+<p>We can see that with more throws, it is very very unlikely for us to get 20% heads. So it matches our institution: the more times we repeat the experiment, the less likely we are to get values that are far away from the true probability of head.</p>
+</section>
+<section id="graphical-representation">
+<h3>Graphical representation<a class="headerlink" href="#graphical-representation" title="Link to this heading">#</a></h3>
+<p>I showed an example with taking a few random numbers to illustrate my point. But with the Binomial distribution formulae, we know for any given probability of head (%P(X=1)<span class="math notranslate nohighlight">\(, which we will call \)</span>P(\Theta)<span class="math notranslate nohighlight">\(, so that we can refer to the parameter of interest as \)</span>\Theta<span class="math notranslate nohighlight">\( for simplicity) and a given number of throw, what the probability of obtaining a certain observsation (\)</span>Number\ of\ head/Total\ Number\ of\ Throw$)</p>
+<p>In other words, we can know:
+$<span class="math notranslate nohighlight">\(P(y|P(\Theta))\)</span>$</p>
+<p>Let’s say we have 1000 throws, and <span class="math notranslate nohighlight">\(P(\Theta)=0.5\)</span> (i.e. a fair coin), we can compute the probability of occurence of any numbers of head <span class="math notranslate nohighlight">\(y\)</span>:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_throw</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Number of throw</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># Probability of obtaining head</span>
+<span class="n">n_head</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_throw</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># We want to know the probability of getting 0 heads, 2 heads... up to a 1000 heads out of our 1000 throws</span>
 
-<span class="n">distribution</span> <span class="o">=</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="n">k</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)]</span>
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span> <span class="n">distribution</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X = k&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;P(X = k)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Binomial probability distribution at P(X=1) = 0.5&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">close</span>
 
-<span class="n">distribution</span> <span class="o">=</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="n">k</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)]</span>
+<span class="n">distribution</span> <span class="o">=</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n_throw</span><span class="p">,</span><span class="n">k</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">n_head</span><span class="p">]</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)),</span> <span class="n">distribution</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">k</span><span class="o">/</span><span class="n">n_throw</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">n_head</span><span class="p">)],</span> <span class="n">distribution</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X = k&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;P(X = k)&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Binomial probability distribution at P(X=1) = 0.5&quot;</span><span class="p">)</span>
@@ -1837,13 +908,165 @@ Where \)</span>n<span class="math notranslate nohighlight">\( is the number of e
 <div class="output text_plain highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;function matplotlib.pyplot.close(fig: &quot;None | int | str | Figure | Literal[&#39;all&#39;]&quot; = None) -&gt; &#39;None&#39;&gt;
 </pre></div>
 </div>
-<img alt="_images/8fcaef4551a59d3d90d867c542ccc8f9be2ca1853cf505f4c3f5a2ff625db6c1.png" src="_images/8fcaef4551a59d3d90d867c542ccc8f9be2ca1853cf505f4c3f5a2ff625db6c1.png" />
-<img alt="_images/1b9ffccd4ffc3d36989b7ee3fc6ebc03a72b6a0232c387e04363a6a034ddd409.png" src="_images/1b9ffccd4ffc3d36989b7ee3fc6ebc03a72b6a0232c387e04363a6a034ddd409.png" />
-<img alt="_images/73c3f0edb6aa3e068e74961d4f883f3a457ffce5c0fc7a69d9c8de9d21fae4c5.png" src="_images/73c3f0edb6aa3e068e74961d4f883f3a457ffce5c0fc7a69d9c8de9d21fae4c5.png" />
+<img alt="_images/131eb1823db1d964f78146d1f70f172752d0ea1c231787def2fd489fcefb1acd.png" src="_images/131eb1823db1d964f78146d1f70f172752d0ea1c231787def2fd489fcefb1acd.png" />
 </div>
 </div>
+<p>We can see that the probability of getting 0 out of a 1000 throw is very unlikely if the true theta is 0.5, and that the most likely value is getting 500/1000 throw. Makes sense. We can also have a look at what that distribution would look like if we do only 10 throws:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_throw</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Number of throw</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># Probability of obtaining head</span>
+<span class="n">n_head</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_throw</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># We want to know the probability of getting 0 heads, 2 heads... up to a 1000 heads out of our 1000 throws</span>
+
+<span class="n">distribution</span> <span class="o">=</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n_throw</span><span class="p">,</span><span class="n">k</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">n_head</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">k</span><span class="o">/</span><span class="n">n_throw</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">n_head</span><span class="p">)],</span> <span class="n">distribution</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X = k/n&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;P(X = k/n)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Binomial probability distribution at P(X=1) = 0.5&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>This also matches our previous intuition: the probability distribution when we do only 10 throws is much broader compared to when we do a 1000 throws, which means that the probability of getting values that are further away from the true <span class="math notranslate nohighlight">\(\theta\)</span> parameter is larger when we have few throws. Accordingly, we should trust the results of the experiment with more throws more than that of the experiment with few throws. Everything falls into place.</p>
+</section>
+<section id="on-the-usefulness-of-mathematical-formalism">
+<h3>On the usefulness of mathematical formalism<a class="headerlink" href="#on-the-usefulness-of-mathematical-formalism" title="Link to this heading">#</a></h3>
+<p>Hopefully, by now you realize why adopting some mathematical formalism to what we guessed intuitively is useful. We could also have generated very similar results using the same kind of simulation we did before. Say we want to know how likely it is to get 0.1, 0.2, 0.3… head/tail ratio when we do 10 throws and the true ratio is 50/50. We could just take a coin that we think is fair, repeat the experiment of throwing the coin 10 times many many times, and see how often each outcome occurs. Let’s give that a try:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We repeat an experiment in which we throw the coin 10 times a 1000 times, and each time we count the proportion of heads</span>
+<span class="n">n_iteration</span> <span class="o">=</span> <span class="mi">100</span>
+<span class="n">n_throws</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iteration</span><span class="p">):</span>
+    <span class="n">n_throw</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># 20 throws instead of 10</span>
+    <span class="n">n_head</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Before we start, we have zero head</span>
+    <span class="n">n_tail</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># And zero tails</span>
+
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_throws</span><span class="p">):</span>  <span class="c1"># Repeat the same thing 10 times (throwing the coin)</span>
+        <span class="n">rnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>  <span class="c1"># Draw a random number between 0 and 1 (following a uniform distribution, so each value between 0 and 1 is equally likely)</span>
+        <span class="k">if</span> <span class="n">rnd</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">:</span>  <span class="c1"># If our random number is less than 0.5, we consider that our coin landed on head.</span>
+            <span class="n">n_head</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>   <span class="c1"># If our random number is more than 0.5, we consider that our coin landed on tail</span>
+            <span class="n">n_tail</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Compute the probability of head and tail:</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n_head</span><span class="o">/</span><span class="n">n_throw</span><span class="p">)</span>   <span class="c1"># The probability of head is simply how often we obtained head in our 10 throw, divided by the number throws</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X = k/n&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">hat</span><span class="si">{P}</span><span class="s2">$(X = k/n)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Binomial probability distribution at P(X=1) = 0.5&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/6e05d438dca4840d14b6d25218cee720305cb6bc0dfc5d3e9aff2755667b9022.png" src="_images/6e05d438dca4840d14b6d25218cee720305cb6bc0dfc5d3e9aff2755667b9022.png" />
+</div>
+</div>
+<p>That seems a bit similar to the graph we obtained when using the formula, but it is not as clearn. That is because we only used a 1000 repetitions. If we were to use more, we would get something better. Let’s try:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># We repeat an experiment in which we throw the coin 10 times a 1000 times, and each time we count the proportion of heads</span>
+<span class="n">n_iteration</span> <span class="o">=</span> <span class="mi">1000000</span>
+<span class="n">n_throws</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">results</span> <span class="o">=</span> <span class="p">[]</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iteration</span><span class="p">):</span>
+    <span class="n">n_throw</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># 20 throws instead of 10</span>
+    <span class="n">n_head</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Before we start, we have zero head</span>
+    <span class="n">n_tail</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># And zero tails</span>
+
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_throws</span><span class="p">):</span>  <span class="c1"># Repeat the same thing 10 times (throwing the coin)</span>
+        <span class="n">rnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>  <span class="c1"># Draw a random number between 0 and 1 (following a uniform distribution, so each value between 0 and 1 is equally likely)</span>
+        <span class="k">if</span> <span class="n">rnd</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">:</span>  <span class="c1"># If our random number is less than 0.5, we consider that our coin landed on head.</span>
+            <span class="n">n_head</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>   <span class="c1"># If our random number is more than 0.5, we consider that our coin landed on tail</span>
+            <span class="n">n_tail</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="c1"># Compute the probability of head and tail:</span>
+    <span class="n">results</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">n_head</span><span class="o">/</span><span class="n">n_throw</span><span class="p">)</span>   <span class="c1"># The probability of head is simply how often we obtained head in our 10 throw, divided by the number throws</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;X = k/n&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">hat</span><span class="si">{P}</span><span class="s2">$(X = k/n)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Binomial probability distribution at P(X=1) = 0.5&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/fb5caf378cd90608bc229894095b47eb25bcb02bf936d3b9afd8eb5011e35ef9.png" src="_images/fb5caf378cd90608bc229894095b47eb25bcb02bf936d3b9afd8eb5011e35ef9.png" />
+</div>
+</div>
+<p>That seems better, closer to what we obtained with the formulae. But still not perfect. But you will notice that there is another problem: it took us several seconds to get to something okay, whereas when using the Binomial formulae, it was hardly a second. Accordingly, having a formulae to compute the probability of observing a particular outcomes, given a value of the parameter of interest (<span class="math notranslate nohighlight">\(P(y|\theta)\)</span>) is twofold:</p>
+<ul class="simple">
+<li><p>It is exact (while simulations are just approximate)</p></li>
+<li><p>It is very very fast: we just need to enter the values we got one and that’s it
+That’s what we mean with “having an analytical solution”</p></li>
+</ul>
+<p>And with the formulae, we can play around with any parameters. Say we want to know <span class="math notranslate nohighlight">\(P(y|\theta)\)</span> for any possible y and any possible <span class="math notranslate nohighlight">\(\theta\)</span>, assuming we threw the coin a 10 times. We can very simply compute that:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Say we want to know the probability of getting any observations between 0 and 1 for any true probability of success between 0 and 1, assuming we throw the coin a 1000 times:</span>
+<span class="n">n_throws</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Number of trials</span>
+<span class="n">y_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_throws</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="c1"># Numbers of successes</span>
+<span class="n">theta_values</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">1.01</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># Probability of success (p) ranging from 0 to 1 in steps of 0.01</span>
+
+<span class="c1"># Create meshgrid for k and p</span>
+<span class="n">k_mesh</span><span class="p">,</span> <span class="n">p_mesh</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="n">y_values</span><span class="p">,</span> <span class="n">theta_values</span><span class="p">)</span>
+
+<span class="c1"># Calculate the binomial distribution for each combination of k and p</span>
+<span class="n">Z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n_throws</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">p</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">y_values</span><span class="p">]</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">theta_values</span><span class="p">])</span>
+
+<span class="c1"># Create a 3D plot</span>
+<span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">(</span><span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">7</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">,</span> <span class="n">projection</span><span class="o">=</span><span class="s1">&#39;3d&#39;</span><span class="p">)</span>
+
+<span class="c1"># Plot the surface</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot_surface</span><span class="p">(</span><span class="n">k_mesh</span><span class="o">/</span><span class="n">n_throws</span><span class="p">,</span> <span class="n">p_mesh</span><span class="p">,</span> <span class="n">Z</span><span class="p">,</span> <span class="n">cmap</span><span class="o">=</span><span class="s1">&#39;viridis&#39;</span><span class="p">)</span>
+<span class="c1"># Labeling the axes</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_zlabel</span><span class="p">(</span><span class="s2">&quot;P(y|$</span><span class="se">\\</span><span class="s2">Theta$)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Probability of each outcome y, for each $\Theta$ (when we throw the coin 10 times)&quot;</span><span class="p">)</span>
+
+<span class="c1"># Show the plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;&gt;:22: SyntaxWarning: invalid escape sequence &#39;\T&#39;
+&lt;&gt;:22: SyntaxWarning: invalid escape sequence &#39;\T&#39;
+C:\Users\alexander.lepauvre\AppData\Local\Temp\ipykernel_18920\3306174890.py:22: SyntaxWarning: invalid escape sequence &#39;\T&#39;
+  ax.set_title(&quot;Probability of each outcome y, for each $\Theta$ (when we throw the coin 10 times)&quot;)
+</pre></div>
+</div>
+<img alt="_images/af5a8238dcf822f57615753be447cf06d8be92d7af6ef8ba6458854b0ebbc30b.png" src="_images/af5a8238dcf822f57615753be447cf06d8be92d7af6ef8ba6458854b0ebbc30b.png" />
+</div>
+</div>
+<p>This graph may seem a bit confusing at first, but spend some time trying to understand it. I swear it’s not all that complicated</p>
+</section>
+</section>
+<section id="the-bayes-theorem-from-p-y-theta-to-p-theta-y">
+<h2>The Bayes theorem: from <span class="math notranslate nohighlight">\(P(y|\theta)\)</span>, to <span class="math notranslate nohighlight">\(P(\theta|y)\)</span><a class="headerlink" href="#the-bayes-theorem-from-p-y-theta-to-p-theta-y" title="Link to this heading">#</a></h2>
+<p>Using the binomial formula, we can calculate <span class="math notranslate nohighlight">\(P(y|\theta)\)</span>, which is the probability of observing our data <span class="math notranslate nohighlight">\(y\)</span> (e.g., getting a certain number of heads) given any value of <span class="math notranslate nohighlight">\(\theta\)</span> (the probability of getting heads on a single toss). But again, what we really want to know is how confident we should be about the actual value of <span class="math notranslate nohighlight">\(\theta\)</span>, given the data we have observed. In other words, we’re seeking <span class="math notranslate nohighlight">\(P(\theta|y)\)</span>: the probability of a particular value of <span class="math notranslate nohighlight">\(\theta\)</span> (in our case, <span class="math notranslate nohighlight">\(\theta=0.5\)</span>). So we need to flip <span class="math notranslate nohighlight">\(P(y|\theta)\)</span> to obtain <span class="math notranslate nohighlight">\(P(\theta|y)\)</span>.</p>
+<p>The Bayesian theorem enables us to do exactly that. It provides a mathematical formulae to obtain the probability of a parameter (or several) parameters, given the data we have observed. You will often hear that the Bayes theorem is a mathematical framework to update our beliefs about an unknown parameter based on empirical data. This is exactly what we have been trying to do since the beginning, just phrased in a different way. We want to know if our coin is biased, and for that we run an experiment to try to decide whether it is biased or not. This is the same as saying: I believe that the coin is balanced, and I want to know whether this belief is true based on something I have observed. Not that this is also (almost) the same as saying “I believe that this coin is not balanced, and I want to know whether this belief is correct based on my observations”.</p>
+<p>The Bayes theorem is a single formulae:
+$<span class="math notranslate nohighlight">\(P(\Theta|y) = \frac{P(y|\Theta)*P(\Theta)}{P(y)}\)</span>$</p>
+<p>We have already seen <span class="math notranslate nohighlight">\(P(y|\Theta)\)</span>, this is the conditional probability of our observation given any value of <span class="math notranslate nohighlight">\(\theta\)</span>, which is the Binomial distribution. There are two additional terms we haven’t seen before: <span class="math notranslate nohighlight">\(P(\Theta)\)</span> and <span class="math notranslate nohighlight">\(P(y)\)</span>. The first (<span class="math notranslate nohighlight">\(P(\Theta)\)</span>) is referred to as the <strong>prior</strong>, and the second <span class="math notranslate nohighlight">\(P(y)\)</span> is the marginal likelihood or model evidence.</p>
+</section>
 <section id="a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads">
-<h3>*A little aside: we can compute the empirical probability of obtaining 3/10 heads+<a class="headerlink" href="#a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads" title="Link to this heading">#</a></h3>
+<h2>*A little aside: we can compute the empirical probability of obtaining 3/10 heads+<a class="headerlink" href="#a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads" title="Link to this heading">#</a></h2>
 <p>In fact, we can very easily verify that this is true by running another little simulation (very much the same we did before):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -1871,13 +1094,12 @@ Where \)</span>n<span class="math notranslate nohighlight">\( is the number of e
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(X = 3/10 heads)=0.1181
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(X = 3/10 heads)=0.1149
 </pre></div>
 </div>
 </div>
 </div>
 <p>So as you can see, when we run the same experiment 10000 times, we get about 12% of the times 3 heads, in line with the Binomial distribution. This may seem familiar with how I described above how we can obtain an empirial probability. With binomial distribution, we get <span class="math notranslate nohighlight">\(P(X=3)\)</span>, and with simulation above, we get <span class="math notranslate nohighlight">\(\hat{P}(X=3)\)</span></p>
-</section>
 </section>
 </section>
 
@@ -1936,17 +1158,29 @@ Where \)</span>n<span class="math notranslate nohighlight">\( is the number of e
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuitions-about-probabilities-using-a-coin-toss-example">Intuitions about probabilities using a coin toss example</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#intuitions-about-probabilities-using-a-coin-toss-example">Intuitions about probabilities using a coin toss example</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-simulated-experiments">Running (simulated) experiments</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#interpreting-the-data">Interpreting the data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#running-a-better-experiment">Running a better experiment</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#answering-the-question-based-on-our-data">Answering the question based on our data</a></li>
+</ul>
+</li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#formalizing-our-intuition">Formalizing our intuition</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions">Definitions:</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bernoulli-distribution-a-single-formulae-to-express-the-probability-of-each-event">The Bernoulli distribution: a single formulae to express the probability of each event</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-binomial-distribution-a-formulae-to-determine-how-likely-a-given-empirical-probability-is-based-on-any-given-true-probability">The Binomial distribution: a formulae to determine how likely a given empirical probability is based on any given true probability</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-of-the-binomial-distribution">Usage of the Binomial distribution</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads">*A little aside: we can compute the empirical probability of obtaining 3/10 heads+</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-binomial-distribution-a-formulae-to-determine-how-likely-a-given-empirical-probability-is-based-on-any-given-true-probability">The Binomial distribution: a formulae to determine how likely a given empirical probability is based on any given true probability</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-we-have-seen-so-far">What we have seen so far:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#conditional-probabilities-and-probabilities-of-probabilities">Conditional probabilities and probabilities of probabilities</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bernoulli-distribution">The Bernoulli distribution:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#usage-of-the-binomial-distribution">Usage of the Binomial distribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#graphical-representation">Graphical representation</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#on-the-usefulness-of-mathematical-formalism">On the usefulness of mathematical formalism</a></li>
 </ul>
 </li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bayes-theorem-from-p-y-theta-to-p-theta-y">The Bayes theorem: from <span class="math notranslate nohighlight">\(P(y|\theta)\)</span>, to <span class="math notranslate nohighlight">\(P(\theta|y)\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads">*A little aside: we can compute the empirical probability of obtaining 3/10 heads+</a></li>
 </ul>
   </nav></div>
 
