@@ -8,7 +8,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <title>Welcome to your Jupyter Book &#8212; My sample book</title>
+    <title>Variational Laplace for Dummies &#8212; Variational Laplace For Dummies</title>
   
   
   
@@ -62,7 +62,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'intro';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Bayesian statistics" href="BayesianStatistics.html" />
+    <link rel="next" title="Some intuitions: answering questions when faced with uncertainty" href="SomeIntuitions.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -156,8 +156,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="My sample book - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="My sample book - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Variational Laplace For Dummies - Home"/>`);</script>
   
   
 </a></div>
@@ -178,12 +178,13 @@
         <ul class="nav bd-sidenav bd-sidenav__home-link">
             <li class="toctree-l1 current active">
                 <a class="reference internal" href="#">
-                    Welcome to your Jupyter Book
+                    Variational Laplace for Dummies
                 </a>
             </li>
         </ul>
         <ul class="nav bd-sidenav">
-<li class="toctree-l1"><a class="reference internal" href="BayesianStatistics.html">Bayesian statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProbabilityDistribution.html">Probablities and probability distribution</a></li>
 </ul>
 
     </div>
@@ -367,7 +368,7 @@ document.write(`
               
 
 <div id="jb-print-docs-body" class="onlyprint">
-    <h1>Welcome to your Jupyter Book</h1>
+    <h1>Variational Laplace for Dummies</h1>
     <!-- Table of contents -->
     <div id="print-main-content">
         <div id="jb-print-toc">
@@ -381,16 +382,17 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="welcome-to-your-jupyter-book">
-<h1>Welcome to your Jupyter Book<a class="headerlink" href="#welcome-to-your-jupyter-book" title="Link to this heading">#</a></h1>
-<p>If you are reading this book, you are interested in understanding what variational Laplace is, how it is used to do Bayesian statistics, how it relates to neuroscience, active inference, predictive processing, or something along these lines. If you are like me and have very little knowledge in mathematics, you may have encountered many papers that try to explain variational Laplace and felt more confused than anything. That is not to say that people did a bad job at explaining it in existing text books and papers, there are great resources out there. That being said, most of them require the reader to be already familiar with concepts of mathematics that I would consider quite advanced. This notebook was created to be maximally accessible. I wrote this notebook as I was reading Peter Zeidman’s “A primer on variational Laplace”, and it is me explaining myself the bits of maths I was missing.</p>
+  <section class="tex2jax_ignore mathjax_ignore" id="variational-laplace-for-dummies">
+<h1>Variational Laplace for Dummies<a class="headerlink" href="#variational-laplace-for-dummies" title="Link to this heading">#</a></h1>
+<p>If you are reading this book, you are interested in understanding what variational Laplace is, how it is used to do Bayesian statistics, how it relates to neuroscience, active inference, predictive processing, or something along these lines. If you are like me and have very little knowledge in mathematics, you may have encountered many papers that try to explain variational Laplace and felt intimidated by it. That is not to say that people did a bad job at explaining it in existing text books and papers, there are great resources out there. However, most of these resources require the reader to be already familiar with quite advanced mathematical concepts. This notebook was created to be maximally accessible. I wrote this notebook as I was reading Peter Zeidman’s “A primer on variational Laplace”, and it is me explaining myself the bits of maths I was missing.</p>
 <p>I will start by introducing Bayesian statistics using very simple example. I will build from very simple intuition that I believe we all share to introduce mathematical formalism and show how that helps us go beyond our simple intuition. I will show how Bayes theorem aims at reaching the best possible conclusion based on data when we are dealing with uncertainty.</p>
 <p>I will then proceed to show that while the Bayes Theorem (which is a single equation) is really helpful, it can in most cases not solvable analytically. This means that we can’t solve the equation by hand to then be able to plug in the values that we have to get the answer to our question. And even more unfortunately, for most interesting questions we try to answer with statistics (the weight of a regressor in a linear regression for example), computational solutions are also not feasible. This means that we can’t try a bunch of options with a computer to find something that comes close to a solution, because there are way too many things we can try, and we would need to let our computer run for decades to get answers to even simple problems. Don’t worry if this all sounds a bit confusing right now. The point is that while Bayes Theorem can tell us which is the best conclusion to reach based on some data, we very often can’t get that answer straight away, because the maths required to do so are too complicated or simply impossible.</p>
 <p>Following a detailed explanation illustrated with simple example as to why we cannot in most cases solve the Bayesian theorem, I will show that we can instead find mathematical tricks to solve something else. That something else should get us an answer that is close enough to what we would have gotten if we had actually solved the Bayes theorem. Even better, we can know that the larger that value gets, the closest we are approaching the answer the Bayes theorem would have given us. This means that we can strive to always get higher values to get a more accurate answer, and you will see then why that is a good thing. This quantity that we will seek to compute is the so called Free Energy. In order to compute this quantity, we need to use a lot of mathematical tricks to make impossible equations possible, and these series of tricks is what is referred to as Variational Laplace.</p>
 <p>Hopefully, once we are done with all of this, you should have a good understanding of how Variational Laplace works. At least that’s how it worked for me.</p>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="BayesianStatistics.html">Bayesian statistics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProbabilityDistribution.html">Probablities and probability distribution</a></li>
 </ul>
 </div>
 </section>
@@ -426,11 +428,11 @@ document.write(`
                   
 <div class="prev-next-area">
     <a class="right-next"
-       href="BayesianStatistics.html"
+       href="SomeIntuitions.html"
        title="next page">
       <div class="prev-next-info">
         <p class="prev-next-subtitle">next</p>
-        <p class="prev-next-title">Bayesian statistics</p>
+        <p class="prev-next-title">Some intuitions: answering questions when faced with uncertainty</p>
       </div>
       <i class="fa-solid fa-angle-right"></i>
     </a>
@@ -450,7 +452,7 @@ document.write(`
   <div class="footer-item">
     
 <p class="component-author">
-By The Jupyter Book Community
+By Alex Lepauvre, Jan Gabriel Hartel
 </p>
 
   </div>

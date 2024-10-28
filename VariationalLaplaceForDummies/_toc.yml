@@ -4,4 +4,6 @@
 format: jb-book
 root: intro
 chapters:
-- file: BayesianStatistics
+- file: SomeIntuitions
+- file: ProbabilityDistribution
+
