@@ -6,4 +6,5 @@ root: intro
 chapters:
 - file: SomeIntuitions
 - file: ProbabilityDistribution
+- file: BayesTheorem
 

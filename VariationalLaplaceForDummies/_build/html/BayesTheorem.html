@@ -32,7 +32,7 @@
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
     <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
     <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
-    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
@@ -62,6 +62,7 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'BayesTheorem';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Probablities and probability distribution" href="ProbabilityDistribution.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
   </head>
@@ -124,8 +125,6 @@
       
       
       
-        
-      
       <div class="bd-sidebar-primary bd-sidebar">
         
 
@@ -181,9 +180,10 @@
                 </a>
             </li>
         </ul>
-        <ul class="nav bd-sidenav">
+        <ul class="current nav bd-sidenav">
 <li class="toctree-l1"><a class="reference internal" href="SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
 <li class="toctree-l1"><a class="reference internal" href="ProbabilityDistribution.html">Probablities and probability distribution</a></li>
+<li class="toctree-l1 current active"><a class="current reference internal" href="#">The Bayes theorem</a></li>
 </ul>
 
     </div>
@@ -385,9 +385,19 @@ document.write(`
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-the-prior-and-the-likelihood">Combining the prior and the likelihood</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solving-the-numerator">Solving the numerator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#another-beta-distribution">Another beta distribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-combined-prior-and-likelihood">The combined prior and likelihood</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads">*A little aside: we can compute the empirical probability of obtaining 3/10 heads+</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#marginal-likelihood-a-k-a-model-evidence">Marginal likelihood, a.k.a. model evidence</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deriving-the-marginal-likelihood-for-our-problem">Deriving the marginal likelihood for our problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-implementation-of-the-likelihood">Python implementation of the likelihood</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-everything-together-computing-the-posterior">Putting everything together: computing the posterior</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#p-0-49-theta-0-51"><span class="math notranslate nohighlight">\(P(0.49&lt;=\Theta&lt;=0.51)\)</span></a></li>
+</ul>
+</li>
 </ul>
             </nav>
         </div>
@@ -412,7 +422,9 @@ $<span class="math notranslate nohighlight">\(P(\Theta|y) = \frac{P(y|\Theta)*P(
 <p>The prior is the same thing as your belief, or your hypothesis about the true value of the parameter, which you want to test. If your starting hypothesis is that the coin is not biased, then you are basically saying that you believe the most probable value for theta is 0.5. If you are very certain about that, you would say: I believe the probability of <span class="math notranslate nohighlight">\(\Theta=0.5\)</span> is 1. So for this particular coin, you are a 100% sure that it is not biased and that any other values of <span class="math notranslate nohighlight">\(\Theta\)</span> are basically impossible. If you were to express it as a graph, then it would probably look something like this:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta_values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>  <span class="c1"># Values of theta between 0 and 1</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">theta_values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>  <span class="c1"># Values of theta between 0 and 1</span>
 <span class="n">theta_proba</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># Probability of each value of theta</span>
 
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
@@ -426,18 +438,7 @@ $<span class="math notranslate nohighlight">\(P(\Theta|y) = \frac{P(y|\Theta)*P(
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
-<span class="ne">NameError</span><span class="g g-Whitespace">                                 </span>Traceback (most recent call last)
-<span class="n">Cell</span> <span class="n">In</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">line</span> <span class="mi">4</span>
-<span class="g g-Whitespace">      </span><span class="mi">1</span> <span class="n">theta_values</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.7</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]</span>  <span class="c1"># Values of theta between 0 and 1</span>
-<span class="g g-Whitespace">      </span><span class="mi">2</span> <span class="n">theta_proba</span>  <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">]</span>  <span class="c1"># Probability of each value of theta</span>
-<span class="ne">----&gt; </span><span class="mi">4</span> <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
-<span class="g g-Whitespace">      </span><span class="mi">5</span> <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">theta_values</span><span class="p">,</span> <span class="n">theta_proba</span><span class="p">)</span>
-<span class="g g-Whitespace">      </span><span class="mi">6</span> <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
-
-<span class="ne">NameError</span>: name &#39;plt&#39; is not defined
-</pre></div>
-</div>
+<img alt="_images/d9f4afa7ec10351ee8c2e61bb5db216ab6aed679a9cd69e28300fe1770a2b871.png" src="_images/d9f4afa7ec10351ee8c2e61bb5db216ab6aed679a9cd69e28300fe1770a2b871.png" />
 </div>
 </div>
 <p>As we can see, this is kind of representing what we want to say, but this is not perfect. For <span class="math notranslate nohighlight">\(\Theta=0.5\)</span>, we do have a value of 1, but it looks like at <span class="math notranslate nohighlight">\(\Theta=0.45\)</span>, we don’t have zero. That’s to be expected. The simple way we have implemented our belief only specified values for 0.1, 0.2…, but nothing in between, so in the plot above, the dots are connected by taking a straightline between the missing points. We could for sure try to define many more points per hand, but that wouldn’t be very efficient. And it would also never be perfect, except if we were to generate an infinity of points, which we of course can’t do either.</p>
@@ -449,7 +450,7 @@ $<span class="math notranslate nohighlight">\(P(\Theta|y) = \frac{P(y|\Theta)*P(
 <h3>Beta distribution<a class="headerlink" href="#beta-distribution" title="Link to this heading">#</a></h3>
 <p>For the Binomial likelihood, a conjugate does exists, and it is the beta distribution. It is defined like so:</p>
 <div class="math notranslate nohighlight">
-\[f(\Theta) = \frac{x^{\alpha-1}(1-\Theta)^{\beta-1}}{B(\alpha, \beta)}\]</div>
+\[f(\Theta) = \frac{\Theta^{\alpha-1}(1-\Theta)^{\beta-1}}{B(\alpha, \beta)}\]</div>
 <p>Where:</p>
 <div class="math notranslate nohighlight">
 \[B(\alpha, \Beta)=\frac{\Gamma(\alpha)\Gamma(\Beta)}{\Gamma(\alpha+\beta)}\]</div>
@@ -504,7 +505,6 @@ $<span class="math notranslate nohighlight">\(P(\Theta|y) = \frac{P(y|\Theta)*P(
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
-<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
 
 <span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># Say this is x=theta, we want to get the P(x) at each values of x, for a given value of alpha and beta:</span>
 <span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]</span>  <span class="c1"># Try values of alpha from 1 to 5</span>
@@ -611,198 +611,423 @@ $<span class="math notranslate nohighlight">\(C=\binom{n}{k}\frac{\Gamma(\alpha 
 <p>We can now combine the exponents of <span class="math notranslate nohighlight">\(\Theta\)</span> and <span class="math notranslate nohighlight">\((1-\Theta)\)</span></p>
 <div class="math notranslate nohighlight">
 \[P(y|\Theta)P(\Theta) = C[\Theta^{k+\alpha -1}(1-\Theta)^{n-k+\beta-1}]\]</div>
-<p>I didn’t add every single step, but that’s basically combining the exponents in the right way. And you don’t even have to do that, you could just stick to the initial function without simplifying it, but that way it’s a bit easier to work with. We write a pretty simple python code to figure out what the numerator of our Bayes theorem would be for any values of all our parameters (<span class="math notranslate nohighlight">\(\Theta, y, \beta, \alpha, n\)</span>):</p>
+</section>
+<section id="another-beta-distribution">
+<h3>Another beta distribution<a class="headerlink" href="#another-beta-distribution" title="Link to this heading">#</a></h3>
+<p>The final formulae once again looks quite familiar. We again have a beta kernel:</p>
+<div class="math notranslate nohighlight">
+\[P(y|\Theta)P(\Theta) = C\times\Theta^{\alpha' -1}(1-\Theta)^{\beta'-1}\]</div>
+<p>Where:</p>
+<div class="math notranslate nohighlight">
+\[\alpha' = k+\alpha\]</div>
+<div class="math notranslate nohighlight">
+\[\beta' = n-k+\beta\]</div>
+<p>This implies that the numerator is going to be a beta distribution as well. As we will see in a little bit, the denominator (i.e. the marginal likelihood) is a constant with respect to <span class="math notranslate nohighlight">\(\Theta\)</span> as you can already guess from the formulae. This means that the numerator will not have an impact on the kind of distribution of the posterior, simply scale it up and down. Accordingly, the family of distribution the posterior follows is dictated by the numerator. And to complete the story, when we mean that the prior is a conjugate prior, we mean that for a given likelihood function, the posterior is in the same probability distribution family as the prior.</p>
+</section>
+<section id="the-combined-prior-and-likelihood">
+<h3>The combined prior and likelihood<a class="headerlink" href="#the-combined-prior-and-likelihood" title="Link to this heading">#</a></h3>
+<p>In the combined formulae of the prior and the likelihood, the quantity C does not depend on <span class="math notranslate nohighlight">\(\Theta\)</span>. This implies that the value of C is the same for any value of $\Theta, and accordingly will not impact the shape of the distribution, it will only scale it up or down. This is why it is not strictly neccessary to compute it.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">binomial_beta_joint</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
-<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<span class="sd">    Compute the joint probability density of the Beta distribution and Binomial distribution at a given value theta, for a given alpha, beta and y (or whichever way you like really.).</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="n">comb</span>
 
-<span class="sd">    The joint beta is defined as</span>
-<span class="sd">        $$P(y|\Theta) * P(\Theta) = \frac{k \Theta^{y+\alpha-1}(1-\Theta)^{(n-y)+\beta-1}}{B(\alpha, \beta)}$$</span>
-<span class="sd">    </span>
+<span class="k">def</span> <span class="nf">binomial_distribution</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Calculate the binomial probability P(X = k) for n trials, k successes, and success probability p.</span>
+<span class="sd">    P(X = k) = \binom{n}{k} p^k (1 - p)^{n - k}</span>
+<span class="sd">    :param n: Total number of trials</span>
+<span class="sd">    :param k: Number of successes</span>
+<span class="sd">    :param p: Probability of success on a single trial</span>
+<span class="sd">    :return: Binomial probability P(X = k)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1"># Calculate the binomial coefficient (n choose k)</span>
+    <span class="n">binom_coeff</span> <span class="o">=</span> <span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>  <span class="c1"># Calculate n choose k: \binom{n}{k}</span>
+    
+    <span class="c1"># Calculate the binomial probability using the formula</span>
+    <span class="n">probability</span> <span class="o">=</span> <span class="n">binom_coeff</span> <span class="o">*</span> <span class="p">(</span><span class="n">p</span> <span class="o">**</span> <span class="n">k</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">**</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="n">probability</span>
+
+<span class="k">def</span> <span class="nf">constant_C</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the constant C in the product of the likelihood and prior.</span>
+
 <span class="sd">    Parameters:</span>
-<span class="sd">        y (int): Number of success (heads in our case)</span>
-<span class="sd">        n (int): Total number of throws</span>
-<span class="sd">        theta (float): probability of success</span>
-<span class="sd">        alpha (float): parameter for our prior belief</span>
-<span class="sd">        beta (float): parameter for our prior belief</span>
+<span class="sd">    n (int): Total number of trials.</span>
+<span class="sd">    k (int): Number of successes observed.</span>
+<span class="sd">    alpha (float): Alpha parameter of the Beta prior.</span>
+<span class="sd">    beta (float): Beta parameter of the Beta prior.</span>
 
 <span class="sd">    Returns:</span>
-<span class="sd">        float: The probability density of the Beta distribution at x.</span>
+<span class="sd">    float: The computed constant C.</span>
 <span class="sd">    &quot;&quot;&quot;</span>
-    <span class="c1"># Ensure x is within the valid range</span>
-    <span class="k">if</span> <span class="n">theta</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">theta</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;x must be between 0 and 1.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">alpha</span> <span class="o">&lt;=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">beta</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;alpha and beta must be positive.&quot;</span><span class="p">)</span>
-    <span class="k">if</span> <span class="n">y</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
-        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;y cannot be larger than n, because that would mean more successes than we had attempts&quot;</span><span class="p">)</span>
-    
-    <span class="c1"># Compute the denominator:</span>
-    <span class="n">denom</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">(</span><span class="n">beta</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span><span class="p">))</span>  <span class="c1"># The Beta(alpha, beta) = (Gamma(alpha) * Gamma(beta)) / Gamma(alpha + beta) above. And instead of using the factorial, we are using the gamma function that will work with any numbers</span>
+    <span class="n">binom_coeff</span> <span class="o">=</span> <span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="c1"># Corrected the denominator to be the product, not the sum</span>
+    <span class="n">beta_ratio</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">(</span><span class="n">beta</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">binom_coeff</span> <span class="o">*</span> <span class="n">beta_ratio</span>
 
-    <span class="c1"># Compute the constant k:</span>
-    <span class="n">k</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>  <span class="c1"># Calculate n choose k: \binom{n}{y}</span>
-    
+
+<span class="k">def</span> <span class="nf">likelihood_times_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the unnormalized posterior, which is the product of the likelihood and the prior.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    theta (float): The parameter value at which to evaluate.</span>
+<span class="sd">    n (int): Total number of trials.</span>
+<span class="sd">    k (int): Number of successes observed.</span>
+<span class="sd">    alpha (float): Alpha parameter of the Beta prior.</span>
+<span class="sd">    beta (float): Beta parameter of the Beta prior.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    float: The unnormalized posterior density at theta.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">constant_C</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="n">alpha_prime</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="n">alpha</span>
+    <span class="n">beta_prime</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="n">beta</span>
+    <span class="k">return</span> <span class="n">C</span> <span class="o">*</span> <span class="n">theta</span><span class="o">**</span><span class="p">(</span><span class="n">alpha_prime</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">beta_prime</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">likelihood_times_prior_n_c</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the unnormalized posterior, which is the product of the likelihood and the prior.</span>
+
+<span class="sd">    Parameters:</span>
+<span class="sd">    theta (float): The parameter value at which to evaluate.</span>
+<span class="sd">    n (int): Total number of trials.</span>
+<span class="sd">    k (int): Number of successes observed.</span>
+<span class="sd">    alpha (float): Alpha parameter of the Beta prior.</span>
+<span class="sd">    beta (float): Beta parameter of the Beta prior.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">    float: The unnormalized posterior density at theta.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">alpha_prime</span> <span class="o">=</span> <span class="n">k</span> <span class="o">+</span> <span class="n">alpha</span>
+    <span class="n">beta_prime</span> <span class="o">=</span> <span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="n">beta</span>
+    <span class="k">return</span> <span class="n">theta</span><span class="o">**</span><span class="p">(</span><span class="n">alpha_prime</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">beta_prime</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now let’s try to calculate the numerator with different values. We will keep our orgininal alpha and beta the same as berore, 22 and 22 each. And let’s say that we throw the coin a 100 times and we get 40 times head:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">alpha</span> <span class="o">=</span> <span class="mi">22</span>  <span class="c1"># Our prior confidence for the theta value</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="mi">22</span>  <span class="c1"># Our prior confidence for the theta value</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Say we run an experiment in which we throw the coin a 1000 times</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mi">40</span>  <span class="c1"># Say we get a hypothetical 400 heads:</span>
+
+<span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">beta_distribution</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">alpha$=</span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2"> &amp; $</span><span class="se">\\</span><span class="s2">beta$=</span><span class="si">{</span><span class="n">beta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prior distribution&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Likelihood&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">likelihood_times_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta) * P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prior time likelihood&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">likelihood_times_prior_n_c</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">])</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta) * P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prior time likelihood without C&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/640e837dab2d4d39f19b94be4a5067c09206deb662c1900088c841ef1fd38376.png" src="_images/640e837dab2d4d39f19b94be4a5067c09206deb662c1900088c841ef1fd38376.png" />
+</div>
+</div>
+<p>We can clearly see that the distribution has the exact same shape, with and without the constant. The only difference are the values on the y axis. This brings us to the next part of the equation: with and without the scaling, the sum of the probablities over all values of <span class="math notranslate nohighlight">\(\Theta\)</span> do not add up to 1. That is the role of the denominator (P(y)), which acts as a normalizing constant to make sure that the distribution sums up to 1. We will get to this in a bit. But before, let’s look at the results we have above to note a few interesting things.</p>
+<p>We can see that all the multplication between the prior and the likelihood seems to give something in between the two, an average of sorts. This is to be expected. As we discussed before, if you have very strong belief about something (say the probability of picking a king of heart in a 52 cards deck that you know if balanced), you should not take the results of your experiment (here shown as the likelihood) at face value. In the current case, the posterior doesn’t take the same shape as the likelihood because we wouldn’t want to change our mind about whether or not the coin is biased based on the outcome of a single experiment, if we have reasonable reasons to believe that the coin is most probably not biased. It would seem logical to suggest that we should only change our minds if we have a lot of data that doesn’t match our belief, or if we don’t have a strong belief to start with. Turns out that that’s exactly how the multiplication of the prior and likelihood behaves. We can illustrate that by keeping everything the same but using more or less strong priors, or keeping the prior the same but increasing the amount of data we have:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Modulating prior &#39;tightness&#39;:</span>
+<span class="n">alphas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>  <span class="c1"># Our prior confidence for the theta value</span>
+<span class="n">betas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">40</span><span class="p">]</span>  <span class="c1"># Our prior confidence for the theta value</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1"># Say we run an experiment in which we throw the coin a 1000 times</span>
+<span class="n">k</span> <span class="o">=</span> <span class="mi">40</span>  <span class="c1"># Say we get a hypothetical 400 heads:</span>
+
+<span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">alphas</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">beta_distribution</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">betas</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">alpha$=</span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2"> &amp; $</span><span class="se">\\</span><span class="s2">beta$=</span><span class="si">{</span><span class="n">betas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prior distribution&quot;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Likelihood&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">alpha</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">alphas</span><span class="p">):</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">likelihood_times_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">betas</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;P($</span><span class="se">\\</span><span class="s2">Theta; </span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2">, </span><span class="si">{</span><span class="n">betas</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="si">}</span><span class="s2">$)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta) * P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prior time likelihood with various priors&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/132519adfa5dae3c313e6090111b3cc673dad44dfc5803c081b7cfd3ce389478.png" src="_images/132519adfa5dae3c313e6090111b3cc673dad44dfc5803c081b7cfd3ce389478.png" />
+</div>
+</div>
+<p>We can see quite clearly in the plot above the the least ‘tight’ our prior is, the most the outcome ends up being something close to the likelihood (the black dashed line). In fact, if we set a prior with <span class="math notranslate nohighlight">\(\alpha=1\)</span> and <span class="math notranslate nohighlight">\(\beta=1\)</span>, the results is exactly the same as the likelihood. Again, that’s how you would want it to behave. As you can see in the upper plot, setting <span class="math notranslate nohighlight">\(\alpha=1\)</span> and <span class="math notranslate nohighlight">\(\beta=1\)</span> is basically saying that you believe that any possible values of <span class="math notranslate nohighlight">\(\Theta\)</span> are equally likely a priori, or in other words, you have no idea what the value of <span class="math notranslate nohighlight">\(\Theta\)</span> could be. In Bayesian Linguo, we say that very tight priors are very <strong>informative</strong>, and you will often hear things like <strong>mildly informative priors</strong>, <strong>mildly informative priors</strong>. These all refers to how tight the prior is.</p>
+<p>As much as a tight prior pulls the data closer to the prior, the amount of data used to generate the likelihood pulls the outcome towards the data. That also makes sense: you should be more willing to change your mind if you see a lot of data. That’s exactly what our intuition told us initially: we should trust estimates about <span class="math notranslate nohighlight">\(P(X=1)\)</span> more if it comes from experiments where we threw the coin many many times. This is also how the multiplication between the prior and the likelihood behaves:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Modulating prior &#39;tightness&#39;:</span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mi">22</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="mi">22</span>
+<span class="n">n</span> <span class="o">=</span> <span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">200</span><span class="p">]</span>  <span class="c1"># Say we run an experiment in which we throw the coin a 1000 times</span>
+<span class="n">k_per_n_throw</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># Say we get 40% head when we throw the coin 10, 20, 100, 200 times</span>
+
+<span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">beta_distribution</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prior distribution&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">n</span><span class="p">:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">k_per_n_throw</span><span class="o">*</span><span class="n">i</span><span class="p">),</span> <span class="n">theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;Likelihood (n=</span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">likelihood_times_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="n">k_per_n_throw</span><span class="o">*</span><span class="n">i</span><span class="p">),</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="s1">&#39;k&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta) * P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prior time likelihood with various priors&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/851052ce6fb8a164dbec5336a05b70d0c834060cf157dc0f78664c1bd92eb4f0.png" src="_images/851052ce6fb8a164dbec5336a05b70d0c834060cf157dc0f78664c1bd92eb4f0.png" />
+</div>
+</div>
+</section>
+</section>
+<section id="marginal-likelihood-a-k-a-model-evidence">
+<h2>Marginal likelihood, a.k.a. model evidence<a class="headerlink" href="#marginal-likelihood-a-k-a-model-evidence" title="Link to this heading">#</a></h2>
+<p>The numerator controls the overall shape of the distribution. As you can see in the examples above, it seems to behave in the way we would expect our <strong>posterior</strong> to behave. Remember, the posterior is what we are after, as it basically tells us how confident we should be in a given value of <span class="math notranslate nohighlight">\(\Theta\)</span> given our data: if the value of <span class="math notranslate nohighlight">\(\Theta\)</span> is highly likely given the data, then we should conclude that our coin isn’t biased. The posterior, like every other bits of the Bayes theorem is a probability distribution. But you may have noticed that the results in the plot above don’t seem to quite fit the bill. That’s because the numerator alone doesn’t sum up to 1. And we saw before that any probability distribution must satisfy:</p>
+<div class="math notranslate nohighlight">
+\[\int{P(\Theta|y)}d\Theta = 1\]</div>
+<p>This means that when we sum up the probability of any values of <span class="math notranslate nohighlight">\(\Theta\)</span>, we should get 1. You might have expected to see <span class="math notranslate nohighlight">\(\sum\)</span> here instead of <span class="math notranslate nohighlight">\(\int\)</span>. The term <span class="math notranslate nohighlight">\(\int\)</span> is basically an extension of  <span class="math notranslate nohighlight">\(\sum\)</span>, as it also works when <span class="math notranslate nohighlight">\(\Theta\)</span> is continuous (i.e. can take an infinity of values within a range). This is what the denominator in the Bayes theorem does: it enforces that the final product is a distribution that sums up to 1. In other words, we need to normalize the nummerator by dividing it by something so that it sums up to 1. This is why the marginal likelihood/model evidence is referred to as the normalizing constant in some cases.</p>
+<p>The marginal likelihood is defined as:</p>
+<div class="math notranslate nohighlight">
+\[P(y) = \int{P(y|\Theta)P(\Theta)}{d\Theta}\]</div>
+<p>In other words, the denominator is the integral of the numerator. It is called the marginal likelihood, because it consists in obtaining the probabity of <span class="math notranslate nohighlight">\(y\)</span> while marginalizing over all possible values of <span class="math notranslate nohighlight">\(\Theta\)</span>, weighted by their prior probability <span class="math notranslate nohighlight">\(P(\Theta)\)</span></p>
+<section id="deriving-the-marginal-likelihood-for-our-problem">
+<h3>Deriving the marginal likelihood for our problem<a class="headerlink" href="#deriving-the-marginal-likelihood-for-our-problem" title="Link to this heading">#</a></h3>
+<p>Once again, eventhough the formulae might look intimidating, it is nothing crazy. We just need to plug in the right formulae in the right place, to see how we can then find the integral of that:</p>
+<div class="math notranslate nohighlight">
+\[P(y) = \int[\binom{n}{k}\Theta^k(1-\Theta)^{n-k}][\frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\beta)}\Theta^{\alpha-1}(1-\Theta)^{\beta-1}]\]</div>
+<p>Same deal as before, we can take out the constants that aren’t concerned by <span class="math notranslate nohighlight">\(\Theta\)</span>, given that we integrate over <span class="math notranslate nohighlight">\(\Theta\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[P(y) = \binom{n}{k}\frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\alpha)}\int{\Theta^{k+\alpha-1}(1-\Theta)^{n-k+\beta-1}}d\Theta\]</div>
+<p>And just as was the case before, what we end up having to integrate is also a Beta function:</p>
+<div class="math notranslate nohighlight">
+\[P(y) = \binom{n}{k}\frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\alpha)}\int{\Theta^{\alpha'-1}(1-\Theta)^{\beta'-1}}d\Theta\]</div>
+<p>where:</p>
+<div class="math notranslate nohighlight">
+\[\alpha'=k+\alpha\]</div>
+<p>and</p>
+<div class="math notranslate nohighlight">
+\[\beta'=n-k+\beta\]</div>
+<p>So we only need to find the integral of that beta distribution. The math behind it is a bit long and complicated (see <a class="reference external" href="https://en.wikipedia.org/wiki/Beta_function">here</a> if you want the full derivations), but it turns out that the derivatives of any beta function is:</p>
+<div class="math notranslate nohighlight">
+\[\int{\Theta^{\alpha'-1}(1-\Theta)^{\beta'-1}}d\Theta=\frac{\Gamma(\alpha')\Gamma(\beta')}{\Gamma(\alpha' + \beta')}\]</div>
+<p>That probably seems very familiar, doesn’t it? We have indeed seen the right hand side of that formulae many times. Whenever we wrote the <span class="math notranslate nohighlight">\(\beta\)</span> distribution, we saw something like this. Indeed, a <span class="math notranslate nohighlight">\(\beta\)</span> distribution is defined like so (see above as well):</p>
+<div class="math notranslate nohighlight">
+\[f(\Theta) = \frac{\Theta^{\alpha-1}(1-\Theta)^{\beta-1}}{B(\alpha, \beta)}\]</div>
+<p>Where:</p>
+<div class="math notranslate nohighlight">
+\[B(\alpha, \Beta)=\frac{\Gamma(\alpha)\Gamma(\Beta)}{\Gamma(\alpha+\beta)}\]</div>
+<p>Or:</p>
+<div class="math notranslate nohighlight">
+\[\frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\beta)}\Theta^{\alpha-1}(1-\Theta)^{\beta-1}\]</div>
+<p>But actually, that makes perfect sense when you look at the first expression. You have the top part that looks like this:</p>
+<div class="math notranslate nohighlight">
+\[\Theta^{\alpha-1}(1-\Theta)^{\beta-1}\]</div>
+<p>But this bit on its own doesn’t sum up to 1. To get that to sum up to 1, you also need to normalize it by dividing it by the integral of the numerator. So you need to divide <span class="math notranslate nohighlight">\({\Theta^{\alpha-1}(1-\Theta)^{\beta-1}}\)</span> by <span class="math notranslate nohighlight">\(\int{\Theta^{\alpha-1}(1-\Theta)^{\beta-1}}\)</span> to give it a probability distribution. And this is why in the formulae above, we divide <span class="math notranslate nohighlight">\({\Theta^{\alpha-1}(1-\Theta)^{\beta-1}}\)</span> by <span class="math notranslate nohighlight">\(B(\alpha, \beta)\)</span>, because <span class="math notranslate nohighlight">\(B(\alpha, \beta)\)</span> is the integral of the numerator.</p>
+<p>So that’s it, we’ve solved the denominator:
+$<span class="math notranslate nohighlight">\(P(y) = \binom{n}{k}\frac{\Gamma(\alpha + \beta)}{\Gamma(\alpha)\Gamma(\alpha)}\times\frac{\Gamma(k+\alpha)\Gamma(n-k+\beta)}{\Gamma(n+\alpha+\beta)}\)</span>$</p>
+</section>
+<section id="python-implementation-of-the-likelihood">
+<h3>Python implementation of the likelihood<a class="headerlink" href="#python-implementation-of-the-likelihood" title="Link to this heading">#</a></h3>
+<p>That was quite a bit of maths. But hopefully by getting a detailed overview, you understand that there is nothing too crazy about it. Sure the trick of know that the integral we were looking for was actually the beta function is something you need to know. Alternatively you could try to come up with the integral for that function, but I will grant you that it takes quite a bit of skills in mathematics (I wouldn’t be able to do it myself). But hopefully you got the sense that it isn’t too crazy complicated either, just high school level maths.</p>
+<p>We can now implement the function to compute the marginal likelihood for out specific problem:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">marginal_likelihood</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+    <span class="c1"># Binomial coefficient, n chooses k</span>
+    <span class="n">binom_coeff</span> <span class="o">=</span> <span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+    <span class="c1"># Ratio of gammas with alpha and beta</span>
+    <span class="n">gammas_ratio1</span> <span class="o">=</span> <span class="n">gamma</span><span class="p">(</span><span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">(</span><span class="n">beta</span><span class="p">))</span>
+    <span class="c1"># Ratio of gammas with alpha&#39; and beta&#39;</span>
+    <span class="n">gammas_ratio2</span> <span class="o">=</span> <span class="p">(</span><span class="n">gamma</span><span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">gamma</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="n">k</span> <span class="o">+</span> <span class="n">beta</span><span class="p">))</span> <span class="o">/</span> <span class="n">gamma</span><span class="p">(</span><span class="n">n</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">+</span> <span class="n">beta</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">binom_coeff</span> <span class="o">*</span> <span class="n">gammas_ratio1</span> <span class="o">*</span> <span class="n">gammas_ratio2</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Nothing too crazy, is it? Now we have all the building blocks to compute our posterior.</p>
+</section>
+</section>
+<section id="putting-everything-together-computing-the-posterior">
+<h2>Putting everything together: computing the posterior<a class="headerlink" href="#putting-everything-together-computing-the-posterior" title="Link to this heading">#</a></h2>
+<p>Now we have all the pieces necessary to compute the posterior. Let’s put everything together:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">compute_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
     <span class="c1"># Compute the numerator:</span>
-    <span class="n">numer</span> <span class="o">=</span> <span class="n">k</span> <span class="o">*</span> <span class="n">theta</span><span class="o">**</span><span class="p">(</span><span class="n">y</span> <span class="o">+</span> <span class="n">alpha</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">theta</span><span class="p">)</span><span class="o">**</span><span class="p">((</span><span class="n">n</span><span class="o">-</span><span class="n">y</span><span class="p">)</span><span class="o">+</span><span class="n">beta</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">num</span> <span class="o">=</span> <span class="n">likelihood_times_prior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
 
-    <span class="c1"># Return the probability of beta at this particular value of x with alpha and beta:</span>
-    <span class="k">return</span> <span class="n">numer</span><span class="o">/</span><span class="n">denom</span> 
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>&lt;&gt;:2: SyntaxWarning: invalid escape sequence &#39;\T&#39;
-&lt;&gt;:2: SyntaxWarning: invalid escape sequence &#39;\T&#39;
-C:\Users\alexander.lepauvre\AppData\Local\Temp\ipykernel_17156\669880927.py:2: SyntaxWarning: invalid escape sequence &#39;\T&#39;
-  &quot;&quot;&quot;
+    <span class="c1"># Compute the denominator, i.e. the model evidence:</span>
+    <span class="n">model_evidence</span> <span class="o">=</span> <span class="n">marginal_likelihood</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">num</span><span class="o">/</span><span class="n">model_evidence</span><span class="p">,</span> <span class="n">model_evidence</span>
 </pre></div>
 </div>
 </div>
 </div>
-<p>Nothing all that crazy after all. Now let’s play around with a few values and plot the results:</p>
+<p>Finally, we can answer our question: is the coin biased? For that, let’s run an experiment again, where we throw the coin a 10 times and compute the posterior by fixing our prior to be a beta distribution with <span class="math notranslate nohighlight">\(\alpha=0.5\)</span> and <span class="math notranslate nohighlight">\(\beta=0.5\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c1"># Our prior about the most likely value of theta</span>
-<span class="n">alpha</span> <span class="o">=</span> <span class="mi">80</span>  <span class="c1"># Our prior confidence for the theta value</span>
-<span class="n">beta</span> <span class="o">=</span> <span class="mi">80</span>  <span class="c1"># Our prior confidence for the theta value</span>
-<span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Say we run an experiment in which we throw the coin a 1000 times</span>
-<span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1"># We can plot the joint probability of our likelihood and prior for different observation to see what that looks like:</span>
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">coin_toss</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">bias</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate teh results of throwing a coin by taking n times a random number between 0 and 1 and it is smaller than 0.5, say it is head</span>
+<span class="sd">    Parameters:</span>
+<span class="sd">    n (float): how often we throw the coin</span>
+<span class="sd">    Returns:</span>
+<span class="sd">    k: total number of heads</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Before we start, we have zero head</span>
 
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span> <span class="p">[</span><span class="n">beta_distribution</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">alpha$=</span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2"> &amp; $</span><span class="se">\\</span><span class="s2">beta$=</span><span class="si">{</span><span class="n">beta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prior distribution&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">),</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">)])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Likelihood&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="p">[</span><span class="n">binomial_beta_joint</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta) * P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;y (i.e. number of success)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Joint probability of the likelihood and prior for various values of y&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/ea41af9b530b9cef6e8b03f662f3fe78ea9747601d147b7f356408b93dd00e57.png" src="_images/ea41af9b530b9cef6e8b03f662f3fe78ea9747601d147b7f356408b93dd00e57.png" />
-</div>
-</div>
-<p>It might not be self-evident what we are looking at, but hopefully by playing around a bit more and looking at the graphs will give you an intuition about it all. In the above, the first plot is our prior, the second is the likelihood of the data if <span class="math notranslate nohighlight">\(\Theta=0.5\)</span>, and the lower part is the joint probability of the two. By the look of it, the data look very much like the likelihood. Now let’s try to change our prior. Let’s say we got the coin from the magician shop, so we are less confident about the actual theta:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c1"># Our prior about the most likely value of theta</span>
-<span class="n">alpha</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># Our prior confidence for the theta value</span>
-<span class="n">beta</span> <span class="o">=</span> <span class="mi">20</span>  <span class="c1"># Our prior confidence for the theta value</span>
-<span class="n">n</span> <span class="o">=</span> <span class="mi">1000</span>  <span class="c1"># Say we run an experiment in which we throw the coin a 1000 times</span>
-<span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1"># We can plot the joint probability of our likelihood and prior for different observation to see what that looks like:</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span> <span class="p">[</span><span class="n">beta_distribution</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">alpha$=</span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2"> &amp; $</span><span class="se">\\</span><span class="s2">beta$=</span><span class="si">{</span><span class="n">beta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prior distribution&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="mi">10</span><span class="p">)])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Likelihood&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="p">[</span><span class="n">binomial_beta_joint</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta) * P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;y (i.e. number of success)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Joint probability of the likelihood and prior for various values of y&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/8fe8a537ff20d713fb235b289c78f0ae6af13437b48295acfb7f8d1631158af9.png" src="_images/8fe8a537ff20d713fb235b289c78f0ae6af13437b48295acfb7f8d1631158af9.png" />
-</div>
-</div>
-<p>Not much happens. The prior doesn’t seem to have much of an impact, the joint distribution kind of always look like the likelihood of the data. Now let’s try something else. In the examples so far, the likelihood was always in line with the prior, meaning that the probability distribution of the data was always such that the most likely value in the data is 0.5. That’s just to be expected, becausewe set  the <span class="math notranslate nohighlight">\(\Theta\)</span> parameter of our prior and likelihood to be the same. Now that doesn’t need to be the case. If we have a coin that is biased towards tail, then the true likelihood should be biased away from 0.5 towards lower values, even if we believe that the coin isn’t biased. This may seem like a really strange thing to say: we always know what the <span class="math notranslate nohighlight">\(\Theta\)</span> value is, because we pass it to the binomial distribution, so of course we know that our prior is correct. It wouldn’t make any sense to choose a prior that is different from what we pass to the binomial distribution function.</p>
-<p>But in a real life problem, we don’t know the true <span class="math notranslate nohighlight">\(\Theta\)</span> value, remember, that’s the very reason we are doing all of this in the first place. It is really important to understand that the <span class="math notranslate nohighlight">\(\Theta\)</span> in the various bits of the Bayes theorem don’t need to be the same values. In fact, in the prior, <span class="math notranslate nohighlight">\(\Theta\)</span> refer to all possible value of <span class="math notranslate nohighlight">\(\Theta\)</span>  between 0 and 1 and the belief we have in each, while in the likelihood, the <span class="math notranslate nohighlight">\(\Theta\)</span> is fixed for all possible values of y. The likelihood follows a binomial distribution, but the parameters of that distribution depend on the data. Say if we run an experiment in which we throw the coin a 1000 times, and we repeat that experiment a 100 times: we will get the distribution of <span class="math notranslate nohighlight">\(P(\Theta)\)</span> centered on 0.5 only if the coin isn’t biased. If the coin is biased, then of course the center of the distribution won’t be 0.5. Now let’s see what happens if that were to be the case:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">prior_theta</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="c1"># Our prior about the most likely value of theta</span>
-<span class="n">alpha</span> <span class="o">=</span> <span class="mi">80</span>  <span class="c1"># Our prior confidence for the theta value</span>
-<span class="n">beta</span> <span class="o">=</span> <span class="mi">80</span>  <span class="c1"># Our prior confidence for the theta value</span>
-<span class="n">true_theta</span> <span class="o">=</span> <span class="mf">0.3</span>
-<span class="n">n</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># Say we run an experiment in which we throw the coin a 1000 times</span>
-<span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span> <span class="c1"># We can plot the joint probability of our likelihood and prior for different observation to see what that looks like:</span>
-
-<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">),</span> <span class="p">[</span><span class="n">beta_distribution</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">alpha$=</span><span class="si">{</span><span class="n">alpha</span><span class="si">}</span><span class="s2"> &amp; $</span><span class="se">\\</span><span class="s2">beta$=</span><span class="si">{</span><span class="n">beta</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">Theta$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Prior distribution&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">true_theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="mi">10</span><span class="p">)])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;y&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Likelihood&quot;</span><span class="p">)</span>
-
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="p">[</span><span class="n">binomial_beta_joint</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">true_theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">y</span> <span class="ow">in</span> <span class="n">ys</span><span class="p">])</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(y|</span><span class="se">\\</span><span class="s2">Theta) * P(</span><span class="se">\\</span><span class="s2">Theta)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;y (i.e. number of success)&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Joint probability of the likelihood and prior for various values of y&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-<div class="cell_output docutils container">
-<img alt="_images/77e12f480ec35848d9228c77c3159d35b936e0b25cc347bbeb0ace4af94dd043.png" src="_images/77e12f480ec35848d9228c77c3159d35b936e0b25cc347bbeb0ace4af94dd043.png" />
-</div>
-</div>
-</section>
-</section>
-<section id="a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads">
-<h2>*A little aside: we can compute the empirical probability of obtaining 3/10 heads+<a class="headerlink" href="#a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads" title="Link to this heading">#</a></h2>
-<p>In fact, we can very easily verify that this is true by running another little simulation (very much the same we did before):</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Let&#39;s repeat the 10 coin tosses a 10000 times, just to we get closer to the actual value:</span>
-<span class="n">n_iteration</span> <span class="o">=</span> <span class="mi">10000</span>
-
-<span class="c1"># ========================================================</span>
-<span class="c1"># Experiment 1:</span>
-<span class="n">P</span><span class="p">[</span><span class="s2">&quot;X=3/10 heads&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_iteration</span><span class="p">):</span>
-    <span class="n">n_throw</span> <span class="o">=</span> <span class="mi">10</span> <span class="c1"># 20 throws instead of 10</span>
-    <span class="n">n_head</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># Before we start, we have zero head</span>
-    <span class="n">n_tail</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># And zero tails</span>
-
-    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_throw</span><span class="p">):</span>  <span class="c1"># Repeat the same thing 10 times (throwing the coin)</span>
-        <span class="n">rnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span>  <span class="c1"># Draw a random number between 0 and 1 (following a uniform distribution, so each value between 0 and 1 is equally likely)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>  <span class="c1"># Repeat the same thing 10 times (throwing the coin)</span>
+        <span class="n">rnd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">()</span> <span class="o">+</span> <span class="n">bias</span>  <span class="c1"># Draw a random number between 0 and 1 (following a uniform distribution, so each value between 0 and 1 is equally likely)</span>
         <span class="k">if</span> <span class="n">rnd</span> <span class="o">&lt;=</span> <span class="mf">0.5</span><span class="p">:</span>  <span class="c1"># If our random number is less than 0.5, we consider that our coin landed on head.</span>
-            <span class="n">n_head</span> <span class="o">+=</span> <span class="mi">1</span>
-        <span class="k">else</span><span class="p">:</span>   <span class="c1"># If our random number is more than 0.5, we consider that our coin landed on tail</span>
-            <span class="n">n_tail</span> <span class="o">+=</span> <span class="mi">1</span>
-    <span class="k">if</span> <span class="n">n_head</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
-        <span class="n">P</span><span class="p">[</span><span class="s2">&quot;X=3/10 heads&quot;</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(X = 3/10 heads)=</span><span class="si">{</span><span class="n">P</span><span class="p">[</span><span class="s2">&quot;X=3/10 heads&quot;</span><span class="p">]</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">n_iteration</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Throw </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">: Head&quot;</span><span class="p">)</span>
+            <span class="n">k</span> <span class="o">+=</span> <span class="mi">1</span>
+    
+    <span class="k">return</span> <span class="n">k</span>
+</pre></div>
+</div>
+</div>
+</div>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define all our parameters:</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># How often we throw our coin </span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mi">22</span>  <span class="c1"># Our prior about the values of theta</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="mi">22</span>  <span class="c1"># Our prior about the values of theta</span>
+<span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># Define a range for theta for plotting purposes</span>
+
+<span class="c1"># Let&#39;s run the experiment:</span>
+<span class="n">k</span> <span class="o">=</span> <span class="n">coin_toss</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;We obtained </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> heads out of </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> tosses&quot;</span><span class="p">)</span>
+
+<span class="c1"># Now that we have some data, let&#39;s compute the posterior:</span>
+<span class="n">posterior</span> <span class="o">=</span> <span class="p">[</span><span class="n">compute_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">]</span>
+
+<span class="c1"># Let&#39;s plot the results:</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">beta_distribution</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Prior&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Likelihood&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">posterior</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Posterior&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">Theta$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(X)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Posterior distribution&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(X = 3/10 heads)=0.1149
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 5 heads out of 10 tosses
+</pre></div>
+</div>
+<img alt="_images/d87ad7a53d38edaef80aff460b1ec808f9d7ed2a1b68afb26c18a1ba132e6a81.png" src="_images/d87ad7a53d38edaef80aff460b1ec808f9d7ed2a1b68afb26c18a1ba132e6a81.png" />
+</div>
+</div>
+<p>One thing you probably notice off the bat is that the probability returned by the likelihood function are smaller than that of the prior and posterior. And even weirder, both for the prior and the posterior, there are values that are higher than 1, eventhough we said that a probability distribution must sum up to 1, how can that be? Well for sake of simplicity I omitted a few things. There is a fundamental difference between the distribution we use for the likelihood and the distributions of the prior and posterior. The likelihood is a discrete probability distribution. When we throw the coin n times, there is a finite number of outcomes k: 0 to n. And for each of these outcome, we have a probability. If we take the sum of all these probabilities, we must get one:</p>
+<div class="math notranslate nohighlight">
+\[\sum\limits_{k=0}^nP(X=k) = 1\]</div>
+<p>Accordingly, with such a distribution, the more throw we make, the smaller the value of each outcome ends up being. The binomial distribution is what we call a <strong>probability mass function (PMF)</strong> and each value k has a positive probability. In comparison, both the prior and posterior distributions are Beta distribution which ascribe to each possible values of <span class="math notranslate nohighlight">\(\Theta\)</span> a probability. <span class="math notranslate nohighlight">\(\Theta\)</span> is continuous, it can take an infinity of values between 0 and 1. Because <span class="math notranslate nohighlight">\(\Theta\)</span> can take an infinity of values between 0 and 1, the probability of any one value of <span class="math notranslate nohighlight">\(\Theta\)</span> is 0. Indeed, it is impossible to get exactly 0.5. When dealing with probability distribution of continuous variables, we talk about <strong>probability density function</strong>, because such functions actually inform us about the probability of the value of <span class="math notranslate nohighlight">\(\Theta\)</span> to be between two points. If this is unclear to you, I strongly recommend you check out this <a class="reference external" href="https://www.youtube.com/watch?v=hDjcxi9p0ak">youtube tutorial</a>, which should give you a good intuition about it!</p>
+<p>I purposefully displayed the graph above to illustrate that point, but to make things a bit easier to visualize, we can set the likelihood on a different axis:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define all our parameters:</span>
+<span class="n">n</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># How often we throw our coin </span>
+<span class="n">alpha</span> <span class="o">=</span> <span class="mi">22</span>  <span class="c1"># Our prior about the values of theta</span>
+<span class="n">beta</span> <span class="o">=</span> <span class="mi">22</span>  <span class="c1"># Our prior about the values of theta</span>
+<span class="n">thetas</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>  <span class="c1"># Define a range for theta for plotting purposes</span>
+
+<span class="c1"># Let&#39;s run the experiment 4 times in a row:</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="n">ax</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">):</span>
+    <span class="n">k</span> <span class="o">=</span> <span class="n">coin_toss</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;We obtained </span><span class="si">{</span><span class="n">k</span><span class="si">}</span><span class="s2"> heads out of </span><span class="si">{</span><span class="n">n</span><span class="si">}</span><span class="s2"> tosses&quot;</span><span class="p">)</span>
+
+    <span class="c1"># Now that we have some data, let&#39;s compute the posterior:</span>
+    <span class="n">posterior</span> <span class="o">=</span> <span class="p">[</span><span class="n">compute_posterior</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">]</span>
+
+    <span class="c1"># Plot the likelihood:</span>
+    <span class="n">ax2</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">twinx</span><span class="p">()</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Likelihood&#39;</span><span class="p">)</span>
+    <span class="n">ax2</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(y|$</span><span class="se">\\</span><span class="s1">Theta$)&#39;</span><span class="p">)</span>
+    <span class="c1"># Plot the prior</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="p">[</span><span class="n">beta_distribution</span><span class="p">(</span><span class="n">theta</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Prior&#39;</span><span class="p">)</span>
+    <span class="c1"># Plot the posterior:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">posterior</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Posterior&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">Theta$&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P($</span><span class="se">\\</span><span class="s1">Theta$) | P($</span><span class="se">\\</span><span class="s1">Theta$|y)&#39;</span><span class="p">)</span>
+    
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Experiment </span><span class="si">{</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+
+<span class="n">lines</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+<span class="n">lines2</span><span class="p">,</span> <span class="n">labels2</span> <span class="o">=</span> <span class="n">ax2</span><span class="o">.</span><span class="n">get_legend_handles_labels</span><span class="p">()</span>
+<span class="n">ax2</span><span class="o">.</span><span class="n">legend</span><span class="p">(</span><span class="n">lines</span> <span class="o">+</span> <span class="n">lines2</span><span class="p">,</span> <span class="n">labels</span> <span class="o">+</span> <span class="n">labels2</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 5 heads out of 10 tosses
+We obtained 8 heads out of 10 tosses
+We obtained 5 heads out of 10 tosses
+We obtained 6 heads out of 10 tosses
+</pre></div>
 </div>
-<p>So as you can see, when we run the same experiment 10000 times, we get about 12% of the times 3 heads, in line with the Binomial distribution. This may seem familiar with how I described above how we can obtain an empirial probability. With binomial distribution, we get <span class="math notranslate nohighlight">\(P(X=3)\)</span>, and with simulation above, we get <span class="math notranslate nohighlight">\(\hat{P}(X=3)\)</span></p>
+<img alt="_images/2d312da1726614fb85ae9cd4bb4a6bed69abc1acb4deb42d95d8527a23c2a6a2.png" src="_images/2d312da1726614fb85ae9cd4bb4a6bed69abc1acb4deb42d95d8527a23c2a6a2.png" />
+</div>
+</div>
+<p>That way it’s a bit easier to read. In the figure above, we run the same experiment three times in a row to show that depending on the outcome of the experiment, while our prior remains the same, the likelihood may change depending on the randomness involved in our experiment, which results in different posterior. That all make sense: if you get in one experiment 3/10 heads, then you have more reasons to believe that your coin is biased compared to getting 5/10 heads, make sense.</p>
+<p>So now we have our posterior, which tells us how confident we can be that our coin isn’t biased. But wait a minute, how exactly are you supposed to answer the question based on the posterior? It would seem from the plots above that the closer your observations were from a ratio of 5/10, the more centered your posterior is on 0.5, so it would seem that you should be more confident in those results. However, because <span class="math notranslate nohighlight">\(\Theta\)</span> is a continuous variable which can take any values between 0 and 1, we know that the probability of your coin having a probability of head of exactly 0.5 is exactly 0. This sounds like you should actually be certain that your coin is biased? This is probably the biggest let down of everything you have read so far: as counter-intuitive as this may sound, your coin is most certainly biased. Furthermore, the posterior doesn’t really enables you to know how confident you should be that the probability of getting head is exactly 0.5, but that’s because it is the wrong question to ask. The only thing that makes sense to try to establish is how confident can you be that the probability of obtaining head is within a range that you believe is acceptable to pursue with your bet?</p>
+<section id="p-0-49-theta-0-51">
+<h3><span class="math notranslate nohighlight">\(P(0.49&lt;=\Theta&lt;=0.51)\)</span><a class="headerlink" href="#p-0-49-theta-0-51" title="Link to this heading">#</a></h3>
+<p>Say you are 99% confident based on your data that the true value of <span class="math notranslate nohighlight">\(\Theta\)</span> lies between 0.49 and 0.51, this is probably okay for you to pursue with your bet. Of course that would mean that someone is at a slight advantage. But that advantage is so small that it won’t matter if you conduct your bet only once. With your posterior distribution, you can do just that, you can compute the probability of <span class="math notranslate nohighlight">\(\Theta\)</span> to be between say 0.49 and 0.51.</p>
+</section>
 </section>
 </section>
 
@@ -836,6 +1061,15 @@ C:\Users\alexander.lepauvre\AppData\Local\Temp\ipykernel_17156\669880927.py:2: S
                 <footer class="prev-next-footer d-print-none">
                   
 <div class="prev-next-area">
+    <a class="left-prev"
+       href="ProbabilityDistribution.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Probablities and probability distribution</p>
+      </div>
+    </a>
 </div>
                 </footer>
               
@@ -858,9 +1092,19 @@ C:\Users\alexander.lepauvre\AppData\Local\Temp\ipykernel_17156\669880927.py:2: S
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#combining-the-prior-and-the-likelihood">Combining the prior and the likelihood</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#solving-the-numerator">Solving the numerator</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#another-beta-distribution">Another beta distribution</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-combined-prior-and-likelihood">The combined prior and likelihood</a></li>
 </ul>
 </li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-little-aside-we-can-compute-the-empirical-probability-of-obtaining-3-10-heads">*A little aside: we can compute the empirical probability of obtaining 3/10 heads+</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#marginal-likelihood-a-k-a-model-evidence">Marginal likelihood, a.k.a. model evidence</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#deriving-the-marginal-likelihood-for-our-problem">Deriving the marginal likelihood for our problem</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#python-implementation-of-the-likelihood">Python implementation of the likelihood</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#putting-everything-together-computing-the-posterior">Putting everything together: computing the posterior</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#p-0-49-theta-0-51"><span class="math notranslate nohighlight">\(P(0.49&lt;=\Theta&lt;=0.51)\)</span></a></li>
+</ul>
+</li>
 </ul>
   </nav></div>
 
