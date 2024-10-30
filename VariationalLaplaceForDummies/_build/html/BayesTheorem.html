@@ -981,10 +981,10 @@ $<span class="math notranslate nohighlight">\(P(y|\Theta)P(\Theta) = C\times\The
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 5 heads out of 10 tosses
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 4 heads out of 10 tosses
 </pre></div>
 </div>
-<img alt="_images/d87ad7a53d38edaef80aff460b1ec808f9d7ed2a1b68afb26c18a1ba132e6a81.png" src="_images/d87ad7a53d38edaef80aff460b1ec808f9d7ed2a1b68afb26c18a1ba132e6a81.png" />
+<img alt="_images/3e294737071ca124eb0f6bc4794bdf9db587e4616d75e0731fa9a5f09eb940a8.png" src="_images/3e294737071ca124eb0f6bc4794bdf9db587e4616d75e0731fa9a5f09eb940a8.png" />
 </div>
 </div>
 <p>One thing you probably notice off the bat is that the probability returned by the likelihood function are smaller than that of the prior and posterior. And even weirder, both for the prior and the posterior, there are values that are higher than 1, eventhough we said that a probability distribution must sum up to 1, how can that be? Well for sake of simplicity I omitted a few things. There is a fundamental difference between the distribution we use for the likelihood and the distributions of the prior and posterior. The likelihood is a discrete probability distribution. When we throw the coin n times, there is a finite number of outcomes k: 0 to n. And for each of these outcome, we have a probability. If we take the sum of all these probabilities, we must get one:</p>
@@ -1036,12 +1036,12 @@ $<span class="math notranslate nohighlight">\(P(y|\Theta)P(\Theta) = C\times\The
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 4 heads out of 10 tosses
-We obtained 2 heads out of 10 tosses
 We obtained 4 heads out of 10 tosses
-We obtained 5 heads out of 10 tosses
+We obtained 3 heads out of 10 tosses
+We obtained 7 heads out of 10 tosses
 </pre></div>
 </div>
-<img alt="_images/3a2003380dc45315574f46cbec6832411b1d8334f86eb199545c572128812703.png" src="_images/3a2003380dc45315574f46cbec6832411b1d8334f86eb199545c572128812703.png" />
+<img alt="_images/c877ae73334c15c7987b45e78548231e283c633fe4bb0249e81a658949671006.png" src="_images/c877ae73334c15c7987b45e78548231e283c633fe4bb0249e81a658949671006.png" />
 </div>
 </div>
 <p>That way it’s a bit easier to read. In the figure above, we run the same experiment three times in a row to show that depending on the outcome of the experiment, while our prior remains the same, the likelihood may change depending on the randomness involved in our experiment, which results in different posterior. That all make sense: if you get in one experiment 3/10 heads, then you have more reasons to believe that your coin is biased compared to getting 5/10 heads, make sense.</p>
@@ -1078,10 +1078,10 @@ We obtained 5 heads out of 10 tosses
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 6 heads out of 10 tosses
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 8 heads out of 10 tosses
 </pre></div>
 </div>
-<img alt="_images/16c1a7f096b1e3ad62fb0ccf9f887b396fc89dd130f1de9a66a2885b93fdf915.png" src="_images/16c1a7f096b1e3ad62fb0ccf9f887b396fc89dd130f1de9a66a2885b93fdf915.png" />
+<img alt="_images/ea9cf3266e0233172812b24b7ff2793bd16627137574f6eb0115a930b91a0835.png" src="_images/ea9cf3266e0233172812b24b7ff2793bd16627137574f6eb0115a930b91a0835.png" />
 </div>
 </div>
 <p>Now let’s do the same but for <span class="math notranslate nohighlight">\(P(\Theta&lt;=0.51)\)</span></p>
@@ -1106,7 +1106,7 @@ We obtained 5 heads out of 10 tosses
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4e585b6b75898a59099166f0d5bc8279178412170c7f4ac0e0f557397ab1b68e.png" src="_images/4e585b6b75898a59099166f0d5bc8279178412170c7f4ac0e0f557397ab1b68e.png" />
+<img alt="_images/dee26b936ff9cbb2790f0a748ee85b8c5bfea49e6e62333857575a02fe38c963.png" src="_images/dee26b936ff9cbb2790f0a748ee85b8c5bfea49e6e62333857575a02fe38c963.png" />
 </div>
 </div>
 <p>If we take the difference between these two, we get:</p>
@@ -1137,7 +1137,7 @@ We obtained 5 heads out of 10 tosses
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4d52ea88319784a6794aa24a5e1d7ed71d702c3e3275f05fc85073e30ede0c50.png" src="_images/4d52ea88319784a6794aa24a5e1d7ed71d702c3e3275f05fc85073e30ede0c50.png" />
+<img alt="_images/cbe4190942890202f6cd430f6ba2e59563cf6ad107fdda4e686f950d056b02d1.png" src="_images/cbe4190942890202f6cd430f6ba2e59563cf6ad107fdda4e686f950d056b02d1.png" />
 </div>
 </div>
 <p>That’s right, when we take the difference between <span class="math notranslate nohighlight">\(P(\Theta&lt;= 0.55) - P(\Theta&lt;= 0.45)\)</span> we get the probability of <span class="math notranslate nohighlight">\(P(0.45&lt;=\Theta&lt;= 0.55)\)</span>, as we remove everything that is common to both (the area overlapping between the two on the graph above). So this means that to obtain the probability of our theta value being within a specific range, we need to integrate the posterior again, once for each of the bounds of our range:</p>
@@ -1282,7 +1282,7 @@ $<span class="math notranslate nohighlight">\(\int_{\Theta=0}^{x}{P(\Theta|y)} =
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/4631018b5378b34492044d5a133e69d910dc03d343812973b2907f2aedd0f2d1.png" src="_images/4631018b5378b34492044d5a133e69d910dc03d343812973b2907f2aedd0f2d1.png" />
+<img alt="_images/21565da80cc6889e1031bffb86bcf40818d45a4fbab4f0e90c1f00a21a5bcbb3.png" src="_images/21565da80cc6889e1031bffb86bcf40818d45a4fbab4f0e90c1f00a21a5bcbb3.png" />
 </div>
 </div>
 <p>Hopefully this makes sense, the CDF is basically summing up all the values under the green curve up until that point</p>
@@ -1342,7 +1342,7 @@ $<span class="math notranslate nohighlight">\(\int_{\Theta=0}^{x}{P(\Theta|y)} =
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(0.45 &lt;= $\Theta$ &lt;= 0.55)=0.5199763331021547
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(0.45 &lt;= $\Theta$ &lt;= 0.55)=0.4036507504715131
 </pre></div>
 </div>
 </div>
@@ -1355,7 +1355,7 @@ $<span class="math notranslate nohighlight">\(\int_{\Theta=0}^{x}{P(\Theta|y)} =
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(0.40 &lt;= $\Theta$ &lt;= 0.60)=0.8456041959052895
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(0.40 &lt;= $\Theta$ &lt;= 0.60)=0.7314485372625755
 </pre></div>
 </div>
 </div>
@@ -1415,6 +1415,8 @@ $<span class="math notranslate nohighlight">\(\int_{\Theta=0}^{x}{P(\Theta|y)} =
 </div>
 </div>
 </div>
+<p>And you are left confused, wondering ‘how on earth do we go from the Bayes theorem to this?!’. Now you know for this particular example. When dealing with other likelihood and prior distributions, the exact maths behind it are different, but it’s not black magic. And sure, it might be beyond your mathematical skills to understand and follow, but at least you now know in principle how that works.</p>
+<p>However, one of the reason why Bayesian stats are so notoriously difficult is that there aren’t many cases in which we can find solution as easily as we did for our example. That may sound daunting if the above didn’t feel that easy. That’s normal. After all, the above wasn’t exactly easy, it took us hundreds of lines of code, text and equations to get through. But at least we got to a solution in the end, and hopefully using maths that are familiar to most. The thing is that for many interesting problems, there are no easy conjugate priors that play well with the likelihood function of the data, and in many cases, there are <strong>no analytical solutions</strong>, which means we can’t just solve the equation, as we will see in the next chapter. But now that you know how things play out for cases in which we can find a solution, you should be able to understand why in some cases, we can’t find one, which should make it easy to understand why we need <strong>variational Laplace</strong> for, which should in turn make it easier to understand it. Pfiou, quite a program, hey?</p>
 </section>
 
     <script type="text/x-thebe-config">
