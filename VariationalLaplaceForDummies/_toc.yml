@@ -12,4 +12,5 @@ chapters:
   - file: IntroductionToLinearModel/LinearModelsAndBayesTheorem
   - file: IntroductionToLinearModel/LinearModelsLikelihood
   - file: IntroductionToLinearModel/LinearModelsPriors
+  - file: IntroductionToLinearModel/LinearModelsIntermediaryRecap
 
