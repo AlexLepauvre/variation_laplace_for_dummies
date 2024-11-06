@@ -7,4 +7,9 @@ chapters:
 - file: SomeIntuitions
 - file: ProbabilityDistribution
 - file: BayesTheorem
+- file: IntroductionToLinearModel
+  sections:
+  - file: IntroductionToLinearModel/LinearModelsAndBayesTheorem
+  - file: IntroductionToLinearModel/LinearModelsLikelihood
+  - file: IntroductionToLinearModel/LinearModelsPriors
 
