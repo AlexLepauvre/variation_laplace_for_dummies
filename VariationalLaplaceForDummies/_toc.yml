@@ -14,3 +14,6 @@ chapters:
   - file: LMBayes/LMPriors
   - file: LMBayes/LMIntermediaryRecap
   - file: LMBayes/LMMarginalLikelihood
+- file: VariationalLaplace
+  sections:
+  - file: VL/JensenInequality
