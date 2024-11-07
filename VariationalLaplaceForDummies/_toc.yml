@@ -13,4 +13,4 @@ chapters:
   - file: IntroductionToLinearModel/LinearModelsLikelihood
   - file: IntroductionToLinearModel/LinearModelsPriors
   - file: IntroductionToLinearModel/LinearModelsIntermediaryRecap
-
+  - file: IntroductionToLinearModel/MarginalLikelihood
