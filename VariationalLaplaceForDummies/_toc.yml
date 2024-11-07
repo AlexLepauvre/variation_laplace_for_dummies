@@ -7,10 +7,10 @@ chapters:
 - file: SomeIntuitions
 - file: ProbabilityDistribution
 - file: BayesTheorem
-- file: IntroductionToLinearModel
+- file: LMBayes
   sections:
-  - file: IntroductionToLinearModel/LinearModelsAndBayesTheorem
-  - file: IntroductionToLinearModel/LinearModelsLikelihood
-  - file: IntroductionToLinearModel/LinearModelsPriors
-  - file: IntroductionToLinearModel/LinearModelsIntermediaryRecap
-  - file: IntroductionToLinearModel/MarginalLikelihood
+  - file: LMBayes/LMAndBayesTheorem
+  - file: LMBayes/LMLikelihood
+  - file: LMBayes/LMPriors
+  - file: LMBayes/LMIntermediaryRecap
+  - file: LMBayes/LMMarginalLikelihood
