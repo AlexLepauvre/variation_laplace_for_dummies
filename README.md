@@ -1,4 +1,8 @@
-# Variational Laplace for dummies: A Journey from Zero to Understanding
+<div align="center">
+  <img src="VariationalLaplaceForDummies/cover.png" alt="Book Cover" width="400">
+</div>
+
+# Variational Laplace for dummies
 
 Welcome to the Variational Laplace for dummies repository! This project aims to demystify the concepts of Variational Bayes and Laplace Approximation for individuals without a heavy mathematical background. If you're curious about Bayesian statistics but have felt overwhelmed by complex papers and mathematical jargon, this book is for you.
 
