@@ -1,0 +1,598 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Variational Laplace &#8212; Variational Laplace For Dummies</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'VariationalLaplace';</script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Jensen inequality: from an intractable integral to an optimization problem" href="VL/JensenInequality.html" />
+    <link rel="prev" title="Marginal likelihood" href="LMBayes/LMMarginalLikelihood.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Variational Laplace for Dummies
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProbabilityDistribution.html">Probablities and probability distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BayesTheorem.html">The Bayes theorem</a></li>
+
+<li class="toctree-l1 has-children"><a class="reference internal" href="LMBayes.html">Linear models and Bayes theorem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMAndBayesTheorem.html">Bayes theorem applied to the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMLikelihood.html">The likelihood of the estimated parameters of a linear model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMPriors.html">The prior of the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMIntermediaryRecap.html">Intermediary recap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMMarginalLikelihood.html">Marginal likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Variational Laplace</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FVariationalLaplace.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/VariationalLaplace.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Variational Laplace</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#saying-the-same-thing-with-mathematical-formulae">Saying the same thing with mathematical formulae</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-linear-model">The linear model:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-theorem-applied-to-the-linear-model">Bayes theorem applied to the linear model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#we-can-t-compute-the-marginal-likelihood">We can’t compute the marginal likelihood…</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variational-laplace-a-method-to-approximate-the-marginal-likelihood">Variational Laplace: a method to approximate the marginal likelihood</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="alert alert-info"><h4>Note</h4><p> 
+    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
+</p></div>
+<section class="tex2jax_ignore mathjax_ignore" id="variational-laplace">
+<h1>Variational Laplace<a class="headerlink" href="#variational-laplace" title="Link to this heading">#</a></h1>
+<p>We have finally made it to the main topic of the book: <strong>variational Laplace</strong>.</p>
+<p>We have seen in the previous section that if we want to answer a question of the kind “Is there a relationship between penguins flipper length and their weights”, we can use a linear model. In order to answer our question in Bayesian term, we want to obtain the <strong>posterior probability distribution</strong>, that tells us the likelihood of the true value of the parameter of our model given the data we have measured in our experiment. If it is highly unlikely that the parameter that relates penguin flipper lengths to their weight in the model (<span class="math notranslate nohighlight">\(\beta_1\)</span>) is equal to 0 (or close thereof), then we can answer our question and say ‘yes, there is a relationship between penguin flipper lengths and their weights”, or even better, we can say “I am 95% confident that the relationship between the 2 is between this value and that value”. Following the Bayes Theorem, to compute the <strong>posterior</strong>, we need to multiply the <strong>likelihood</strong> of the data under all values of our parameters by our <strong>prior</strong> belief of the likelihood of each parameter and divide the whole by the <strong>marginal likelihood</strong>, also called <strong>model evidence</strong>, which is the likelihood of the data after marginalizing all possible values of the parameters of our model. Because we are dealing with a linear model, the likelihood of our data is a multivariate normal distribution, due to the assumption that the error of our model is normally distributed.</p>
+<p>There is however one main problem: we can’t solve the <strong>marginal likelihood</strong> analytically. This is because there is an integral in the formula of the marginal likelihood. To compute it, e would need to compute one by one the results of a function for an infinity of values, and then sum all these values together, which is of course impossible to do.</p>
+<section id="saying-the-same-thing-with-mathematical-formulae">
+<h2>Saying the same thing with mathematical formulae<a class="headerlink" href="#saying-the-same-thing-with-mathematical-formulae" title="Link to this heading">#</a></h2>
+<p>We can also recapitulate all we have seen before with mathematical formulae. It is not saying anything different from above, just the same thing in a different way (albeit a bit more detailed and precise).</p>
+<section id="the-linear-model">
+<h3>The linear model:<a class="headerlink" href="#the-linear-model" title="Link to this heading">#</a></h3>
+<p>To answer our question ‘Is there a relationship between penguins flipper lengths and their weights’, we can use a linear model:</p>
+<div class="math notranslate nohighlight">
+\[y = \bold{X}\bold{\beta} + \epsilon\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(y= \begin{bmatrix}y_1\\y_2\\...\end{bmatrix}\)</span>: is a vector containing each data point we are trying to model (i.e. penguin weight)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\bold{X}= \begin{bmatrix}x_{0, 1},\ x_{1, 1},\ ...\\x_{0, 2},\ x_{1, 2},\ ...\\...,\ ...,\ ...\end{bmatrix}\)</span>: is a matrix containing the regressor, also called the <strong>design matrix</strong>. Each column contains all the value of one regressor, each row the value of all regressor associated with each data point. In our example, <span class="math notranslate nohighlight">\(x_0\)</span> is the intercept, so it’s the same in each row: <span class="math notranslate nohighlight">\(x_{0_1} = x_{0_2} = 1\)</span>, while <span class="math notranslate nohighlight">\(x_1\)</span> is the weight of our penguins, so <span class="math notranslate nohighlight">\(x_{1, 1}\)</span> is the weight of the first penguin whose weight is <span class="math notranslate nohighlight">\(y_1\)</span> and so on for all our penguins</p></li>
+<li><p><span class="math notranslate nohighlight">\(\bold{\beta}=\begin{bmatrix}\beta_0\\\beta_1\\...\end{bmatrix}\)</span>: the weight of our regressors. We don’t know the true values, but can estimate the <strong>observed values</strong> of these parameters that generate a line that fits the data the best, i.e. that minimize the residuals sum of square (RSS) by using OLS (see below). The values found by the OLS are the maximum likelihood estimates (MLE), which means that the likelihood of the data is maximized under these parameter (see likelihood function below)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon \sim \mathcal{N}(0, \sigma^2)\)</span>: the error term follows a normal distribution of mean 0 and of variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>. It is an assumption, meaning that if this is not true, we shouldn’t use this kind of model.  We assume that the mean of the distribution is 0, which means that negative errors (underestimations) are equally likely as positive errors (overestimations). The <span class="math notranslate nohighlight">\(\sigma^2\)</span> on the other hands is not assumed and depends on the data. The variance parameter of the distribution controls its spread, meaning that large <span class="math notranslate nohighlight">\(\sigma^2\)</span> implies that large error are more likely compared to when <span class="math notranslate nohighlight">\(\sigma^2\)</span> is small. and we can also find the MLE for this parameters, i.e. the value of <span class="math notranslate nohighlight">\(\sigma^2\)</span> under which the data are the most likely</p></li>
+</ul>
+<p>In this model, the <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(\bold{X}\)</span> are fixed: it is the data we observed (i.e. measured, collected…). The likelihood of observing these values depends on the value of the parameters <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span>. Accordingly, we can try to find the <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> under which the data are most likely, which is what we do when we <strong>fit the model</strong> to the data. The formula for finding the MLE for the <span class="math notranslate nohighlight">\(\beta\)</span> is know as the <strong>optimal least square (OLS)</strong>:</p>
+<div class="math notranslate nohighlight">
+\[\hat{\beta} = (\bold{X}^T\bold{X})^-1\bold{X}^Ty\]</div>
+<p>This formula looks a bit different to the OLS formulae we saw before for calculating <span class="math notranslate nohighlight">\(\hat{\beta_1}\)</span> and <span class="math notranslate nohighlight">\(\hat{\beta_0}\)</span>, beacuse it is in vector format and it general to calculate all the <span class="math notranslate nohighlight">\(\beta\)</span> even if you have more than 2.</p>
+<p>The MLE of the variance term of the <span class="math notranslate nohighlight">\(\epsilon\)</span> distribution is:</p>
+<div class="math notranslate nohighlight">
+\[\hat{\sigma}^2 = \frac{(y-\bold{X}\bold{\hat{\beta}})^2}{n}\]</div>
+<p>In the case of the <span class="math notranslate nohighlight">\(\epsilon\)</span> of our model, we don’t write that it is equal to the normal distribution, because the error follows a distribution or <strong>probability density function</strong> but it is not equal to it.</p>
+</section>
+<section id="bayes-theorem-applied-to-the-linear-model">
+<h3>Bayes theorem applied to the linear model<a class="headerlink" href="#bayes-theorem-applied-to-the-linear-model" title="Link to this heading">#</a></h3>
+<p>When we ask the question: “Is there a relationship between penguins’ fipper lenghts and their weights”, we want to draw an inference on the true value of the <span class="math notranslate nohighlight">\(\beta\)</span> parameter. We can never know the true value, but we can infer the likelihood of the true value of the parameter given the data, for which we need the Bayes theorem, which states that:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta|y) = \frac{P(y|\Theta)P(\Theta)}{P(y)}\]</div>
+<p>In our specific case, we have:</p>
+<div class="math notranslate nohighlight">
+\[P(\beta, \sigma^2|y) = \frac{P(y|\beta, \sigma^2)P(\beta, \sigma^2)}{P(y)}\]</div>
+<p>Where <span class="math notranslate nohighlight">\(\beta\)</span> is a vector containing the values of the various beta of our model. So in our penguin example, it contains both <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span></p>
+<p>The likelihood of the data is a multivariate normal distribution (because the error is normally distrubuted around 0), defined as:</p>
+<div class="math notranslate nohighlight">
+\[P(y|\beta, \sigma^2) = \frac{1}{(2\pi\sigma^2)^{n/2}}exp(-\frac{1}{2\sigma^2}(y-\bold{X}\beta)^T(y-\bold{X}\beta))\]</div>
+<p>The prior distribution is:</p>
+<div class="math notranslate nohighlight">
+\[P(\beta, \sigma^2) = P(\beta) \times P(\sigma^2)\]</div>
+<p>Where <span class="math notranslate nohighlight">\(P(\beta)\)</span> is also a multivariate normal distribution, like so:</p>
+<div class="math notranslate nohighlight">
+\[P(\beta) = \frac{1}{(2\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu}))\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu\)</span> is the prior mean, meaning the value we think is the most likely for each <span class="math notranslate nohighlight">\(\beta\)</span> parameter</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Sigma\)</span> is the prior variance covariance matrix. Along the diagonal, it contains the variance of the prior distribution of each <span class="math notranslate nohighlight">\(\beta\)</span> parameter (i.e. how likely we think the true value of the <span class="math notranslate nohighlight">\(\beta\)</span> parameter is really far away from the mean we declared) and off the diagonal is the covariance between two <span class="math notranslate nohighlight">\(\beta\)</span> parameters. We should set the off diagonal to 0 if we think that each pair of <span class="math notranslate nohighlight">\(\beta\)</span> are independent from each other and to non-zero otherwise. What we mean by <span class="math notranslate nohighlight">\(\beta\)</span> not being independent is if you have reasons to believe that observing a certain value of <span class="math notranslate nohighlight">\(\beta\)</span> for one parameter is likely to result in another <span class="math notranslate nohighlight">\(\beta\)</span> having a larger or smaller value (depending on the sign of the covariance)</p></li>
+</ul>
+<p>And <span class="math notranslate nohighlight">\(P(\sigma^2)\)</span> is:</p>
+<div class="math notranslate nohighlight">
+\[P(\sigma^2) = \frac{b^\alpha}{\Gamma(\alpha)}(\sigma^2)^{-\alpha-1}exp(-\frac{b}{\sigma^2})\]</div>
+</section>
+<section id="we-can-t-compute-the-marginal-likelihood">
+<h3>We can’t compute the marginal likelihood…<a class="headerlink" href="#we-can-t-compute-the-marginal-likelihood" title="Link to this heading">#</a></h3>
+<p>The reason the book isn’t finished already is because we have a problem: we can’t compute the marginal likelihood. The marginal likelihood is:</p>
+<div class="math notranslate nohighlight">
+\[P(y) = \int P(y|\bold{\beta}, \sigma^2)P(\bold{\beta}, \sigma^2)d\beta d\sigma^2 = \int P(y|\bold{\beta}, \sigma^2) \times P(\bold{\beta}) \times P(\sigma^2)d\beta d\sigma^2\]</div>
+<div class="math notranslate nohighlight">
+\[P(y) = \int \frac{1}{(2\pi\sigma^2)^{n/2}}exp(-\frac{1}{2\sigma^2}(y-\bold{X}\beta)^T)(y-\bold{X}\beta) \times  \frac{1}{(2\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu})) \times \frac{b^\alpha}{\Gamma(\alpha)}(\sigma^2)^{-\alpha-1}exp(-\frac{b}{\sigma^2})\ d\beta d\sigma^2\]</div>
+<p>The marginal likelihood requires to integrate over all possible values of <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>, which is impossible because there is literally an infinity of possible values. This is a fact which we have to accept it.</p>
+</section>
+</section>
+<section id="variational-laplace-a-method-to-approximate-the-marginal-likelihood">
+<h2>Variational Laplace: a method to approximate the marginal likelihood<a class="headerlink" href="#variational-laplace-a-method-to-approximate-the-marginal-likelihood" title="Link to this heading">#</a></h2>
+<p>If we can’t compute the marginal likelihood, we can’t compute the posterior and we can’t answer our original question. This is where the <strong>variational Laplace</strong> method comes into play. This method calls on rather advanced mathematics (by my standards at least), but the gist idea is the following: instead of trying to solve the marginal likelihood, we try to approximate it by calculating something that should approach it. There are many bits and pieces of mathematics associated with the method (both the implementation and the justification of why it works). None of them are incredibly complicated on their own, but it is a bit difficult to understand how they all fit together. We will explore each bit in a progressive order, so that by the end of it, you hopefully have a good understanding of it! Let’s dive in.</p>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="LMBayes/LMMarginalLikelihood.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Marginal likelihood</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="VL/JensenInequality.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Jensen inequality: from an intractable integral to an optimization problem</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#saying-the-same-thing-with-mathematical-formulae">Saying the same thing with mathematical formulae</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-linear-model">The linear model:</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-theorem-applied-to-the-linear-model">Bayes theorem applied to the linear model</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#we-can-t-compute-the-marginal-likelihood">We can’t compute the marginal likelihood…</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#variational-laplace-a-method-to-approximate-the-marginal-likelihood">Variational Laplace: a method to approximate the marginal likelihood</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alex Lepauvre, Jan Gabriel Hartel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

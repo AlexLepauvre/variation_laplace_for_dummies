@@ -16,17 +16,19 @@
     document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
     document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
   </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
   
   <!-- Loaded before other Sphinx assets -->
-  <link href="_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-<link href="_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-
-  
-  <link href="_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
-  <link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
-<link rel="preload" as="font" type="font/woff2" crossorigin href="_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+  <link href="_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
 
     <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
     <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
@@ -36,10 +38,11 @@
     <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
     <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
   
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
   <!-- Pre-loaded scripts that we'll load fully later -->
-  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
-<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
-  <script src="_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
 
     <script src="_static/documentation_options.js?v=9eb32ce0"></script>
     <script src="_static/doctools.js?v=9a2dae69"></script>
@@ -62,9 +65,11 @@
     <script>DOCUMENTATION_OPTIONS.pagename = 'BayesTheorem';</script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Linear models and Bayes theorem" href="LMBayes.html" />
     <link rel="prev" title="Probablities and probability distribution" href="ProbabilityDistribution.html" />
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
   </head>
   
   
@@ -80,19 +85,8 @@
     <i class="fa-solid fa-arrow-up"></i>Back to top</button>
 
   
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-primary-sidebar-checkbox"/>
-  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
-  
-  <input type="checkbox"
-          class="sidebar-toggle"
-          id="pst-secondary-sidebar-checkbox"/>
-  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
-  
-  <div class="search-button__wrapper">
-    <div class="search-button__overlay"></div>
-    <div class="search-button__search-container">
+  <dialog id="pst-search-dialog">
+    
 <form class="bd-search d-flex align-items-center"
       action="search.html"
       method="get">
@@ -100,7 +94,6 @@
   <input type="search"
          class="form-control"
          name="q"
-         id="search-input"
          placeholder="Search this book..."
          aria-label="Search this book..."
          autocomplete="off"
@@ -108,8 +101,8 @@
          autocapitalize="off"
          spellcheck="false"/>
   <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
-</form></div>
-  </div>
+</form>
+  </dialog>
 
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
@@ -125,7 +118,8 @@
       
       
       
-      <div class="bd-sidebar-primary bd-sidebar">
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
         
 
   
@@ -155,21 +149,17 @@
     
     
     <img src="_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
-    <script>document.write(`<img src="_static/logo.png" class="logo__image only-dark" alt="Variational Laplace For Dummies - Home"/>`);</script>
+    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
   
   
 </a></div>
         <div class="sidebar-primary-item">
 
- <script>
- document.write(`
-   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="fa-solid fa-magnifying-glass"></i>
-    <span class="search-button__default-text">Search</span>
-    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
-   </button>
- `);
- </script></div>
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
         <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
     <div class="bd-toc-item navbar-nav active">
         
@@ -185,6 +175,18 @@
 <li class="toctree-l1"><a class="reference internal" href="ProbabilityDistribution.html">Probablities and probability distribution</a></li>
 <li class="toctree-l1 current active"><a class="current reference internal" href="#">The Bayes theorem</a></li>
 
+<li class="toctree-l1 has-children"><a class="reference internal" href="LMBayes.html">Linear models and Bayes theorem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMAndBayesTheorem.html">Bayes theorem applied to the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMLikelihood.html">The likelihood of the estimated parameters of a linear model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMPriors.html">The prior of the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMIntermediaryRecap.html">Intermediary recap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMMarginalLikelihood.html">Marginal likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="VariationalLaplace.html">Variational Laplace</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+</ul>
+</details></li>
 </ul>
 
     </div>
@@ -239,7 +241,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -256,7 +258,7 @@
       
       
       
-      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2FBayesTheorem.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FBayesTheorem.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -339,24 +341,16 @@
 
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
-    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
-    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
-    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
-  </button>
-`);
-</script>
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
 
 
-<script>
-document.write(`
-  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <i class="fa-solid fa-magnifying-glass fa-lg"></i>
-  </button>
-`);
-</script>
+</button>
 <button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
     <span class="fa-solid fa-list"></span>
 </button>
@@ -418,7 +412,10 @@ document.write(`
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <section class="tex2jax_ignore mathjax_ignore" id="the-bayes-theorem">
+  <div class="alert alert-info"><h4>Note</h4><p> 
+    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
+</p></div>
+<section class="tex2jax_ignore mathjax_ignore" id="the-bayes-theorem">
 <h1>The Bayes theorem<a class="headerlink" href="#the-bayes-theorem" title="Link to this heading">#</a></h1>
 <p>In the previous chapter, we defined the concept of probability and probability distributions. We saw that in our experiment where we toss a coin many time, we can use the binomial distribution to obtain the likelihood of experimental outcomes given different probabilities of obtaining tails. However, as we saw in the end, while the likelihood computed with the binomial distribution function is related to how confident we should be that the coin isn’t biased, it is not exactly the same. We need to be able to go from <span class="math notranslate nohighlight">\(P(y|P(X=1))\)</span> to <span class="math notranslate nohighlight">\(P(P(X=1)|y)\)</span>. This is exacty what the Bayes Theorem enables us to do. But before introducing it, we need to revise our notation to be more general purpose.</p>
 <p>In our coin toss example, we would like to know the probability of obtaining head, which we wrote as <span class="math notranslate nohighlight">\(P(X=1)\)</span>. However, this notation is very specific to a problem with a binary outcome. In Bayesian inference, we are generally interested in know the value of one or several parameters <span class="math notranslate nohighlight">\(\Theta\)</span>, which happens in our coin toss problem to be <span class="math notranslate nohighlight">\(P(X=1)\)</span>. To that end, we used the binomial distribution to investigate the probability of a number of head out of a total number of throw. These are our empirical data and these are generally written as <span class="math notranslate nohighlight">\(y\)</span>. So when you read <span class="math notranslate nohighlight">\(P(y|\Theta)\)</span>, you can read ‘The probability of our data given the value of our parameter of interest’ and in the specific case of our coin toss example as ‘The probability of getting k times head, given the probability of head’.</p>
@@ -981,10 +978,10 @@ $<span class="math notranslate nohighlight">\(P(y|\Theta)P(\Theta) = C\times\The
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 4 heads out of 10 tosses
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 6 heads out of 10 tosses
 </pre></div>
 </div>
-<img alt="_images/3e294737071ca124eb0f6bc4794bdf9db587e4616d75e0731fa9a5f09eb940a8.png" src="_images/3e294737071ca124eb0f6bc4794bdf9db587e4616d75e0731fa9a5f09eb940a8.png" />
+<img alt="_images/34773a919d00586982c2de19516e3abd3bcd8976a07530aff24bb7343efbef6a.png" src="_images/34773a919d00586982c2de19516e3abd3bcd8976a07530aff24bb7343efbef6a.png" />
 </div>
 </div>
 <p>One thing you probably notice off the bat is that the probability returned by the likelihood function are smaller than that of the prior and posterior. And even weirder, both for the prior and the posterior, there are values that are higher than 1, eventhough we said that a probability distribution must sum up to 1, how can that be? Well for sake of simplicity I omitted a few things. There is a fundamental difference between the distribution we use for the likelihood and the distributions of the prior and posterior. The likelihood is a discrete probability distribution. When we throw the coin n times, there is a finite number of outcomes k: 0 to n. And for each of these outcome, we have a probability. If we take the sum of all these probabilities, we must get one:</p>
@@ -1035,13 +1032,13 @@ $<span class="math notranslate nohighlight">\(P(y|\Theta)P(\Theta) = C\times\The
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 4 heads out of 10 tosses
-We obtained 4 heads out of 10 tosses
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 5 heads out of 10 tosses
+We obtained 2 heads out of 10 tosses
 We obtained 3 heads out of 10 tosses
-We obtained 7 heads out of 10 tosses
+We obtained 2 heads out of 10 tosses
 </pre></div>
 </div>
-<img alt="_images/c877ae73334c15c7987b45e78548231e283c633fe4bb0249e81a658949671006.png" src="_images/c877ae73334c15c7987b45e78548231e283c633fe4bb0249e81a658949671006.png" />
+<img alt="_images/b44a48b41ae5d759aadbe0c3d1f1b9ef16b36b7fa6e3b9fbc9d8f8319280208b.png" src="_images/b44a48b41ae5d759aadbe0c3d1f1b9ef16b36b7fa6e3b9fbc9d8f8319280208b.png" />
 </div>
 </div>
 <p>That way it’s a bit easier to read. In the figure above, we run the same experiment three times in a row to show that depending on the outcome of the experiment, while our prior remains the same, the likelihood may change depending on the randomness involved in our experiment, which results in different posterior. That all make sense: if you get in one experiment 3/10 heads, then you have more reasons to believe that your coin is biased compared to getting 5/10 heads, make sense.</p>
@@ -1078,10 +1075,10 @@ We obtained 7 heads out of 10 tosses
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 8 heads out of 10 tosses
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>We obtained 5 heads out of 10 tosses
 </pre></div>
 </div>
-<img alt="_images/ea9cf3266e0233172812b24b7ff2793bd16627137574f6eb0115a930b91a0835.png" src="_images/ea9cf3266e0233172812b24b7ff2793bd16627137574f6eb0115a930b91a0835.png" />
+<img alt="_images/4719e0e1400a2d15774f24d6cd94452e17fda2bf84c7126b403d626bbba1d927.png" src="_images/4719e0e1400a2d15774f24d6cd94452e17fda2bf84c7126b403d626bbba1d927.png" />
 </div>
 </div>
 <p>Now let’s do the same but for <span class="math notranslate nohighlight">\(P(\Theta&lt;=0.51)\)</span></p>
@@ -1106,7 +1103,7 @@ We obtained 7 heads out of 10 tosses
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/dee26b936ff9cbb2790f0a748ee85b8c5bfea49e6e62333857575a02fe38c963.png" src="_images/dee26b936ff9cbb2790f0a748ee85b8c5bfea49e6e62333857575a02fe38c963.png" />
+<img alt="_images/315da359c9d1385108c55ed249e5383ca843ba5f000ac7153fa5f2131165af3d.png" src="_images/315da359c9d1385108c55ed249e5383ca843ba5f000ac7153fa5f2131165af3d.png" />
 </div>
 </div>
 <p>If we take the difference between these two, we get:</p>
@@ -1137,7 +1134,7 @@ We obtained 7 heads out of 10 tosses
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/cbe4190942890202f6cd430f6ba2e59563cf6ad107fdda4e686f950d056b02d1.png" src="_images/cbe4190942890202f6cd430f6ba2e59563cf6ad107fdda4e686f950d056b02d1.png" />
+<img alt="_images/a664971d48ad51931b4db84d9c31380912a9397dcae27e49c5800cfedf912e70.png" src="_images/a664971d48ad51931b4db84d9c31380912a9397dcae27e49c5800cfedf912e70.png" />
 </div>
 </div>
 <p>That’s right, when we take the difference between <span class="math notranslate nohighlight">\(P(\Theta&lt;= 0.55) - P(\Theta&lt;= 0.45)\)</span> we get the probability of <span class="math notranslate nohighlight">\(P(0.45&lt;=\Theta&lt;= 0.55)\)</span>, as we remove everything that is common to both (the area overlapping between the two on the graph above). So this means that to obtain the probability of our theta value being within a specific range, we need to integrate the posterior again, once for each of the bounds of our range:</p>
@@ -1282,7 +1279,7 @@ $<span class="math notranslate nohighlight">\(\int_{\Theta=0}^{x}{P(\Theta|y)} =
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/21565da80cc6889e1031bffb86bcf40818d45a4fbab4f0e90c1f00a21a5bcbb3.png" src="_images/21565da80cc6889e1031bffb86bcf40818d45a4fbab4f0e90c1f00a21a5bcbb3.png" />
+<img alt="_images/4099519a345d8c244e0f4ced99bc1c0c10f6351f7bb85993874c9072b58d4e37.png" src="_images/4099519a345d8c244e0f4ced99bc1c0c10f6351f7bb85993874c9072b58d4e37.png" />
 </div>
 </div>
 <p>Hopefully this makes sense, the CDF is basically summing up all the values under the green curve up until that point</p>
@@ -1342,7 +1339,7 @@ $<span class="math notranslate nohighlight">\(\int_{\Theta=0}^{x}{P(\Theta|y)} =
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(0.45 &lt;= $\Theta$ &lt;= 0.55)=0.4036507504715131
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(0.45 &lt;= $\Theta$ &lt;= 0.55)=0.5366211004445558
 </pre></div>
 </div>
 </div>
@@ -1355,7 +1352,7 @@ $<span class="math notranslate nohighlight">\(\int_{\Theta=0}^{x}{P(\Theta|y)} =
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(0.40 &lt;= $\Theta$ &lt;= 0.60)=0.7314485372625755
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(0.40 &lt;= $\Theta$ &lt;= 0.60)=0.8605612038452095
 </pre></div>
 </div>
 </div>
@@ -1458,6 +1455,15 @@ $<span class="math notranslate nohighlight">\(\int_{\Theta=0}^{x}{P(\Theta|y)} =
         <p class="prev-next-title">Probablities and probability distribution</p>
       </div>
     </a>
+    <a class="right-next"
+       href="LMBayes.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Linear models and Bayes theorem</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
 </div>
                 </footer>
               
@@ -1465,7 +1471,8 @@ $<span class="math notranslate nohighlight">\(\int_{\Theta=0}^{x}{P(\Theta|y)} =
             
             
               
-                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
 
 
   <div class="sidebar-secondary-item">
@@ -1549,8 +1556,8 @@ By Alex Lepauvre, Jan Gabriel Hartel
   </div>
   
   <!-- Scripts loaded after <body> so the DOM is not blocked -->
-  <script src="_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
-<script src="_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+  <script defer src="_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
 
   <footer class="bd-footer">
   </footer>

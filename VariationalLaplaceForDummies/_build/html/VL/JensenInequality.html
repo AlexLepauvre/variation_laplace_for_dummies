@@ -1,0 +1,803 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Jensen inequality: from an intractable integral to an optimization problem &#8212; Variational Laplace For Dummies</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'VL/JensenInequality';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="Variational Laplace" href="../VariationalLaplace.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Variational Laplace for Dummies
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ProbabilityDistribution.html">Probablities and probability distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BayesTheorem.html">The Bayes theorem</a></li>
+
+<li class="toctree-l1 has-children"><a class="reference internal" href="../LMBayes.html">Linear models and Bayes theorem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMAndBayesTheorem.html">Bayes theorem applied to the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMLikelihood.html">The likelihood of the estimated parameters of a linear model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMPriors.html">The prior of the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMIntermediaryRecap.html">Intermediary recap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMMarginalLikelihood.html">Marginal likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../VariationalLaplace.html">Variational Laplace</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FVL/JensenInequality.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/VL/JensenInequality.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Jensen inequality: from an intractable integral to an optimization problem</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expectation">Expectation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-log-model-evidence-as-an-expectation">The log model evidence as an expectation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#free-energy-a-lower-bound-on-the-model-evidence">Free energy: a lower bound on the model evidence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-q-theta-supposed-to-be">What’s <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> supposed to be?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q-theta-is-an-approximation-of"><span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is an approximation of…</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-posterior-distribution">…The posterior distribution!</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap">Recap</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <div class="alert alert-info"><h4>Note</h4><p> 
+    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
+</p></div><section class="tex2jax_ignore mathjax_ignore" id="jensen-inequality-from-an-intractable-integral-to-an-optimization-problem">
+<h1>Jensen inequality: from an intractable integral to an optimization problem<a class="headerlink" href="#jensen-inequality-from-an-intractable-integral-to-an-optimization-problem" title="Link to this heading">#</a></h1>
+<p>As I mentioned in the previous chapter, since we can’t compute the marginal likelihood directly, we can compute something else that’s easier to calculate that we know should be roughly equivalent. This something else we can try to compute rely on the so-called <strong>Jensen inequality</strong>, which states that concave function, the function of the average is greater than or equal to the average of the function. This may sound a bit complicated at first. So for sake of clarity, let’s replace ‘a function’ by the logarithmic function, which is clearly concave:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>  
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;log(x)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alexander.lepauvre\AppData\Local\Temp\ipykernel_9416\149632854.py:5: RuntimeWarning: divide by zero encountered in log
+  y = np.log(xs)
+</pre></div>
+</div>
+<img alt="../_images/e0c0546a636284fb054ed86257317b0b72c6d24c977792049799958e24124b13.png" src="../_images/e0c0546a636284fb054ed86257317b0b72c6d24c977792049799958e24124b13.png" />
+</div>
+</div>
+<p>The Jensen inequality states the following:</p>
+<div class="math notranslate nohighlight">
+\[f(\frac{x_1 + x_2}{2}) &gt;= \frac{f(x_1) + f(x_2)}{2}\]</div>
+<p>In other words, the function applied to the average of two values is greater than or equal to the average of the function applied to those values.</p>
+<p>Using the logarithmic function, if we have <span class="math notranslate nohighlight">\(x_1=1\)</span> and <span class="math notranslate nohighlight">\(x_3\)</span>, then we have:</p>
+<div class="math notranslate nohighlight">
+\[ln(\frac{1 + 3}{2}) &gt;= \frac{ln(1) + ln(3)}{2}\]</div>
+<div class="math notranslate nohighlight">
+\[ln(2) &gt;= \frac{0 + 1.1}{2}\]</div>
+<div class="math notranslate nohighlight">
+\[0.69 &gt;= 0.55\]</div>
+<p>We can again see that that’s the case with code:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;f(x) = ln(x)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">3</span><span class="p">)],</span> <span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">20</span><span class="p">],</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">3</span><span class="p">)],</span> <span class="p">[</span><span class="mi">40</span><span class="p">,</span> <span class="mi">40</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])],</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span> <span class="p">[</span><span class="mi">40</span><span class="p">],</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$ln(</span><span class="se">\\</span><span class="s2">frac{1 + 3}</span><span class="si">{2}</span><span class="s2">)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])],</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span> <span class="p">[</span><span class="mi">40</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">frac{ln(1) + ln(3)}</span><span class="si">{2}</span><span class="s2">$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">3</span><span class="p">)],</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">])),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">3</span><span class="p">)]),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;log(x)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/d3bd4d17012df6b86e955ed7f1c26737d3231de5b92b121291fdd66b504751a0.png" src="../_images/d3bd4d17012df6b86e955ed7f1c26737d3231de5b92b121291fdd66b504751a0.png" />
+</div>
+</div>
+<p>This is just an example with the logarithmic function, but that’s true of any concave function. We can express it more generally:</p>
+<div class="math notranslate nohighlight">
+\[f(\frac{x_1 + x_2}{2}) &gt;= \frac{f(x_1) + f(x_2)}{2}\]</div>
+<p>Before we can go further, we need to introduce a new concept that you may not be familiar with, eventhough you have been using it a lot without knowing: Expectation</p>
+<section id="expectation">
+<h2>Expectation<a class="headerlink" href="#expectation" title="Link to this heading">#</a></h2>
+<p>According to the Jensen Inequality, the average of a log is inferior or equal to the log of an average. This way of describing it is however a bit too restrictive, because an average is in fact a specific case of something else: an <strong>Expectation</strong>. To be precise, an average is basically an expectation, when the variable we are dealing with is discrete. When computing your GPA, you have a finite number of grades, and you want to know the “Expected value” across all these grades. But you can compute an “average” if you will for any functions. When you take the log function for example, you can also compute the Expectation of that function. In probability theory, it is quite common to want to compute the Expectation of a random variable that follows any kind of probability distribution.</p>
+<p>As we have seen in the previous chapters, all probability distributions are mathematical functions, and we can compute the Expectation of a variable following that particular probability distribution. The general formulae for an Expectation of a continuous variable is this:</p>
+<div class="math notranslate nohighlight">
+\[\bold{E}[X] = \int_{-\infty}^{+\infty}x \cdot f(x) dx\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p>x: a continuous random variable</p></li>
+<li><p>f(x): a probability distribution applied to that variable</p></li>
+</ul>
+<p>It is quite intuitive: the expected value is basically the sum of each value of x, weighted by its probability. So it is just the same thing as a weighted average. With your GPA, the weighted average is the sum of each grade multiplied by the coefficient of that grade, then the whole divided by the sum of all coefficients. But that is also equivalent to dividing each coefficient by the total sum of coefficients, such that each weight is below 1, and multiplying each grade by that normalized coefficient. It’s the same thing in the formulae above, just using an integral instead of a sum, because the variable is continuous and not discrete.</p>
+<p>And funny enough, if the function <span class="math notranslate nohighlight">\(f(x)\)</span> were to be the normal distribution, then the value you would end up with by solving this formula would be it <span class="math notranslate nohighlight">\(\mu\)</span> parameter, so it all adds up. And we could in fact play around with the formulae and end up with the formulae you can look up for calculating the average of a normal distribution: once again, mathematician got annoyed dealing with a complicated function with an integral, and someone went and found an easier solution that gives the same result. No magic.</p>
+<p>One last piece of information, is that you can do the same where instead of looking at a random variable <span class="math notranslate nohighlight">\(x\)</span>, you can also look at the expectation of a function:</p>
+<div class="math notranslate nohighlight">
+\[\bold{E}[g(x)] = \int_{-\infty}^{+\infty}g(x) \cdot f(x) dx\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p>x: a continuous random variable</p></li>
+<li><p>g(x): any function that takes an input x and returns another value</p></li>
+<li><p>f(x): a probability distribution applied to that variable</p></li>
+</ul>
+<p>That’s probably a bit of a confusing concept, but basically, you can compute the weighted average of any function given any probability distrubion <span class="math notranslate nohighlight">\(f(x)\)</span>. So you could for example compute the Expectation of the function: <span class="math notranslate nohighlight">\(g(x) = x^2\)</span>, given a normal distribution <span class="math notranslate nohighlight">\(f(x)\)</span>. It may feel very confusing and really unclear why you would ever want to do something like this. As often in math, things feels obscurely complicated and pointless, but that’s just because if you have never encountered a concept and have never seen why it is useful, it feels pointless. So the best you can do for now is just take it as it is: you can compute the Expectation (which is roughly speaking the same thing as an average) of any function weighted by any probability distribution. At least in theory, some combinations may not be solvable anatyically [read: would require you to compute an infinity of numbers to get one out]</p>
+<p>So the Jensen inequality can be written as follows:</p>
+<div class="math notranslate nohighlight">
+\[f(E[X]) &gt;= E[f(x)]\]</div>
+<p>And if you replace the function by the logarithmic, then you have this:</p>
+<div class="math notranslate nohighlight">
+\[ln(E[X]) &gt;= E[ln(x)]\]</div>
+<p>That’s just the general form of what we said above, which now works for any function. Furthermore, we don’t need to specify several values of x (like we said 1 and 3), now the inequality holds for any values of x. And if that helps, in the case of the logarithmic function, you can rewrite the inequality like so:</p>
+<div class="math notranslate nohighlight">
+\[ln(\int_{-\infty}^{+\infty}x \cdot f(x) dx) &gt;= \int_{-\infty}^{+\infty}ln(x) \cdot f(x) dx\]</div>
+<p>If you get confused by the weird E letter. It’s all the same thing.</p>
+<p>In the example above with the logarithmic function, we showed that the log of the average of 1 and 3 is more than the average of log of 1 and log of 3. But with this more general formulation, we can see that the inequality holds true if we were to take any values between 1 and 3 instead:</p>
+<div class="math notranslate nohighlight">
+\[ln(\int_{1}^{3}x \cdot f(x) dx) &gt;= \int_{1}^{3}ln(x) \cdot f(x) dx\]</div>
+<p>Assuming that f(x) is a uniform distribution, such that the likelihood of each value is the same (i.e. non-weighted average), we can compute it like so:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)</span>
+<span class="n">x0</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">x1</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">steps</span> <span class="o">=</span> <span class="mf">0.01</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">))</span>
+<span class="n">log_of_average</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>  <span class="c1"># The log of the Expectation of all values between 1 and 3</span>
+<span class="n">average_of_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">)))</span>  <span class="c1"># The Expectation of the log of all values between 1 and 3</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;f(x) = ln(x)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">log_of_average</span><span class="p">,</span> <span class="p">[</span><span class="mi">40</span><span class="p">],</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$ln(</span><span class="se">\\</span><span class="s2">int_</span><span class="si">{1}</span><span class="s2">^3 x . f(x))$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">average_of_log</span><span class="p">,</span> <span class="p">[</span><span class="mi">40</span><span class="p">],</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">zorder</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s2">&quot;$</span><span class="se">\\</span><span class="s2">int_</span><span class="si">{1}</span><span class="s2">^3 ln(x) . f(x)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">vlines</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">3</span><span class="p">)],</span> <span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;:&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">))),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">hlines</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">))),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">linestyles</span><span class="o">=</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylim</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">))</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;log(x)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;x&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="../_images/827e692481cb24a075b90887477d0e27973b0c6509e906b866a68157b7f91900.png" src="../_images/827e692481cb24a075b90887477d0e27973b0c6509e906b866a68157b7f91900.png" />
+</div>
+</div>
+</section>
+<section id="the-log-model-evidence-as-an-expectation">
+<h2>The log model evidence as an expectation<a class="headerlink" href="#the-log-model-evidence-as-an-expectation" title="Link to this heading">#</a></h2>
+<p>How does that help? The marginal likelihood (<span class="math notranslate nohighlight">\(P(y)\)</span>) should return a single number, but we can’t calculate it because of the integral. So we have to try to find something else that we can calculate that will get us close to that. According to the Jensen inequality, if we have a concave function, then we know that the output of that function at the average of some inputs is always going to be at least equal or more than the average of that function’s output at all of those same inputs. This gets us on track to our approximate.</p>
+<p>The logarithmic function is a concave function, which means that the Jensen inequality applies to it. And the marginal likelihood return a single number. So if instead of looking for <span class="math notranslate nohighlight">\(P(x)\)</span>, we want to find <span class="math notranslate nohighlight">\(ln P(x)\)</span>, then the Jensen inequality applies. But if we want to write a formula like so:</p>
+<div class="math notranslate nohighlight">
+\[ln P(y) &gt;=  E[???]\]</div>
+<p>We are a bit stuck. That’s because the Jensen inequality stats that the log of an expectation (i.e. average) is always at least more than the expectation of a log. But the P(y) is not the average of something, so we can’t compute the average of that log either to write the other part of the equation.</p>
+<p>But we can see the problem in another direction: if we could express the marginal likelihood as an average of some sorts, then we would be able to write the missing part of the equation above. So let’s try to express the marginal likelihood as an expectation.</p>
+<p>The formula of an expectation is in fact not too far off that of the model evidence. Both have an intergal in there:</p>
+<div class="math notranslate nohighlight">
+\[ln P(y) = ln \int_{-\infty}^{+\infty} P(y|\Theta) P(\Theta) d\Theta\]</div>
+<p>For the sake of avoiding too long and beefy formulae, I am going to introduce a novel notation:</p>
+<div class="math notranslate nohighlight">
+\[P(y|\Theta) P(\Theta) = P(y, \Theta)\]</div>
+<p><span class="math notranslate nohighlight">\(P(y, \Theta)\)</span> is the <strong>joint probability</strong> of <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(\Theta\)</span>, and it is equal to the likelihood times the prior. Don’t get confused by that notation and don’t mix up <span class="math notranslate nohighlight">\(P(y|\Theta)\)</span> (the likelihood) and <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span> (the joint probability)!</p>
+<p>So we can rewrite the log of the  marginal likelihood as so:</p>
+<div class="math notranslate nohighlight">
+\[ln P(y) = ln \int_{-\infty}^{+\infty} P(y, \Theta) d\Theta\]</div>
+<p>Note that the joint probability is itself a probabity distribution, which is just a special kind of mathematical function. So what we have here is an integral of some function. And we saw that an expectation is the integral of the product between one function (or random variable) and a probability distribution:</p>
+<div class="math notranslate nohighlight">
+\[ln \int_{-\infty}^{+\infty}g(x) \cdot f(x) dx\]</div>
+<p>To express the log of the model evidence as an expectation, we would need to multiply it by a probability distribution. In other words, we could <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span> is <span class="math notranslate nohighlight">\(g(x)\)</span> and multiply it by some probability distribution <span class="math notranslate nohighlight">\(f(x)\)</span>. But obviously, we can’t multiply <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span> by anything else than 1, as that would change the result and not be equal to the model evidence anymore.</p>
+<p>But we can use a smart little trick: we can multiply <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span> by something that cancels each other out. We know that <span class="math notranslate nohighlight">\(f(x)\)</span> should be a probalility distribution to express the log of the model evidence as an expectation to make use of the Jensen inequality, so there is only one thing we can divide it by to have it cancel out: itself. Instead of f(x), we will write this probability distribution to <span class="math notranslate nohighlight">\(Q(x)\)</span>, again, no particular reason, it’S just a convention. So we have the following:</p>
+<div class="math notranslate nohighlight">
+\[ln P(y) = ln \int_{-\infty}^{+\infty} \frac{Q(\Theta)}{Q(\Theta)} P(y, \Theta) d\Theta\]</div>
+<p>Nothing has changes whatsoever, we just wrote this essentially:</p>
+<div class="math notranslate nohighlight">
+\[ln P(y) = ln \int_{-\infty}^{+\infty} 1 \times P(y, \Theta) d\Theta\]</div>
+<p>BUT, this is a nice trick, because it enables us to rewrite the model evidence as an expectation:</p>
+<div class="math notranslate nohighlight">
+\[ln P(y) = ln \int_{-\infty}^{+\infty} g(x) \cdot Q(\Theta) d\Theta\]</div>
+<p>Where:</p>
+<div class="math notranslate nohighlight">
+\[g(x) = \frac{P(y, \Theta)}{Q(\Theta)}\]</div>
+<p>So we have something, times a probability distribution, in other words, we now have:</p>
+<div class="math notranslate nohighlight">
+\[ln P(y) = ln E_{Q(\Theta)}\bigg[\frac{P(y, \Theta)}{Q(\Theta)}\bigg]\]</div>
+<p>And here we go, we can make use of the Jensen inequality:</p>
+<div class="math notranslate nohighlight">
+\[ln E_{Q(\Theta)}\bigg[\frac{P(y, \Theta)}{Q(\Theta)}\bigg] &gt;=  E_{Q(\Theta)}\bigg[ln\frac{P(y, \Theta)}{Q(\Theta)}\bigg]\]</div>
+<p>Just to reiterate, don’t get confused by the Expectation symbol, the above equation is exactly the same as this one:</p>
+<div class="math notranslate nohighlight">
+\[ln P(y) &gt;=  E_{Q(\Theta)}\bigg[ln\frac{P(y, \Theta)}{Q(\Theta)}\bigg]\]</div>
+</section>
+<section id="free-energy-a-lower-bound-on-the-model-evidence">
+<h2>Free energy: a lower bound on the model evidence<a class="headerlink" href="#free-energy-a-lower-bound-on-the-model-evidence" title="Link to this heading">#</a></h2>
+<p>Thanks to the Jensen inequality, we can circumvent the direct calculation of the model evidence and instead try to calculate the expectation of the log of the joint probability divided by the probability distribution <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>. We will discuss in the next section what exactly that <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>. <strong>Don’t get confused</strong>: we have not gotten rid of the integral with this inequality, eventhout the integral symbol is not present in the right side of the equation. If you remember what we wrote above, the right part of the equation in the inequality right above is in fact:</p>
+<div class="math notranslate nohighlight">
+\[E_{Q(\Theta)}\bigg[ln\frac{P(y, \Theta)}{Q(\Theta)}\bigg] = \int_{-\infty}^{+\infty} ln \frac{P(y, \Theta)}{Q(\Theta)} \cdot Q(\Theta) d\Theta\]</div>
+<p>So we have again the same question: How does that help? The answer is that with the Jensen inequality trick, we have turned the unsolvable model evidence into an optimization problem. We know that the result of this function can only be smaller or equal to the model evidence, not higher. In other words, it can maximally be equal to the marginal likelihood. And this is helpful because this gives us a direction in which to go when we try to approximate that quantity. The marginal likelihood could be positive or negative, and we would have no clue on whether any approximation of its value is going in the right direction. With the Expectation of the log described above, we can play with various parameters: we know that the higher the value the better, so we can continue playing around until we don’t see an increase in value anymore! In mathematical linguo, we say that we have converted this unsovable integral into an optimization problem, which can actually be tackled using a combination of analytical tricks and computational methods (which we will see in the next chapter).</p>
+<p>So now, in order to approximate the marginal likelihood, we need to maximize the value of the expectation of the log. But what is it we can actually ‘play around with’? When you look at the equation, you will see that some parameters are actually fixed. The numerator <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span> is the joint probability, which is equal to the likelihood (<span class="math notranslate nohighlight">\(P(y|\Theta)\)</span>) times the prior (<span class="math notranslate nohighlight">\(P(\Theta)\)</span>), both of which are fixed. That leaves only <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>. In the previous section, we said that <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is a probability distribution, so that we can express the marginal likelihood as an expectation. That means that it is a mathematical function that takes as input any values of the parameters of our model and return a probability (which integrates to 1 across all possible inputs). But at this point, we know nothing more about it.</p>
+<p>Therefore, in order to approximate the marginal likelihood, we need to find the parameters of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> that maximize the Expectation of the log (the right hand formula in the Jensen inequality). And the resulting value of the formula with that <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> distribution is the <strong>evidence lower bound (ELBO)</strong>. In other words, we have a function that takes as input the probability distribution <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> and returns as a value the Expectation of the log under that distribution:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = E_{Q(\Theta)}\bigg[ln\frac{P(y, \Theta)}{Q(\Theta)}\bigg]\]</div>
+<p>This function is actually a functional, a function that takes another function as an input. This is the <strong>Free energy functional</strong>, and yes, its the same one as the free energy principle in neuroscience. And the max of the Free energy functional is the <strong>ELBO</strong>, but it is therefore also simply called the <strong>Free energy</strong>.</p>
+<p>At this point, there is probably one detail that is bugging you: we can play around with the parameters of the <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> all we want, that doesn’t get rid of the problem of the integral. To compute the result of the Free energy functional with a particular <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>, we still need to integrate over all values of <span class="math notranslate nohighlight">\(\Theta\)</span>, which we can’t do, so how can we optimize the free energy functional? This will be the topic of the next chapter: how can we approximate the result of the free energy functional? But also: why can we approximate the result of an integral when it is in the free energy functional, but not when it is in the marginal likelihood? But before we can go into the next chapter, we still need to discuss a bit about <span class="math notranslate nohighlight">\(Q()\Theta\)</span></p>
+</section>
+<section id="what-s-q-theta-supposed-to-be">
+<h2>What’s <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> supposed to be?<a class="headerlink" href="#what-s-q-theta-supposed-to-be" title="Link to this heading">#</a></h2>
+<p>To be able to write the marginal likelihood as an Expectation, we had to introduce a probability distribution <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>. And we needed to write the marginal likelihood as an Expectation so that we can write it’s lower bound as the expectation of the log of that. If that sounds confusing, know that all the information you need understand are actually stated in the previous sentence. The only reason there is this <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is literally just to be able to write the marginal likelihood as an expectation. We couldn’t use anything else than a probability distribution, because an Expectation is defined as the product between a probability distribution and a function (any function). That’s it.</p>
+<p><span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is a probability distribution, which means that it is a mathematical function that returns the probability of each value of <span class="math notranslate nohighlight">\(\Theta\)</span>. In addition, this function integrates over 1, which it needs to in order to be a probability distrubion. But that is all we have specified so far. The <span class="math notranslate nohighlight">\(\Theta\)</span> is the same <span class="math notranslate nohighlight">\(\Theta\)</span> as we have everywhere: it is our model parameter. This means that this probability distribution takes as input the values of each parameter and return the probability of these values. It could be any probability distribution that can accomodate our parameter, and the inequality would hold.</p>
+<p>Just for the sake of example, let’s imagine that the <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is a multivariate normal distribution. I am not saying that it is, I am just using a normal distribution to make more concrete what we are trying to do with the free energy functional. A multivariate normal distribution is parametrized as such:</p>
+<div class="math notranslate nohighlight">
+\[Q(\Theta) \sim \mathcal{N}(\mu, \Sigma)\]</div>
+<p>Or in other words:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta) = \frac{1}{(2\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\Theta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\Theta}-\mathcal{\mu}))\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu = \begin{bmatrix}\mu\beta_0\\\mu\beta_1\\\mu_\sigma^2\\...\end{bmatrix}\)</span> mean parameter of the multivariate normal distribution (one value for each parameter of the model)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\sigma = \begin{bmatrix}\sigma_{\beta_{0}}^2,\ cov{\beta_0, \beta_1},\ ...\\cov{\beta_1, \beta_0},\ \sigma_{\beta_1}^2,\ ...\\...,\ ...,\ ...\end{bmatrix}\)</span> variance covariance matrix of the parameters of the model</p></li>
+<li><p><span class="math notranslate nohighlight">\(p\)</span>: Number of parameters</p></li>
+</ul>
+<p><strong>Again, don’t get confused</strong>. We have already seen multiple instances of the multivariate distribution in various places, so don’t mix them up. If you remember, the likelihood of the data was also a multivariate normal distribution, defining the likelihood of the data under each possible values of the parameters. The prior distribution of the beta parameters is also a multivariate distribution, describing our prior belief in the likelihood of particular values of the beta parameters. Here if <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is a normal distribution, then to find max of the free energy functional, we can play around with all possible combination of values in the <span class="math notranslate nohighlight">\(\mu\)</span> vector and inside the <span class="math notranslate nohighlight">\(\Sigma\)</span> matrix to find the one that yields the largest possible number. In other words, optimizing the free energy function implies finding the inputs of the parametrization of the <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> that yield the highest value.</p>
+<section id="q-theta-is-an-approximation-of">
+<h3><span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is an approximation of…<a class="headerlink" href="#q-theta-is-an-approximation-of" title="Link to this heading">#</a></h3>
+<p>Hopefull this all make sense. Now, as it turns out, <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is not just a distribution we pulled out of nowhere to be able to write the marginal likelihood as an expectation. It actually corresponds to a very important part of the Bayes theorem. To see this, we can rewrite the free energy functional a bit differently:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = E_{Q(\Theta)}\bigg[ln\frac{P(y, \Theta)}{Q(\Theta)}\bigg]\]</div>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = E_{Q(\Theta)}[ln P(y, \Theta) - lnQ(\Theta)]\]</div>
+<p>That’s because with the logarithmic, a division is equal to a substraction. Nothing crazy here. One more thing you probably know (or knew and forgot) from your highschool probabilty classes is the <strong>chain rule</strong>. According to the chain rule:</p>
+<div class="math notranslate nohighlight">
+\[P(A, B) = P(A|B)P(B) = P(B|A)P(A)\]</div>
+<p>According to the chain rule:</p>
+<div class="math notranslate nohighlight">
+\[P(y, \Theta) = P(y|Theta)P(\Theta) = P(\Theta|y)P(y)\]</div>
+<p>Accordingly:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = E_{Q(\Theta)}[ln P(\Theta|y)P(y) - lnQ(\Theta)]\]</div>
+<p>And again, we can simplify multiplication by sum with the logarithmic, so:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = E_{Q(\Theta)}[ln P(\Theta|y) + ln P(y) - lnQ(\Theta)]\]</div>
+<p>And one last thing that you already know because we have seen many times in previous chapter, when you have a term in an integral that doesn’t involve the term that you are integrating over, then you can take it out of the integral. We have one such term in the equation above:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = ln P(y) + E_{Q(\Theta)}[ln P(\Theta|y) - lnQ(\Theta)]\]</div>
+<p>Looking at that equation, you might think: great, we are back to square one, we have the expectation part, but on top of that we have the log of the marginal evidence on its own. But that’s actually a wrong understanding of the function above. The function above basically says: ‘The free energy functional is equal to the log of the marginal evidence, plus something else, that something else being an expectation’. Based on what we say, that makes sense: the free energy functional is a lower bound on the log marginal likelihood, which means it is always going to be equal to the log of the marginal likelihood, minus a little something. The fact that the equation above has a + sign may be a bit confusing, but that’s simply because the expectation term in that case is always negative.</p>
+<p>The important part is this: in the above formula, the marginal likelihood is what we are trying to approximate, which is a fixed quantity. So if we bring the <span class="math notranslate nohighlight">\(E_{Q(\Theta)}[ln P(\Theta|y) - lnQ(\Theta)]\)</span> term to be as close as possible to 0, then the free energy is as close as possible to the log of the free energy, and our approximation is as accurate as it can be. And because the <span class="math notranslate nohighlight">\(E_{Q(\Theta)}[ln P(\Theta|y) - lnQ(\Theta)]\)</span> is a negative term, the largest possible value the free energy can take is the log of the marginal likelihood, which again makes sense because of the Jensen inequality.</p>
+</section>
+<section id="the-posterior-distribution">
+<h3>…The posterior distribution!<a class="headerlink" href="#the-posterior-distribution" title="Link to this heading">#</a></h3>
+<p>But what exactly is the expectation term here:</p>
+<div class="math notranslate nohighlight">
+\[E_{Q(\Theta)}[ln P(\Theta|y) - lnQ(\Theta)]\]</div>
+<p>It turns out that this formula corresponds to something very interesting:</p>
+<div class="math notranslate nohighlight">
+\[E_{Q(\Theta)}[ln P(\Theta|y) - lnQ(\Theta)] = E_{Q(\Theta)}[\frac{ln P(\Theta|y)}{lnQ(\Theta)}] = -D_{KL}[Q(\Theta)||P(\Theta|y)]\]</div>
+<p>The rightmost term is the Kullback-Leibler (KL) divergence. It is a measure of the distance between two probability distribution: the closer two distributions are the closest to 0 the KL divergence. So in other words, maximizing the free energy functional, i.e. making the free energy as close as possible to the log of the marginal likelihood, is equivalent to making the KL divergence between <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> and <span class="math notranslate nohighlight">\(P(\Theta|y)\)</span> as small as possible, i.e. making these two distributions as close as possible to each other.</p>
+<p>In other words, when we maximize the free energy, we are making <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> as similar as possible to <span class="math notranslate nohighlight">\(P(\Theta|y)\)</span>. You may have missed it, but we are here talking about <span class="math notranslate nohighlight">\(P(\Theta|y)\)</span>, which is… The posterior distribution! So we can now say: when maximizing the free energy by tweaking <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>, <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> becomes an approximation of the posterior itself.</p>
+<p>This may seem like a lot and feel a bit strange at first. But hopefully, you would agree that the math adds up. This is the reason why <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is referred to as the <strong>approximate prior</strong>. And when we optimize the free energy, we both approximate the model evidence (i.e. marginal likelihood) and the posterior in one go!</p>
+</section>
+</section>
+<section id="recap">
+<h2>Recap<a class="headerlink" href="#recap" title="Link to this heading">#</a></h2>
+<p>This chapter was the most technical so far, and you may feel a bit overwhelmed, especially given that we haven’t even once talked about penguins. Just to make sure that things get cemented the right way, here is a recap of what we have seen:</p>
+<ul class="simple">
+<li><p>According to the Jensen inequality, the average of a log is always equal or more than the log of an average</p></li>
+<li><p>The log of the marginal likelihood can be expressed as an Expectation (average of sorts):</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[ln P(y) = ln E_{Q(\Theta)}\bigg[\frac{P(y, \Theta)}{Q(\Theta)}\bigg]\]</div>
+<p>Where <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is a probability distribution</p>
+<ul class="simple">
+<li><p>Following the Jensen inequality, the log of the marginal likelihood will always be more than the Expectation of the log:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[ln P(y) &gt;=  E_{Q(\Theta)}\bigg[ln\frac{P(y, \Theta)}{Q(\Theta)}\bigg]\]</div>
+<ul class="simple">
+<li><p>This inequality turns the intractable calculcation of the marginal likelihood into an optimization problem</p></li>
+<li><p>The free energy functional takes as input the probability distribution <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> and returns the Expectation of the log:</p></li>
+</ul>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = E_{Q(\Theta)}\bigg[ln\frac{P(y, \Theta)}{Q(\Theta)}\bigg]\]</div>
+<ul class="simple">
+<li><p>In order to approximate the log of the marginal likelihood, we need to find <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> that maximizes the free energy functional</p></li>
+<li><p>The result of the free energy function at that point is the <strong>free energy</strong>, also known as the <strong>evidence lower bound</strong> (as it is the lowest possible value the log of the evidence, a.k.a. the log of the marginal likelihood, can take)</p></li>
+<li><p>The distribution <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> that maximizes the free energy functional is the posterior distribution, which is why the distribution <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is called the <strong>approximate posterior</strong></p></li>
+</ul>
+<p>Okay, so now that we have seen (and hopfully understood) all of that, it is time to tackle how to actually compute the free energy, or more precisely how to make it computable.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./VL"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="../VariationalLaplace.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Variational Laplace</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#expectation">Expectation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-log-model-evidence-as-an-expectation">The log model evidence as an expectation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#free-energy-a-lower-bound-on-the-model-evidence">Free energy: a lower bound on the model evidence</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-s-q-theta-supposed-to-be">What’s <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> supposed to be?</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#q-theta-is-an-approximation-of"><span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is an approximation of…</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-posterior-distribution">…The posterior distribution!</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#recap">Recap</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alex Lepauvre, Jan Gabriel Hartel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
