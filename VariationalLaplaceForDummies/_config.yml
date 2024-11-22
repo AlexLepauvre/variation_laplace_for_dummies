@@ -3,7 +3,7 @@
 
 title: Variational Laplace For Dummies
 author: Alex Lepauvre, Jan Gabriel Hartel
-logo: logo.png
+logo: cover.png
 
 # Force re-execution of notebooks on each build.
 # See https://jupyterbook.org/content/execute.html

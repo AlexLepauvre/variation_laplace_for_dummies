@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="./VariationalLaplaceForDummies/Cover.jpg" alt="Book Cover" width="400">
+  <img src="./VariationalLaplaceForDummies/Cover.jpg" alt="Book Cover" width="600">
 </div>
 
 # Variational Laplace for dummies
