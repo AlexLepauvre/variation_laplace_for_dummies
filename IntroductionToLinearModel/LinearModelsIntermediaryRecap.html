@@ -1,0 +1,690 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Intermediary recap &#8212; Variational Laplace For Dummies</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/bootstrap.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+
+  
+  <link href="../_static/vendor/fontawesome/6.5.2/css/all.min.css?digest=dfe6caa3a7d634c4db9b" rel="stylesheet" />
+  <link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-solid-900.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-brands-400.woff2" />
+<link rel="preload" as="font" type="font/woff2" crossorigin href="../_static/vendor/fontawesome/6.5.2/webfonts/fa-regular-400.woff2" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b" />
+  <script src="../_static/vendor/fontawesome/6.5.2/js/all.min.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'IntroductionToLinearModel/LinearModelsIntermediaryRecap';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="The prior of the linear model" href="LinearModelsPriors.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-primary-sidebar-checkbox"/>
+  <label class="overlay overlay-primary" for="pst-primary-sidebar-checkbox"></label>
+  
+  <input type="checkbox"
+          class="sidebar-toggle"
+          id="pst-secondary-sidebar-checkbox"/>
+  <label class="overlay overlay-secondary" for="pst-secondary-sidebar-checkbox"></label>
+  
+  <div class="search-button__wrapper">
+    <div class="search-button__overlay"></div>
+    <div class="search-button__search-container">
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         id="search-input"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form></div>
+  </div>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <div class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <script>document.write(`<img src="../_static/logo.png" class="logo__image only-dark" alt="Variational Laplace For Dummies - Home"/>`);</script>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+ <script>
+ document.write(`
+   <button class="btn search-button-field search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass"></i>
+    <span class="search-button__default-text">Search</span>
+    <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+   </button>
+ `);
+ </script></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Variational Laplace for Dummies
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ProbabilityDistribution.html">Probablities and probability distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BayesTheorem.html">The Bayes theorem</a></li>
+
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../IntroductionToLinearModel.html">Introduction to Linear Model</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="LinearModelsAndBayesTheorem.html">Bayes theorem applied to the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LinearModelsLikelihood.html">The likelihood of the estimated parameters of a linear model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LinearModelsPriors.html">The prior of the linear model</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Intermediary recap</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/executablebooks/jupyter-book/issues/new?title=Issue%20on%20page%20%2FIntroductionToLinearModel/LinearModelsIntermediaryRecap.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/IntroductionToLinearModel/LinearModelsIntermediaryRecap.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button" title="light/dark" aria-label="light/dark" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="theme-switch fa-solid fa-sun fa-lg" data-mode="light"></i>
+    <i class="theme-switch fa-solid fa-moon fa-lg" data-mode="dark"></i>
+    <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"></i>
+  </button>
+`);
+</script>
+
+
+<script>
+document.write(`
+  <button class="btn btn-sm pst-navbar-icon search-button search-button__button" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+  </button>
+`);
+</script>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Intermediary recap</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-linear-model">The linear model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-theorem-and-the-linear-model">Bayes theorem and the linear model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-likelihood">The likelihood</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prior">The prior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#keeping-things-straight">Keeping things straight</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="intermediary-recap">
+<h1>Intermediary recap<a class="headerlink" href="#intermediary-recap" title="Link to this heading">#</a></h1>
+<p>The content we have seen so far was quite dense, so before we move forward, let’s recapitulate everything we have seen so far and keep things straight.</p>
+<section id="the-linear-model">
+<h2>The linear model<a class="headerlink" href="#the-linear-model" title="Link to this heading">#</a></h2>
+<p>We started from a simple problem: we have two variables and we want to know if they are correlated to another. We took a concrete example to illustrate this: imagine you want to know if the length of penguin flippers is related to their weight. We used several expression to express teh same idea:</p>
+<ul class="simple">
+<li><p>Is the flipper length correlated with the weight of penguin</p></li>
+<li><p>Is the flipper length predictive of the weight of the penguins</p></li>
+</ul>
+<p>And other variation of this. For any of these questions, if the answer is yes, it means that changes in the value of the one variable are reflected in the other. If the answer is no, then the change in one variable are inconsequential to the other variables and the two are independent. And as you have probably heard countless times before, correlation doesn’t imply causation: if two variables are dependent on each other, it can be that one causes the other, one is a consequence of the other or alternatively, they both driven by a third variable. In our example, the weight of the penguin may be related to their flipper length, but it would be odd to suggest that the flipper length has any causal relationship with the weight of penguin. If you were to investigate whether penguin weight is associated with their food intake, it might seem more reasonable to assume  causality.</p>
+<p>If you want to know whether two variables are linked to another, there are several ways you can go. You could compute the correlation coefficient between the two and see whether it is positive, negative, or null. An alternative approach we chose is to go for a linear model, which has the following formula:</p>
+<div class="math notranslate nohighlight">
+\[y_i = \beta_ix_i + \sigma_i\]</div>
+<p>This approach enables to answer our question, just as other approaches would. But as it turns out, other approach (such as computing a correlation) are specific case of the above. The linear model is therefore more general than other approaches. If you are already familiar with statistics, it is really important to clear out some confusions you may have. A linear model <strong>not a a way to estimate the correlation between two parameters, nor is it a way to know if the correlation between two (or more) variables is significant</strong>. Instead, it is a <strong>generative model for your data</strong>. In other words, it is a hypothesis. You are basically saying “I believe that my observed data are a weighted sum of some variables, give or take some error”. So in the case of our penguins, it is say “I believe that the weight of the penguin is equal to the length of their flipper weighted by a constant, plus an intercept, though with some error because I don’t believe that it is going to be exactly correct”.</p>
+<p>You can then use various other formula and tools to estimate the weights for your regressors (flipper length): that would be the <strong>optimal least square (OLS)</strong> method. Here again, it is important to be clear about what we mean. When you “estimate the parameters” of a linear model, you are trying to find the values of the <span class="math notranslate nohighlight">\(\beta\)</span> parameters they yield the smallest error overall. You are looking for the <span class="math notranslate nohighlight">\(\beta\)</span> values with which the distance between each point and the regression line is on average as small as possible. Because it is equally bad to have a line that is below or above an observation (i.e. positive and negative misestimation are equally bad), you want to minimize the square of the error. So the OLS finds the <span class="math notranslate nohighlight">\(\beta\)</span> values that minimize the <strong>Residual Sum of Square (RSS)</strong>. And we saw that the <span class="math notranslate nohighlight">\(\beta\)</span> that result in the smallest error are also the values under which the observation are the most likely based on the <strong>likelihood function</strong>.</p>
+</section>
+<section id="bayes-theorem-and-the-linear-model">
+<h2>Bayes theorem and the linear model<a class="headerlink" href="#bayes-theorem-and-the-linear-model" title="Link to this heading">#</a></h2>
+<p>The question “Is there a relationship between two (or more) variables?” is equivalent to asking “Are the <span class="math notranslate nohighlight">\(\beta\)</span> parameters different from 0?”. Indeed, if you have a (linear) relationship between two variables, then by definition, a change in one variable will be associated with a change in the other, so the <span class="math notranslate nohighlight">\(\beta\)</span> parameter of the one regressor will be different from 0. Once again, we are dealing with some randomness (stochastic processes). So if we observe two variables, such as the length of penguin’s flipper and their weight, and that we find using the OLS method that the <span class="math notranslate nohighlight">\(\beta\)</span> weight of the flipper length parameter is different from 0, it doesn’t mean that there really is a relationship between the two, just as observing 7/10 heads when throwing a coin doesn’t mean that your coin is biased. What we really want to know is what is the true relationship between two variables, which we can’t know for sure. So instead, what we can seek is to know how confident we are of the values of our <span class="math notranslate nohighlight">\(\beta\)</span> (and other) parameters after seeing some data. And for that, we need the Bayes theorem:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta|y) = \frac{P(y|\Theta)P(\Theta)}{p(y)}\]</div>
+<p>In the case of the coin toss, this is a bit simpler, because both <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(\Theta\)</span> are a single number: the number of head observed in our experiment and the probability of getting head. But in the case of our linear model, the <span class="math notranslate nohighlight">\(\Theta\)</span> parameter refer to several different parameters: each of the <span class="math notranslate nohighlight">\(\beta\)</span> parameter, as well as the <span class="math notranslate nohighlight">\(\sigma\)</span> parameter which refers to how large our error <span class="math notranslate nohighlight">\(\epsilon\)</span> is. Specifically, the <span class="math notranslate nohighlight">\(\sigma^2\)</span> parameters is the variance of the error normal distribution. In addition, the data <span class="math notranslate nohighlight">\(y\)</span> refer to several observation (one for each penguin). This implies that things get a little bit trickier when it comes to compute the likelihood and the prior.</p>
+</section>
+<section id="the-likelihood">
+<h2>The likelihood<a class="headerlink" href="#the-likelihood" title="Link to this heading">#</a></h2>
+<p>So, in our penguin example, where we have 2 <span class="math notranslate nohighlight">\(\beta\)</span>, the <span class="math notranslate nohighlight">\(\Theta\)</span> of the Bayes theorem above is replaced by <span class="math notranslate nohighlight">\(\beta_0, \beta_1, \sigma^2\)</span>, so we can rewrite the Bayes theorem as such for that specific case:
+$<span class="math notranslate nohighlight">\(P(\beta_0, \beta_1, \sigma^2|y) = \frac{P(y|\beta_0, \beta_1, \sigma^2)P(\beta_0, \beta_1, \sigma^2)}{p(y)}\)</span>$</p>
+<p>In the case of the linear model, the likelihood is the probability of observing all the data <span class="math notranslate nohighlight">\(y\)</span> given the values of <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>. Importantly, by the very formula of the linear model, the value of <span class="math notranslate nohighlight">\(y\)</span> depend on the values of each <span class="math notranslate nohighlight">\(\beta\)</span> combined, as well as the value of <span class="math notranslate nohighlight">\(\sigma\)</span> for the error. In other words, the likelihood of <span class="math notranslate nohighlight">\(y\)</span> is not <strong>independent of the parameters</strong>, instead it is <strong>dependent jointly</strong> on the parameters of the model. Accordingly, the likelihood is not equal to the product of the likelihood of the data under each parameter independently. Instead, the likelihood is a multivariate distribution, providing the likelihood of the data <span class="math notranslate nohighlight">\(y\)</span> given the combination of the <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span> parameters.</p>
+<p>What kind of distribution? A multivariate distribution. This is because of the main assumption of linear models: the error should be normally distributed and independently and identically distributed (i.i.d.). Because the error is normally distributed, so is the likelihood.</p>
+<p>The general formula a multivariate normal distribution is:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta) = \frac{1}{(2*\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\Theta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\Theta}-\mathcal{\mu}))\]</div>
+<p>What we mean that by the “general formula” is that any normal distribution follow this formulae. It can however be written in more specific ways depending on the parameters it refers to. In the case of the liklihood function, it describes the probability of the data given the parameters, so can write the following:</p>
+<div class="math notranslate nohighlight">
+\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\Beta]^2}{2\sigma^2}}\]</div>
+<p>How is that the same? Well that’s because product of exponentials can be combined into a single exponential of a sum:</p>
+<div class="math notranslate nohighlight">
+\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^nexp\bigg(-\frac{1}{2\sigma^2}\sum_{i=1}^{n}[y_i-(\beta_0 + \beta_1x_i)]\bigg)\]</div>
+<p>This expression aligns with the multivariate normal distribution’s formula when we consider <span class="math notranslate nohighlight">\(y\)</span> as an <span class="math notranslate nohighlight">\(n\)</span>-dimensional vector, <span class="math notranslate nohighlight">\(\mu\)</span> as the vector of expected values given by the model (<span class="math notranslate nohighlight">\(\mu = X \beta\)</span>), and <span class="math notranslate nohighlight">\(\Sigma\)</span> as <span class="math notranslate nohighlight">\(\sigma^2 I_n\)</span>, where <span class="math notranslate nohighlight">\(I_n\)</span> is the <span class="math notranslate nohighlight">\(n \times n\)</span> identity matrix.</p>
+<p>Upon calculating the likelihood, we made two observations. First, the <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> values under which the likelihood of our observation <span class="math notranslate nohighlight">\(y\)</span> is highest are equivalent to the estimates we get from the OLS method. That’s in fact why finding the <span class="math notranslate nohighlight">\(\beta\)</span> values under which the error are is minimal is useful, it’s because these are the values under which the data are most likely. And this is why we call these the <strong>Minimal Likelihood Estimates (MLE)</strong>. And just as there are MLE for the <span class="math notranslate nohighlight">\(\beta\)</span>, there is also a value of <span class="math notranslate nohighlight">\(\sigma^2\)</span> under which the data are most likely, i.e. there is a MLE for that parameter. You can either compute the likelihood and scan values of <span class="math notranslate nohighlight">\(\sigma^2\)</span> until you find the one under which the data are most likely, or you can take a shortcut and use this formulae:</p>
+<div class="math notranslate nohighlight">
+\[\hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^{n}[y_i-(\sum_{k=1}^{m}\beta_k x_k)]\]</div>
+<p>This is the formula of the variance. The hat here signifies that it is the <strong>observed variance</strong> based on the data. And as you know, this does not need to be equal to the true variance. In other words, say you observe 10 penguins, find your estimates of best fit ofr <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> and compute the measurement error, you don’t know if the value you get is the ground truth, only that it is what you have observed in your sample. This is yet again another parameter you can’t really know about.</p>
+<p>But the formula above is not limited to the <strong>observed variance</strong>, it is the general formula of the variance:</p>
+<div class="math notranslate nohighlight">
+\[\sigma^2 = \frac{1}{n}\sum_{i=1}^{n}[x_i-\bar{x}]\]</div>
+<p>This formula computes the average of the squared differences between the observed values and the values predicted by our model, which is the essence of variance in statistical terms. And for any normal distribution, this is what the <span class="math notranslate nohighlight">\(\sigma^2\)</span> parameters refer to: the square of the differenmce between a value and the mean of the distribution. And this once again makes sense: large variance means that values further away from the mean are more likely, which means that the distribution is wider, small variance means that values that are far from the mean are not very likely, which means that our distribution is quite tight.</p>
+<p>And the other observation we made is that when we have two variables and that our <span class="math notranslate nohighlight">\(x\)</span> regressor isn’t centered, the likelihood takes kind of a weird shape, there is a ridge such that the distribution is squished in one direction. Such a ridge implies that there is a correlation between the values of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span>, because it means that there are pairs of values of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> under which the data are most likely, but more importantly that these pairs fall along a specific line. In this specific case, it is a negative relationship: for larger values of <span class="math notranslate nohighlight">\(beta_1\)</span>, the data tend to be more likely under smaller <span class="math notranslate nohighlight">\(\beta_0\)</span> values and reciprocally. In this case, this is an artifact of sorts that occurs when the regressors aren’t centered. We can fix that issue by subtracting the mean value of our regressors <span class="math notranslate nohighlight">\(\bar{x}\)</span> (i.e. the mean flipper length) to each penguin <span class="math notranslate nohighlight">\(x_i\)</span> flipper length. More generally, it is always a good idea to center each variable independently to avoid such artifacts.</p>
+<p>Importantly, it can happen even if you have centered your variable that there is a correlation between pairs of <span class="math notranslate nohighlight">\(\beta\)</span> parameters under which the data are most likely. It occurs when the predictor variables themselves are correlated, i.e., when there is multicollinearity among the predictors. In such cases, even after centering, if two or more predictors are highly correlated, the estimation of each <span class="math notranslate nohighlight">\(\beta\)</span> becomes less precise, and the likelihood surface shows ridges or elongations reflecting the dependencies between the coefficients.</p>
+</section>
+<section id="the-prior">
+<h2>The prior<a class="headerlink" href="#the-prior" title="Link to this heading">#</a></h2>
+<p>The prior specify the belief we have about likely values of all parameters in the model: <span class="math notranslate nohighlight">\(\beta\)</span> as well as <span class="math notranslate nohighlight">\(\sigma^2\)</span>. For the <span class="math notranslate nohighlight">\(\beta\)</span>, we opted for a normal distribution, while for the <span class="math notranslate nohighlight">\(\sigma^2\)</span> parameter we opted for an <strong>inverse gamma</strong> distribution, because it is only defined for positive value, which is also the case of the variance.</p>
+<p>The inverse gamma is defined as:</p>
+<div class="math notranslate nohighlight">
+\[P(x: \alpha, \beta) = \frac{\beta^\alpha}{\Gamma(\alpha)}(1/x)^{\alpha+1}exp(-\beta/x)\]</div>
+<p>Where <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are parameters that we can tweak to specify our belief aboutt the likely values for the variance of the error term of our model.</p>
+<p>In the case of the <span class="math notranslate nohighlight">\(\beta\)</span>, we use a multivariate normal distribution, so that we can specify if we believe that there may be a correlation between our beta parameter. That would be the case if we believe that if we observe a large value in our <span class="math notranslate nohighlight">\(\beta\)</span>, we should be more likely to see a large value in the other, in which we should specify a positive covariance. Alternatively, we can also specify a negative covariance between two <span class="math notranslate nohighlight">\(\beta\)</span> if we believe that if we observe a high value for one of the <span class="math notranslate nohighlight">\(\beta\)</span> we are likely to see a small value for the other. Importantly, while for the likelihood function, we would expect to observe covariance between the <span class="math notranslate nohighlight">\(\beta\)</span> parameters if there is some colinearity in the regressors <span class="math notranslate nohighlight">\(x\)</span>, here this is independent of seeing any data. It would make sense that if there is a correlation between the <span class="math notranslate nohighlight">\(\beta\)</span>, if both regressors are driven by the same underlying thing, then it would make sense for the actual values of <span class="math notranslate nohighlight">\(x\)</span> to be similar. But in the case of the priors, this is independently of the actual values of <span class="math notranslate nohighlight">\(x\)</span>, it only depends on our belief. And so the prior of the <span class="math notranslate nohighlight">\(\beta\)</span> parameters is specified as:</p>
+<div class="math notranslate nohighlight">
+\[P(\mathcal{\beta}) = \frac{1}{(2*\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu}))\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mathcal{\beta}\)</span> is a vector with the values of each <span class="math notranslate nohighlight">\(\beta\)</span> parameter for which we want to obtain the probability</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{\mu}\)</span> is a vector with the mean value of each <span class="math notranslate nohighlight">\(\beta\)</span> prior distributions</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mathcal{\Sigma}\)</span> is the variance covariance matrix. The diagonal specifies the variance of each parameter, and the off diagonal represents the covariance between each pair of parameter</p></li>
+</ul>
+</section>
+<section id="keeping-things-straight">
+<h2>Keeping things straight<a class="headerlink" href="#keeping-things-straight" title="Link to this heading">#</a></h2>
+<p>I know, I know—at this point, you probably feel like you’re playing Sudoku. There are many bits and pieces, many distributions, and the same parameter <span class="math notranslate nohighlight">\(\sigma^2\)</span> popping up all over the place. It’s really easy to get things mixed up! So here is a summary of each of the bits and pieces that we need to move forward:</p>
+<ol class="arabic simple">
+<li><p>Linear model: the generative model for our data</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[y_i = \beta_0 + \beta_1x + \epsilon\]</div>
+<ol class="arabic simple" start="2">
+<li><p>Assumption About the Error Term:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</div>
+<ul class="simple">
+<li><p>This means the errors are independently and identically distributed (i.i.d.) normal random variables with mean zero and variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>.</p></li>
+</ul>
+<ol class="arabic simple" start="3">
+<li><p>Bayes’ Theorem for Our Model::
+Since we have three parameters that we don’t know—<span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span>, and <span class="math notranslate nohighlight">\(\sigma^2\)</span>—and we want to know how confident we are about their true values given the data, we use Bayes’ theorem:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[P(\beta_0, \beta_1, \sigma^2|y) = \frac{P(y|\beta_0, \beta_1, \sigma^2)P(\beta_0, \beta_1, \sigma^2)}{P(y)}\]</div>
+<ol class="arabic simple" start="4">
+<li><p>Likelihood Function:</p></li>
+</ol>
+<p>The likelihood of the data given the parameters, <span class="math notranslate nohighlight">\(P(y \mid \beta_0, \beta_1, \sigma^2)\)</span>, defines the probability of observing the data we have observed (e.g., the weights of the penguins), given the values of the parameters. It is calculated as:</p>
+<div class="math notranslate nohighlight">
+\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\Beta]^2}{2\sigma^2}}\]</div>
+<ul class="simple">
+<li><p>Here, <span class="math notranslate nohighlight">\(n\)</span> is the number of observations.</p></li>
+<li><p>The parameters <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span>, and <span class="math notranslate nohighlight">\(\sigma^2\)</span> are what we’re trying to estimate.</p></li>
+</ul>
+<ol class="arabic simple" start="5">
+<li><p>Prior Distribution:
+The prior distribution is defined as:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[P(\beta_0, \beta_1, \sigma^2) = P(\mathcal{\beta}) \times P(\sigma^2)\]</div>
+<ul class="simple">
+<li><p>Where <span class="math notranslate nohighlight">\(\boldsymbol{\beta} = \begin{bmatrix} \beta_0 \ \beta_1 \end{bmatrix}\)</span> is the vector of coefficients.</p></li>
+</ul>
+<ol class="arabic simple" start="6">
+<li><p>Prior for <span class="math notranslate nohighlight">\(\sigma^2\)</span>:</p></li>
+</ol>
+<p>The prior distribution of the variance parameter <span class="math notranslate nohighlight">\(\sigma^2\)</span> states our belief about the likely values of <span class="math notranslate nohighlight">\(\sigma^2\)</span>, which conditions the distribution of the error term in our model. It follows an inverse gamma distribution:</p>
+<div class="math notranslate nohighlight">
+\[P(x: \alpha, \beta) = \frac{\beta^\alpha}{\Gamma(\alpha)}(1/x)^{\alpha+1}exp(-\beta/x)\]</div>
+<ul class="simple">
+<li><p>Here:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> are parameters that we can adjust to specify our belief about the likely values for the variance of the error term in our model.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Gamma(\alpha)\)</span> is the gamma function evaluated at <span class="math notranslate nohighlight">\(\alpha\)</span>.</p></li>
+</ul>
+</li>
+</ul>
+<ol class="arabic simple" start="7">
+<li><p>Prior for <span class="math notranslate nohighlight">\(\boldsymbol{\beta}\)</span>:
+Finally—and this is probably where it gets confusing—the prior distribution of the <span class="math notranslate nohighlight">\(\beta\)</span> parameters is a multivariate normal distribution. While it’s the same kind of distribution as the likelihood (since both are normal), it’s important to note that they are separate entities; they just belong to the same family of distributions.</p></li>
+</ol>
+<ul class="simple">
+<li><p>Variance Terms:</p>
+<ul>
+<li><p>Because the prior is a normal distribution, we have a different set of variances (and covariances) that refer to the prior distribution of each <span class="math notranslate nohighlight">\(\beta\)</span> parameter.</p></li>
+<li><p>Important Distinction:</p>
+<ul>
+<li><p><span class="math notranslate nohighlight">\(\sigma^2\)</span> in the likelihood: This is the parameter conditioning the distribution of the error term of our model, and it’s a parameter we’re trying to estimate given the data.</p></li>
+<li><p>Variances in the prior of <span class="math notranslate nohighlight">\(\boldsymbol{\beta}\)</span>: These reflect our belief about which values are plausible for our <span class="math notranslate nohighlight">\(\beta\)</span> parameters.</p></li>
+</ul>
+</li>
+<li><p>Key Point:</p>
+<ul>
+<li><p>These variances are not the same. The <span class="math notranslate nohighlight">\(\sigma^2\)</span> conditioning the error term depends on the data <span class="math notranslate nohighlight">\(y\)</span>, while the variances in the prior only depend on our belief about what values are plausible for <span class="math notranslate nohighlight">\(\boldsymbol{\beta}\)</span>.</p></li>
+<li><p>These variance terms are what we find in the variance-covariance matrix <span class="math notranslate nohighlight">\(\boldsymbol{\Sigma}\)</span> of our prior.</p></li>
+</ul>
+</li>
+<li><p>Variance-Covariance Matrix <span class="math notranslate nohighlight">\(\boldsymbol{\Sigma}\)</span>:</p>
+<ul>
+<li><p>The diagonal elements represent the variances of each <span class="math notranslate nohighlight">\(\beta\)</span> parameter.</p></li>
+<li><p>The off-diagonal elements represent the covariances between pairs of <span class="math notranslate nohighlight">\(\beta\)</span> parameters, reflecting our belief about whether the <span class="math notranslate nohighlight">\(\beta\)</span> parameters are correlated with each other.</p></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ol class="arabic simple" start="8">
+<li><p>Prior Distribution of <span class="math notranslate nohighlight">\(\boldsymbol{\beta}\)</span>:
+The prior for <span class="math notranslate nohighlight">\(\boldsymbol{\beta}\)</span> is given by:</p></li>
+</ol>
+<div class="math notranslate nohighlight">
+\[P(\mathcal{\beta}) = \frac{1}{(2*\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu}))\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\beta}\)</span> is the vector of <span class="math notranslate nohighlight">\(\beta\)</span> parameters.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\mu}\)</span> is the vector of prior means for the <span class="math notranslate nohighlight">\(\beta\)</span> parameters.</p></li>
+<li><p><span class="math notranslate nohighlight">\(p\)</span> is the number of <span class="math notranslate nohighlight">\(\beta\)</span> parameters (including the intercept).</p></li>
+<li><p><span class="math notranslate nohighlight">\(|\boldsymbol{\Sigma}|\)</span> is the determinant of the variance-covariance matrix <span class="math notranslate nohighlight">\(\boldsymbol{\Sigma}\)</span>.</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\Sigma}^{-1}\)</span> is the inverse of the variance-covariance matrix.</p></li>
+</ul>
+<p>Got it? Great, now we can move on to the part where problems actually start (brace yourself)</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./IntroductionToLinearModel"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="LinearModelsPriors.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">The prior of the linear model</p>
+      </div>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <div class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-linear-model">The linear model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#bayes-theorem-and-the-linear-model">Bayes theorem and the linear model</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-likelihood">The likelihood</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-prior">The prior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#keeping-things-straight">Keeping things straight</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alex Lepauvre, Jan Gabriel Hartel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script src="../_static/scripts/bootstrap.js?digest=dfe6caa3a7d634c4db9b"></script>
+<script src="../_static/scripts/pydata-sphinx-theme.js?digest=dfe6caa3a7d634c4db9b"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
