@@ -17,3 +17,6 @@ chapters:
 - file: VariationalLaplace
   sections:
   - file: VL/JensenInequality
+  - file: VL/LaplaceApproximatePosterior
+  - file: VL/LogJointApprox
+  - file: VL/BackToPenguins
