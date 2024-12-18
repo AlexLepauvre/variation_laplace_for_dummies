@@ -20,3 +20,4 @@ chapters:
   - file: VL/LaplaceApproximatePosterior
   - file: VL/LogJointApprox
   - file: VL/BackToPenguins
+  - file: VL/WorkedOutExample
