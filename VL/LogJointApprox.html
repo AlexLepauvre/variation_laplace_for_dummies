@@ -1,0 +1,631 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Approximating the Expectation of the log of the joint probabilitiy &#8212; Variational Laplace For Dummies</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'VL/LogJointApprox';</script>
+    <link rel="icon" href="../_static/logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Back to our penguins" href="BackToPenguins.html" />
+    <link rel="prev" title="Approximating the log posterior using quadratic approximation and the Laplace approximation" href="LaplaceApproximatePosterior.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Variational Laplace for Dummies
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ProbabilityDistribution.html">Probablities and probability distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BayesTheorem.html">The Bayes theorem</a></li>
+
+<li class="toctree-l1 has-children"><a class="reference internal" href="../LMBayes.html">Linear models and Bayes theorem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMAndBayesTheorem.html">Bayes theorem applied to the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMLikelihood.html">The likelihood of the estimated parameters of a linear model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMPriors.html">The prior of the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMIntermediaryRecap.html">Intermediary recap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMMarginalLikelihood.html">Marginal likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../VariationalLaplace.html">Variational Laplace</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/VL/LogJointApprox.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FVL/LogJointApprox.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/VL/LogJointApprox.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Approximating the Expectation of the log of the joint probabilitiy</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-approximation-of-the-log-of-the-joint-probability">Quadratic approximation of the log of the joint probability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-of-the-laplace-approximation">What of the Laplace approximation?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculating-the-expectation-of-the-quadratic-approximation-of-the-log-joint-probability">Calculating the expectation of the quadratic approximation of the log joint probability.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">What of the Laplace approximation?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-mode-mu-of-the-joint-likelihood-p-y-theta">What is the mode <span class="math notranslate nohighlight">\(\mu\)</span> of the joint likelihood <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span>?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-solution-to-the-free-energy-functional">The solution to the free energy functional</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="approximating-the-expectation-of-the-log-of-the-joint-probabilitiy">
+<h1>Approximating the Expectation of the log of the joint probabilitiy<a class="headerlink" href="#approximating-the-expectation-of-the-log-of-the-joint-probabilitiy" title="Link to this heading">#</a></h1>
+<p>In the previous chapter, we have figured out an approximation of the expectation of the log of the approximate posterior, so the free energy functional is simplified to this:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = \mathbb{E}[ln P(y, \Theta)] - [-\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi] - \frac{n}{2}]\]</div>
+<p>So now, we will basically follow the exact same logic, but to approximate <span class="math notranslate nohighlight">\(\mathbb{E}[ln P(y, \Theta)]\)</span>. With everything we have seen up until now, this one should be easy!</p>
+<section id="quadratic-approximation-of-the-log-of-the-joint-probability">
+<h2>Quadratic approximation of the log of the joint probability<a class="headerlink" href="#quadratic-approximation-of-the-log-of-the-joint-probability" title="Link to this heading">#</a></h2>
+<p>In order to approximate the log of the joint, we will use the same technic as we used for the log of the approximate posterior: the quadratic approximation at the mode. So same as before:</p>
+<div class="math notranslate nohighlight">
+\[ln P(y, \Theta) \approx ln P(y, \mu) -\frac{1}{2}(\Theta-\mu)^T \Sigma^{-1}(\Theta-\mu)\]</div>
+<div class="math notranslate nohighlight">
+\[\Sigma^{-1} = \delta_{\mu, x_j} ln P(y, \mu)\]</div>
+<p>One thing you might wonder about is why the <span class="math notranslate nohighlight">\(y\)</span> remains, why do we have <span class="math notranslate nohighlight">\(ln P(y, \Theta_0)\)</span> and not ln P(y_0, \Theta_0)? That’s because y are the observed data, which is fixed. We can’t try to approximate the joint probability by adjusting the observed data. That’s in contrast with the <span class="math notranslate nohighlight">\(\Theta\)</span> that we are trying to estimate. What we are doing with the quadratic approximation is approximate the function around a certain value of <span class="math notranslate nohighlight">\(\Theta\)</span>.</p>
+</section>
+<section id="what-of-the-laplace-approximation">
+<h2>What of the Laplace approximation?<a class="headerlink" href="#what-of-the-laplace-approximation" title="Link to this heading">#</a></h2>
+<p>In the function above, we have used the quadratic method to approximate the log of the joint posterior, doesn’t that imply that we are approximating the joint probability as a Gaussian? Indeed, if you were to take the exponential of the approximation above, we would be doing just that. But in fact, in the case of the joint probability, we don’t need to approximate it, we know what it is: it’s just the numerator. And we have seen before that it’s the multiplication of the prior and the likelihood:</p>
+<div class="math notranslate nohighlight">
+\[P(y, \Theta) = P(y|\Theta)P(\Theta)\]</div>
+<p>We do know how to calculate that. So in the approximation above, we don’t need to use the approximation formula to figure out what <span class="math notranslate nohighlight">\(ln P(y, \mu)\)</span> is equal to, we can simply calculate it. But so then, what’s the point of using the quadratic approximation in the first place? Remember, we are not using the quadratic approximation to find the distribution, but rather the Expectation of the distribution. In the particular case of the joint probability, we are only using the quadratic approximation for that, it’s only for the posterior that it was handy to use the quadratic approximation of the log at the mode to realize that the posterior itself is a Gaussian.</p>
+</section>
+<section id="calculating-the-expectation-of-the-quadratic-approximation-of-the-log-joint-probability">
+<h2>Calculating the expectation of the quadratic approximation of the log joint probability.<a class="headerlink" href="#calculating-the-expectation-of-the-quadratic-approximation-of-the-log-joint-probability" title="Link to this heading">#</a></h2>
+<p>So now, we can use the exact same trick as before, trace trick and everything:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}
+\begin{align}
+\mathbb{E}_{Q(\Theta)}[ln P(y, \Theta)] 
+&amp;\approx ln P(y, \mu)  -\frac{1}{2}\mathbb{E}_{Q(\Theta)}
+[(-\Theta-\mu)^T \Sigma^{-1}(\Theta-\mu)] \\\end{split}\\\begin{split}&amp;= ln P(y, \mu)  -\frac{1}{2}\mathbb{E}_{Q(\Theta)}
+[tr\big((-\Theta-\mu)^T \Sigma^{-1}(\Theta-\mu)]\big)\\\end{split}\\\begin{split}&amp;= ln P(y, \mu)  -\frac{1}{2}tr\bigg(\Sigma^{-1}\mathbb{E}_{Q(\Theta)}
+[(-\Theta-\mu)^T (\Theta-\mu)]\bigg)\\\end{split}\\\begin{split}&amp;= ln P(y, \mu)  -\frac{1}{2}tr(\Sigma^{-1}\Sigma)\\\end{split}\\&amp;= ln P(y, \mu)  -\frac{n}{2}
+\end{align}
+\end{aligned}\end{align} \]</div>
+<p>So just like that, we have found the approximation of the expectation of the log of the joint probability!</p>
+</section>
+<section id="id1">
+<h2>What of the Laplace approximation?<a class="headerlink" href="#id1" title="Link to this heading">#</a></h2>
+<p>At that point, you might wonder: aren’t we using the Laplace approximation here and if not, why not? Well, if we were to take the exponential of the quadratic approximation, we would also get a scaled Gaussian, same as before. So in other words, the exponential of the quadratic approximation of the log of the joint probability would also be a gaussian. But in this particular case, we actuallz don’t need to approximate the joint probability, we already know what it is and we can compute it, it’s just the numerator of the Bayes theorem. And we have seen before that it’s the multiplication of the prior and the likelihood:</p>
+<div class="math notranslate nohighlight">
+\[P(y, \Theta) = P(y|\Theta)P(\Theta)\]</div>
+<p>The only reason in the case of the joint probability to use the quadratic approximation is to be able to approximate the expectation. So again, it’s not wrong to say that the approximation of the log of the joint probability we are using to calculate the expectation implies that the approximation of the joint probability is a Gaussian. But it’s completely inconsequential, as we don’t use this fact to calculate the approximation of the log of the joint probability at the mode <span class="math notranslate nohighlight">\(ln P(y, \mu)\)</span> as we did in the case of the approximate posterior. With the joint probability, we can just calculate it.</p>
+</section>
+<section id="what-is-the-mode-mu-of-the-joint-likelihood-p-y-theta">
+<h2>What is the mode <span class="math notranslate nohighlight">\(\mu\)</span> of the joint likelihood <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span>?<a class="headerlink" href="#what-is-the-mode-mu-of-the-joint-likelihood-p-y-theta" title="Link to this heading">#</a></h2>
+<p>In the previous chapter, we said that <span class="math notranslate nohighlight">\(\mu\)</span> is typically used to refer to the mode of a distribution. And in the previous chapter, we used the character <span class="math notranslate nohighlight">\(\mu\)</span> to depict the mode of the approximate prior, i.e. the values of <span class="math notranslate nohighlight">\(\Theta\)</span> that are the most likely given the data. Now in the expression above, it is used to depict the mode of the joint likelihood. Now you are probably thinking that it’s just a convention, we use the same letter for both the approximate posterior and for the joint likelihood, but these should be different values as they represent the mode of two different distributions: <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> and <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span>. But the neat thing is that approximate posterior <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> and the joint likelihood <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span> actually share the same mode.</p>
+<p>It’s easy to understand why. If you remember, the joint likelihood is the multiplication of the likelihood times the prior, which is the numerator of the Bayes theorem:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta|y) = \frac{P(y, \Theta)}{P(y)} = \frac{P(y|Theta)P(\Theta)}{P(y)}\]</div>
+<p>And as we said before, the denominator of the Bayes theorem is the integral of the numerator, which is a single number. And this single number is the normalization constant, to make sure that the whole thing integrates to 1. What that means is that the posterior is a scaled version of the joint likelihood. The fact that the posterior is a scaled version of the joint likelihood implies that they both have exactly the same shape, just one might be “larger” or “shallower” than the other. But the mode of both distributions is the same, as the overall “shape” of the two is the same! So accordingly, the mode <span class="math notranslate nohighlight">\(\mu\)</span> of the joint likelihood is the same mode <span class="math notranslate nohighlight">\(\mu\)</span> from the approximate posterior <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>.</p>
+<p>This is important, because that means that we can simply compute the free energy functional by simply trying around a set of <span class="math notranslate nohighlight">\(\mu\)</span> values shared by both the approximate prior and the joint probability! So we can now solve the free energy functional quite easily.</p>
+</section>
+<section id="the-solution-to-the-free-energy-functional">
+<h2>The solution to the free energy functional<a class="headerlink" href="#the-solution-to-the-free-energy-functional" title="Link to this heading">#</a></h2>
+<p>So, the free energy functional is:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = \mathbb{E}_{Q(\Theta)}[lnP(y, \Theta) - ln Q(\Theta)]\]</div>
+<p>We have seen in the previous chapter that the expectation of the log of the approximate prior is:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{E}_{Q(\Theta)}[ln Q(\Theta)] \approx -\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi] - \frac{n}{2}
+\]</div>
+<p>And now, we have seen that the expectation of the log of the joint probability is:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{E}_{Q(\Theta)}[ln P(y, \Theta)]  \approx ln P(y, \mu)  -\frac{n}{2}
+\]</div>
+<p>So we now have the solution to the free energy functional:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] =  ln P(y, \mu) - \frac{n}{2} + \frac{1}{2} [ln(|\Sigma|) + nln2\pi e]\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(y\)</span> is our observed data</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> is the number of parameters</p></li>
+<li><p><span class="math notranslate nohighlight">\(\mu\)</span> is the mode of the posterior distribution</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Sigma\)</span> is the covariance matrix</p></li>
+</ul>
+<p>So we have finally made it. Each term can actually be computed. Therefore, we can now optimize the free energy function by trying out many possible combinations of <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\Sigma\)</span> until we find those values that yield the highest possible value of the free energy functional. Once we have done that, the value that we get out of the free energy functional is our approximation of the model evidence from the Bayes Theorem, and the parameters that yield that value are the parameters of the approximate prior. So in other words, we have found everything there is to find!</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./VL"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="LaplaceApproximatePosterior.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Approximating the log posterior using quadratic approximation and the Laplace approximation</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="BackToPenguins.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Back to our penguins</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-approximation-of-the-log-of-the-joint-probability">Quadratic approximation of the log of the joint probability</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-of-the-laplace-approximation">What of the Laplace approximation?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#calculating-the-expectation-of-the-quadratic-approximation-of-the-log-joint-probability">Calculating the expectation of the quadratic approximation of the log joint probability.</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#id1">What of the Laplace approximation?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#what-is-the-mode-mu-of-the-joint-likelihood-p-y-theta">What is the mode <span class="math notranslate nohighlight">\(\mu\)</span> of the joint likelihood <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span>?</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-solution-to-the-free-energy-functional">The solution to the free energy functional</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alex Lepauvre, Jan Gabriel Hartel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

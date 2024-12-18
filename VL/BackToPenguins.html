@@ -1,0 +1,615 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Back to our penguins &#8212; Variational Laplace For Dummies</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'VL/BackToPenguins';</script>
+    <link rel="icon" href="../_static/logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Calculating the free energy for a simple linear regression" href="WorkedOutExample.html" />
+    <link rel="prev" title="Approximating the Expectation of the log of the joint probabilitiy" href="LogJointApprox.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Variational Laplace for Dummies
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ProbabilityDistribution.html">Probablities and probability distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BayesTheorem.html">The Bayes theorem</a></li>
+
+<li class="toctree-l1 has-children"><a class="reference internal" href="../LMBayes.html">Linear models and Bayes theorem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMAndBayesTheorem.html">Bayes theorem applied to the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMLikelihood.html">The likelihood of the estimated parameters of a linear model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMPriors.html">The prior of the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMIntermediaryRecap.html">Intermediary recap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMMarginalLikelihood.html">Marginal likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../VariationalLaplace.html">Variational Laplace</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/VL/BackToPenguins.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FVL/BackToPenguins.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/VL/BackToPenguins.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Back to our penguins</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#everything-we-have-seen-so-far-but-with-our-very-concrete-penguins">Everything we have seen so far, but with our very concrete penguins</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="back-to-our-penguins">
+<h1>Back to our penguins<a class="headerlink" href="#back-to-our-penguins" title="Link to this heading">#</a></h1>
+<p>The previous chapters were quite intense, we barely spoke about our penguins, and we didn’t write any code. It was all very theoretical. We saw that we can use the Jensen inequality to transform the impossible integral into a problem of <strong>variational calculus</strong> (i.e. optimization) with the <strong>free energy functional</strong>. Then we saw that we can use the <strong>quadratic approximation</strong> to get rid of the integrals in the free energy functional, in which case we are <strong>approximating the posterior distribution</strong> (which we aim to calculate) as <strong>Gaussian</strong> as per the <strong>Laplace approximation</strong>. So we now have the formulae for the free energy functional as follows:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] =  ln P(y, \mu) - \frac{n}{2} + \frac{1}{2} [ln(|\Sigma|) + nln2\pi e]\]</div>
+<p>And the crucial thing is that the distribution <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> that yields the highest possible value of the free energy functional is also the (approximate) posterior distribution we sought to calculate. So in order to find the posterior, we don’t really need to go through the whole Bayes theorem:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta|y) = \frac{P(y|\Theta)P(\Theta)}{P(y)}\]</div>
+<p>Instead, we can optimize the free energy functional instead, which is basically killing two birds with one stone, as it yields both the model evidence <span class="math notranslate nohighlight">\(P(y)\)</span> as well as the (approximate) posterior <span class="math notranslate nohighlight">\(Q(\Theta)\approx P(\Theta|y)\)</span></p>
+<p>That’s still all a bit dry probably. To illustrate it practically, we will first get back to our penguins to relate each bit of the free energy functional with the concrete parts of our penguin example, and in the next chapter, we will provide a worked out example with all the code needed.</p>
+<section id="everything-we-have-seen-so-far-but-with-our-very-concrete-penguins">
+<h2>Everything we have seen so far, but with our very concrete penguins<a class="headerlink" href="#everything-we-have-seen-so-far-but-with-our-very-concrete-penguins" title="Link to this heading">#</a></h2>
+<p>Okay, let’s once again rehearse the goal of it all. We started with our very simple example: we want to know if there is any kind of relationship between penguins beak length and their weights. So we collected some data from several penguins. To investigate the relationship between penguins beak lengths and their weights, we used a linear model to model penguins weight as a function of their beak length:</p>
+<div class="math notranslate nohighlight">
+\[y = \beta_0 + \beta_1 x + \epsilon\]</div>
+<p>And we want to know what the true value of the <span class="math notranslate nohighlight">\(\beta_1\)</span> is: if it’s anything else than 0, then we would say that yes, there is a relationship between penguin beak length and their weights. Unfortunately, we can’t know the true value of <span class="math notranslate nohighlight">\(\beta_1\)</span>, it’s not a quantity we can measure directly. Even if we were to measure the beak length and weights of all the penguins that are alive right now, we still wouldn’t know, because maybe in 10 years from now, there will be a penguin born with a weight that really don’t match their beak length with the <span class="math notranslate nohighlight">\(\beta_1\)</span> we had measured across all penguins before!</p>
+<p>Since we cannot know the true value, whatever value we obtain through experiments (i.e. measuring many penguins) is only an estimation of the <span class="math notranslate nohighlight">\(\beta_1\)</span> in our sample. So the next best thing we can do is try to find our how confident we can be about some values of <span class="math notranslate nohighlight">\(\beta_1\)</span> being close to the true value given the data we have observed. The Bayes factor enables us to calculate the posterior, which is a direct answer to that quetion:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta|y) = \frac{P(y|\Theta)P(\Theta)}{P(y)}\]</div>
+<p>The posterior gives us the probability of each value of the parameters of interest <span class="math notranslate nohighlight">\(\Theta\)</span> in our model given the data that we have observed, based on the mutliplication of the likelihood of the data given any possible value of <span class="math notranslate nohighlight">\(\Theta\)</span> (the likelihood) and our prior belief about the probability of each values of each parameters <span class="math notranslate nohighlight">\(P(\Theta)\)</span>, the whole divide by the model evidence. In the previous chapters, we have seen that the likelihood of the data given the parameters is this:</p>
+<div class="math notranslate nohighlight">
+\[P(y|\beta, \sigma^2) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\boldsymbol{\beta}]^2}{2\sigma^2}}\]</div>
+<p>And we have also seen that the priors is split in two parts: a multivariate normal distribution for our parameters <span class="math notranslate nohighlight">\(\beta\)</span> and the inverse gamma distribution for our parameter sigma:</p>
+<div class="math notranslate nohighlight">
+\[P(\sigma^2) = \frac{\beta^\alpha}{\Gamma(\alpha)}(\sigma^2)^{-\alpha-1}exp(-\frac{\beta}{\sigma^2})\]</div>
+<p>And:</p>
+<div class="math notranslate nohighlight">
+\[P(\mathcal{\beta}) = \frac{1}{(2*\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu}))\]</div>
+<p>And the multiplication between the two is our prior:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta) = P(\beta)P(\sigma^2)\]</div>
+<p>In order to specify our priors, we need to specify the <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> values for the error <span class="math notranslate nohighlight">\(\sigma\)</span>. For the <span class="math notranslate nohighlight">\(\beta\)</span>, we need to specify a vector of mean values, which is the mode of the distribution, i.e. the values we think are the most likelily, as well as a covariance matrix. The diagonal of that matrix represents how wide our prior is for the values of each parameter, i.e. how much we think values around the mean of that parameters are likely, and the values off the diagonal represent how correlated we think the <span class="math notranslate nohighlight">\(\beta\)</span> are with each other.</p>
+<p>But as we saw before, we can’t compute the denominator part because of the integral. So instead, we figured out a way to approximate it by relying on the Jensen inequality and the method of quadratic approximation. With this method, we try to optimize the free energy functional, and once we do so, we have also found the approximate prior:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] =  ln P(y, \mu) - \frac{n}{2} + \frac{1}{2} [ln(|\Sigma|) + nln2\pi e]\]</div>
+<p>So let’s try to do it conceptually with our penguins before we move to the code implementation. So say we have measure the beak length and weight of like 20 penguins, <span class="math notranslate nohighlight">\(y\)</span> should be a vector of 20 data points. We should have the corresponding beak length of all 20 penguins, which is our <span class="math notranslate nohighlight">\(X\)</span>. It’s not seen in the free energy functional, but that’s just because it’s inside <span class="math notranslate nohighlight">\(ln P(y, \mu)\)</span>. We should also specify our priors. We have to define the mean of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> and the covariance matrix for those. So let’s set it to the following:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\beta_p}=\begin{bmatrix}20\\0\\\end{bmatrix}\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\Sigma_p}= \begin{bmatrix}10\ 0\\0 \ 10\end{bmatrix}\)</span></p></li>
+</ul>
+<p>That’s basically saying that I believe that penguins average weight is 20Kg, and that I think the most likely value for <span class="math notranslate nohighlight">\(\beta_1\)</span> is 0, meaning that my initial guess is that there might not be a relationship between penguins beak length and their weight. But then, with the covariance matrix, I am basically saying that I wouldn’t be terribly surprised if penguins average weight turns out to be 15Kg, and I also wouldn’t be terribly surprised if there is a strong relationship between penguin beak length and their weight. So in other words, despite my initial guess about the mean of each parameter, I am actually giving quite a bit of leeway to it.</p>
+<p>We also need to specify our prior about the error. Since it is defined using an inverse gamma, we have to specify it using the <span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span> parameters (careful, not the same beta as for the parameters we are trying to estimate!). Let’s set those like this:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\alpha_p=1\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta_p=1\)</span></p></li>
+</ul>
+<p>Just cause these seem reasonable when you look at the chapter <strong>The prior of the linear mixed model</strong>.</p>
+<p>The way I am chosing these priors is very informal and arbitrary, but that’s just for the sake of illustrating how to to everything from start to finish. We will see later that there are kind of rules and conventions on how to do these things, but for now what we have is good enough.</p>
+<p>With all of this, we are now equipped to compute the approximate prior. And once we have computed the approximate prior, we can answer the question “Is there a relationship between penguins beak length and their weight?” by saying something like “I am 95% confident that the relationship between their beak length and the weight is between 0.5 and 1.32, which doesn’t overlap 0, so I can confidently answer yes”. And that is the best possible response you can give to that question!</p>
+<p>To do so, we need to calculate the free energy for many different <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> and find the max value. We have the following:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+F[Q(\Theta)] &amp;= ln P(y, \mu) - \frac{n}{2} + \frac{1}{2} [ln(|\Sigma|) + nln2\pi e] \\
+\end{align}
+\end{split}\]</div>
+<p>And we know that:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+ln P(y, \mu) &amp;= P(y|\mu)P(\mu) \\
+\end{align}
+\end{split}\]</div>
+<p>So now concretly, what we will do is randomly pick some values for <span class="math notranslate nohighlight">\(\mu_{\beta_0}\)</span>, <span class="math notranslate nohighlight">\(\mu_{\beta_1}\)</span>, <span class="math notranslate nohighlight">\(\mu_{\sigma^2}\)</span> and <span class="math notranslate nohighlight">\(\Sigma\)</span> and calculate the result of the above function. We can then rince and repeat until we find the largest possible value. Once we have done that, we will have found the posterior modes for <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> as well as our posterior covariance matrix, and we are done. Easy peasy! Now let’s implement the code!</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+P(y|\Theta) &amp;= (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\boldsymbol{\beta}]^2}{2\sigma^2}} \\
+P(\Theta) &amp;= P(\beta)P(\sigma^2)\\
+P(\beta) &amp;=\frac{1}{(2*\pi)^{p/2}|\Sigma_p|^{1/2}}exp(-\frac{1}{2}(\beta - \mu_p)^T\Sigma^{-1}(\beta-\mu_p))\\
+P(\sigma^2) &amp;= \frac{\beta_p^{\alpha_p}}{\Gamma(\alpha_p)}(\sigma^2)^{-\alpha_p-1}exp(-\frac{\beta_p}{\sigma^2})\\
+\end{align}
+\end{split}\]</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./VL"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="LogJointApprox.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Approximating the Expectation of the log of the joint probabilitiy</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="WorkedOutExample.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Calculating the free energy for a simple linear regression</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#everything-we-have-seen-so-far-but-with-our-very-concrete-penguins">Everything we have seen so far, but with our very concrete penguins</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alex Lepauvre, Jan Gabriel Hartel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

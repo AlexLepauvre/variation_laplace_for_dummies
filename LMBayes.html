@@ -1,0 +1,998 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="./" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Linear models and Bayes theorem &#8212; Variational Laplace For Dummies</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="_static/doctools.js?v=9a2dae69"></script>
+    <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="_static/copybutton.js?v=f281be69"></script>
+    <script src="_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'LMBayes';</script>
+    <link rel="icon" href="_static/logo.png"/>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Bayes theorem applied to the linear model" href="LMBayes/LMAndBayesTheorem.html" />
+    <link rel="prev" title="The Bayes theorem" href="BayesTheorem.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="intro.html">
+                    Variational Laplace for Dummies
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="ProbabilityDistribution.html">Probablities and probability distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="BayesTheorem.html">The Bayes theorem</a></li>
+
+<li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Linear models and Bayes theorem</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMAndBayesTheorem.html">Bayes theorem applied to the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMLikelihood.html">The likelihood of the estimated parameters of a linear model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMPriors.html">The prior of the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMIntermediaryRecap.html">Intermediary recap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LMBayes/LMMarginalLikelihood.html">Marginal likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="VariationalLaplace.html">Variational Laplace</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/LMBayes.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FLMBayes.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="_sources/LMBayes.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Linear models and Bayes theorem</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-linear-model">The linear model:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-our-data-the-linear-model-in-action">Simulating our data: the linear model in action</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-a-linear-model-to-retrieve-the-parameters-based-on-the-data">Fitting a linear model to retrieve the parameters based on the data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-error-term">The error term</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-linear-model-in-vector-form">The linear model in vector form</a></li>
+</ul>
+</li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="linear-models-and-bayes-theorem">
+<h1>Linear models and Bayes theorem<a class="headerlink" href="#linear-models-and-bayes-theorem" title="Link to this heading">#</a></h1>
+<p>We based our previous chapters on an intuitive example: tossing a coin and trying to find whether the probability of head is 0.5, i.e. whether our coin is biased. And we saw that we can use the Bayes Theorem to obtain the probability of each value of <span class="math notranslate nohighlight">\(\Theta\)</span> based on the observed data, based on which we can reach a principled decision.</p>
+<p>In this chapter, we will use another example to illustrate that even for rather simple models, some terms of the Bayes theorem might not have an analytical solution (you will see what that means in a bit ), making computing the posterior difficult. Importantly, the reason we introduce that is to motivate the use of the bag of tricks this book is about: <strong>Variational Laplace</strong>. Once you understand why we can’t simply solve the equation, it should be more intuitive to understand why we need to call on seemingly unrelated concepts.</p>
+<p>The example we will use is also based on a simple question: is the length of penguins flippers related to their body mass? The reason we use this problem is two folds. For one, it enables us to illustrate the difficulties of Bayesian statistics with one of the most general model there is: the linear mixed model, which is also the most important for people reading coming from psychology and neuroscience. But also, it might be familiar from other tutorials online because of the Palmer penguin data set, which is used across many tutorials to illustrate basic principles of stats. In this chapter, we will rely on simulation rather than on the actual dataset, but we will get back to the actual data set in a later chapter.</p>
+<section id="the-linear-model">
+<h2>The linear model:<a class="headerlink" href="#the-linear-model" title="Link to this heading">#</a></h2>
+<p>To investigate this problem, we will use a linear model, which is defined as:</p>
+<div class="math notranslate nohighlight">
+\[y = \beta_{0} + \beta_{1}x_{1} + \epsilon\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p>y: the data. In our example, that would be the body mass of the penguin</p></li>
+<li><p><span class="math notranslate nohighlight">\(x_{1}\)</span>: a correlate. In our example, that would be the flipper length</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta_{1}\)</span>: correlation coefficient. If the flipper length is related to the mass of the penguin, then the body weight may be <span class="math notranslate nohighlight">\(\beta_{1}\)</span> times the flipper length</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta_{0}\)</span>: intercept. If there is a linear relationship between the body weight and the flipper of the penguin, there may be an offset in that relationship (we will see below that that looks like)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon\)</span> error term. The relationship between the flipper length and the body weight probably isn’t 1 to 1, so there will be some error remaining that isn’t explained by our model</p></li>
+</ul>
+<p>When cast in this way, we can rephrase our question <strong>‘is the length of penguins flippers related to their body mass?’</strong> in a more formal way, by saying: <strong>is the parameter <span class="math notranslate nohighlight">\(\beta_1\)</span> significantly different from 0?</strong> Just as in our coin toss problem where we wanted to establish the true probability of getting head (to see if it is more or less 0.5), we here want to draw an inference about the true value of <span class="math notranslate nohighlight">\(\beta_1\)</span> based our data. But as was the case with our coin toss example, because we are dealing with some degrees of randomness, we can never be sure of what the true value of <span class="math notranslate nohighlight">\(\beta_1\)</span> is. Instead, what we have to try to establish is what is the probability of each value of <span class="math notranslate nohighlight">\(\beta_1\)</span> based on our data. So once again, we need to apply the Bayes theorem to find:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta|y)\]</div>
+<p>Where this time <span class="math notranslate nohighlight">\(\Theta\)</span> are the parameters <span class="math notranslate nohighlight">\(\beta_{1}\)</span> and <span class="math notranslate nohighlight">\(\beta_{0}\)</span>. You might wonder: we only care about <span class="math notranslate nohighlight">\(\beta_{1}\)</span>, so why worry about <span class="math notranslate nohighlight">\(\beta_{0}\)</span>. The main reason is that while <span class="math notranslate nohighlight">\(\beta_{0}\)</span> doesn’t matter for our problem, it will for many other. And while in the current model we have only two betas, there are linear models with many more <span class="math notranslate nohighlight">\(\beta\)</span>. We will therefore use this example to illustrate that the <span class="math notranslate nohighlight">\(\Theta\)</span> in the Bayes theorem can refer to many parameters of a single model and how <span class="math notranslate nohighlight">\(P(\Theta|y)\)</span> can refer to the probability of many parameters at once.</p>
+</section>
+<section id="simulating-our-data-the-linear-model-in-action">
+<h2>Simulating our data: the linear model in action<a class="headerlink" href="#simulating-our-data-the-linear-model-in-action" title="Link to this heading">#</a></h2>
+<p>Let’s suppose that there is a positive correlation between the flipper length and the weight of the penguin. That would make sense, because it seems logical that penguin with larger flippers would be heavier. And also, as we said, we probably won’t have a perfect relationship between flipper length and penguin’s weight, so there will be some error remaining. So say we have a correlation of 0.19, plus some error, and an intercept of 0, the data would look something like that:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="k">def</span> <span class="nf">linear_mdl</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">beta_0</span><span class="p">,</span> <span class="n">beta_1</span><span class="p">,</span> <span class="n">error_mu</span><span class="p">,</span> <span class="n">error_sigma</span><span class="p">):</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">beta_0</span> <span class="o">+</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">x</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">error_mu</span><span class="p">,</span> <span class="n">error_sigma</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">y</span>
+
+<span class="c1"># Define the parameters for our simulation:</span>
+<span class="n">flipper_length_mm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">170</span><span class="p">,</span> <span class="mi">230</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># Let&#39;s say we collected the flipper length of penguins and that these are between 170 and 230mm</span>
+<span class="n">beta_0</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Intercept</span>
+<span class="n">beta_1</span> <span class="o">=</span> <span class="mf">0.19</span>  <span class="c1"># Regression coefficient between flipper length and body weight </span>
+<span class="n">error_mu</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Mean error term</span>
+<span class="n">error_sigma</span> <span class="o">=</span> <span class="mi">2</span>  <span class="c1"># Error term spread</span>
+
+<span class="c1"># Simulate the data:</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">linear_mdl</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">beta_0</span><span class="p">,</span> <span class="n">beta_1</span><span class="p">,</span> <span class="n">error_mu</span><span class="p">,</span> <span class="n">error_sigma</span><span class="p">)</span>
+
+<span class="c1"># Plot the data:</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>  <span class="c1"># Plot the simulated data</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">beta_0</span> <span class="o">+</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Regression line&#39;</span><span class="p">)</span>  <span class="c1"># Plot the regression line</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Flipper length (mm)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Body weight (kg)&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/f1912df3ee5a2316ba62ce70cddfaddb0068b6dc31cfba2a8646d407885e4667.png" src="_images/f1912df3ee5a2316ba62ce70cddfaddb0068b6dc31cfba2a8646d407885e4667.png" />
+</div>
+</div>
+<p>There we go, we have generated semi-realistic data: penguin flippers size is correlated with their body weights. A penguin with flippers of 200mm is going to weight around 36-38kg, while a penguin with flipper lengths of 170mm is most likely going to weight around 32-34kg. That doesn’t seem too crazy, but full disclosure I am not a penguin experts, so I have no idea. In comparison, our model could also have a non-zero intercept:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Define the parameters for our simulation:</span>
+<span class="n">non_zero_beta_0</span> <span class="o">=</span> <span class="mi">32</span>  <span class="c1"># Intercept</span>
+
+<span class="c1"># Simulate the data:</span>
+<span class="n">y_intercept</span> <span class="o">=</span> <span class="n">linear_mdl</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">non_zero_beta_0</span><span class="p">,</span> <span class="n">beta_1</span><span class="p">,</span> <span class="n">error_mu</span><span class="p">,</span> <span class="n">error_sigma</span><span class="p">)</span>
+
+<span class="c1"># Plot the data:</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">beta_0=0$&#39;</span><span class="p">)</span>  <span class="c1"># Plot the simulated data</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">y_intercept</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">beta_0=32$&#39;</span><span class="p">)</span>  <span class="c1"># Plot the simulated data</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="mi">0</span> <span class="o">+</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Regression line, $</span><span class="se">\\</span><span class="s1">beta_0=0$&#39;</span><span class="p">)</span>  <span class="c1"># Plot the regression line</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">non_zero_beta_0</span> <span class="o">+</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Regression line, $</span><span class="se">\\</span><span class="s1">beta_0=32$&#39;</span><span class="p">)</span>  <span class="c1"># Plot the regression line</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Flipper length (mm)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Body weight (kg)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/1ab33919884a294fb601a2c3c8475aa53902c0d0e981d89423aea8d12898b451.png" src="_images/1ab33919884a294fb601a2c3c8475aa53902c0d0e981d89423aea8d12898b451.png" />
+</div>
+</div>
+<p>You can see that when we modulate the intercept term, we move the line up or down. The intercept as the name indicates refers to the value on the y axis at which our regression line crosses when x is 0. In our penguin example, you can think about it like this: if we had a hypothetical penguin of flipper length 0, would that penguin also weight 0 kg? When you draw your regression line, imagine you extend it until a flipper length of 0mm, the intercept is the weight of such a hypothetical 0mm length penguin according to our model.</p>
+<p>There is another very important thing to understand here. If you have used linear models in the past, you might understand them only as a statistical tool: you fit the model to your data, compute some statistics (such as p values) on the beta coefficient to then conclude ‘yes there is a relationship between these two variables’. However, a linear model is first and foremost a generative model for the data. You are basically stating a hypothesis that your dependent variable (y) is equal to the independent variable(s) (x) weighted by a particular coefficient (<span class="math notranslate nohighlight">\(\beta\)</span>) plus some noise. The fitting procedure is used to find the parameters of the model based on the data (more on that later). As we did above, you can also use the linear model to simulate data, by setting parameters that you think are reasonable. You can also fit the model to true data to extract the parameters, and then use the exact same parameters to simulate data based on these realistic parameters (I will show how that’s done below). The concept of <strong>generative model</strong> will become very important in the later chapters of the book, so make sure that this is clear (if it’s not, you can drop an issue on github to request more detailed info ;)</p>
+<section id="fitting-a-linear-model-to-retrieve-the-parameters-based-on-the-data">
+<h3>Fitting a linear model to retrieve the parameters based on the data<a class="headerlink" href="#fitting-a-linear-model-to-retrieve-the-parameters-based-on-the-data" title="Link to this heading">#</a></h3>
+<p>Before we go into the details of the Bayesian part, I will spend a few paragraphs describing the inner workings of a linear model. Feel free to skip if you are very familiar with those. But I would encourage you to read it anyways, because some of the concepts relevant to explain a linear model are very relevant for the Bayesian part that comes later.</p>
+<p>When we fit a linear model, we try to find values for the parameters of our model (<span class="math notranslate nohighlight">\(\beta_{0}\)</span> and <span class="math notranslate nohighlight">\(\beta_{1}\)</span>) that minimize the error, that is how off the value predicted by our model are from the actual data. If the <span class="math notranslate nohighlight">\(\beta_{1}\)</span> parameter that yields the smallest error is large, chances are the two variables you are looking at are correlated.</p>
+<p>Trying to minimize the error means trying to make the distance between each dot and the regression line as small as possible. Here is way to vizualize it:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Plot the data and regression line</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Simulated data&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">beta_0</span> <span class="o">+</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Regression line&#39;</span><span class="p">)</span>
+<span class="c1"># Add horizontal lines connecting each data point to the regression line</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">)):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">flipper_length_mm</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">flipper_length_mm</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">beta_0</span> <span class="o">+</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;gray&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="c1"># Set labels and legend</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Flipper length (mm)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Body weight (kg)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="c1"># Show plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/b011ad20d1794e598d8f316c561178ee0c0c996343adf04c9ea130a9d0353dd7.png" src="_images/b011ad20d1794e598d8f316c561178ee0c0c996343adf04c9ea130a9d0353dd7.png" />
+</div>
+</div>
+<p>That way, you can see that for each penguin (i.e. each dot), their weight is <span class="math notranslate nohighlight">\(\beta_1 * Flipper\ Length + some\ error\)</span>. If you take the left most dot, the weight is <span class="math notranslate nohighlight">\(170*0.19=32.3kg\)</span> to which you add (or sutract) some error. That little something is the error, and we need to find the parameter of our model so that the sum of the vertical distance between each dot and the regression line is as small as possible. Because we are working with simulated data, the best parameters should be close to the one we selected. And if we choose any other parameters (different values for <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span>), the error should be larger:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Create wrong parameters:</span>
+<span class="n">wrong_beta_0</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">wrong_beta_1</span> <span class="o">=</span> <span class="mf">0.17</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Simulated data&#39;</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;blue&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">beta_0</span> <span class="o">+</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Best Regression line&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">wrong_beta_0</span> <span class="o">+</span> <span class="n">wrong_beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Bad Regression line&#39;</span><span class="p">)</span>
+<span class="c1"># Add horizontal lines connecting each data point to the regression line</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">)):</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">flipper_length_mm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">flipper_length_mm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">-</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">beta_0</span> <span class="o">+</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+    <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">flipper_length_mm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">flipper_length_mm</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">+</span><span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">wrong_beta_0</span> <span class="o">+</span> <span class="n">wrong_beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">[</span><span class="n">i</span><span class="p">]],</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;orange&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mf">0.8</span><span class="p">)</span>
+<span class="c1"># Set labels and legend</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Flipper length (mm)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Body weight (kg)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="c1"># Show plot</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/cc0f72ee04e989e9132e4438875e422a64ec86030d7818a9ffbd15412c51a193.png" src="_images/cc0f72ee04e989e9132e4438875e422a64ec86030d7818a9ffbd15412c51a193.png" />
+</div>
+</div>
+<p>You can see that the distance between the orange line and each dot is larger than the distance between the red line for most points. There are a few points where that is not the case, but on average, it’s easy to see that red line does a better job than the orange one. Formally, when we try to minimize the error, we try to minimize the <strong>residual sum of square error</strong>:</p>
+<div class="math notranslate nohighlight">
+\[RSS = \sum_{i=1}^{n}(y_i-\hat{y}_i)^2\]</div>
+<p>Which is basically saying we try to find the parameters <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> such that the sum of the difference between each blue dot (<span class="math notranslate nohighlight">\(y_i\)</span>) and the value predicted by the line (<span class="math notranslate nohighlight">\(\hat{y_i}\)</span>) is as small as possible. And we take the square of the difference such that it doesn’t matter if the prediction is more or less than the true value. So you can imagine that fitting a linear model is trying all possible combinations of values of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> (and other <span class="math notranslate nohighlight">\(\beta\)</span> if you have several regressors) and for each compute the <strong>RSS</strong> and pick those values. And if the best parameters entail a large value for <span class="math notranslate nohighlight">\(\beta\)</span>, chances are that your two variables are correlated.</p>
+<p>I think this description is nice to understand how we fit a linear model, i.e. how do we know which values should we choose for our parameters when we are given two random variables? But in practice, we don’t actually try all possible combinations of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span>. That is because it’s simply impossible. As we saw in the previous chapters, <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> are continuous variables, meaning that there is an infinity of parameters to choose from. And also, we have two parameters to consider, so we have many possible combinations. Furthermore, while in our example we have only <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span>, you can have as many <span class="math notranslate nohighlight">\(\beta\)</span> as you want. So overall, it quickly becomes impractical to try out all possible combinations, it would take an insane amount of time.</p>
+<p>And it turns out we really don’t have to, because once again someone figured out a simple math formulae to select the parameters of our model based on the input data without having to try all combination. This is achieved in a very similar way to what we did in the previous chapters. We won’t go into all the details here (But consult this supplementary chapter if you are interested), but in a nutshell, you have the function:</p>
+<div class="math notranslate nohighlight">
+\[y = \beta_{0} + \beta_{1}x_{1} + \epsilon\]</div>
+<p>And you try to find:</p>
+<div class="math notranslate nohighlight">
+\[RSS = \sum_{i=1}^{n}y_i-(\beta_{0} + \beta_{1}x_{1})^2\]</div>
+<p>Such that RSS is as small as possible. And it turns out that that is:</p>
+<div class="math notranslate nohighlight">
+\[\hat{\beta_1} = \frac{\sum_{i=1}^{n}(x_i-\bar{x})(y_i-\bar{y})}{\sum_{i=1}^{n}(x_i-\bar{x})^2}\]</div>
+<div class="math notranslate nohighlight">
+\[\hat{\beta_0} = \bar{y} - \hat{\beta_1}\bar{x}\]</div>
+<p>Where <span class="math notranslate nohighlight">\(\bar{x}\)</span> and <span class="math notranslate nohighlight">\(\bar{y}\)</span> stand for the mean of x and y respectively. This method is called the <strong>optimal least square (OLS)</strong> solution, as it yields the parameters of our model that yield the lowest sum of suqare errors.</p>
+<p>We can try it out programatically. If this formula works, we should retrieve values that are close from the parameters we used to generate the data:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">fit_linear_model</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="c1"># Calculate beta_1:</span>
+    <span class="n">beta_1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">*</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)))</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="c1"># Calcuate beta_0:</span>
+    <span class="n">beta_0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">beta_0</span><span class="p">,</span> <span class="n">beta_1</span>
+
+<span class="n">beta_0</span><span class="p">,</span> <span class="n">beta_1</span> <span class="o">=</span> <span class="n">fit_linear_model</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">flipper_length_mm</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Estimated beta_1=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">beta_1</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Estimated beta_0=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">beta_0</span><span class="p">,</span><span class="w"> </span><span class="mi">3</span><span class="p">)</span><span class="si">}</span><span class="s1">&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Estimated beta_1=0.162
+Estimated beta_0=6.008
+</pre></div>
+</div>
+</div>
+</div>
+<p>As you can see, close enough, but perhaps surprisingly not exactly the same. This is because of the noise parameter, which makes it such that the data aren’t exactly along the line. Accordingly, despite the true parameter of <span class="math notranslate nohighlight">\(\beta_1\)</span> being 0.19, we don’t get exactly that out when we fit the model. In fact, this is exactly the same idea as with the coin toss we had before: if we throw the coin 100 times, even if the true probability of getting head is 0.5 we don’t always get 50% head in each experiment. In the current case, despite the true parameters beta being 0.19, because we only measured a few penguins, we don’t get exactly the true parameter our anymore. And just as before, the whole question is: based on my data, how can I be confident that the true value of beta_1 is within a particular range? If our hypothesis is that there is a positive association between flipper size and body weight, we are predicting that it is most likely that beta_1 is more than 0.</p>
+</section>
+<section id="the-error-term">
+<h3>The error term<a class="headerlink" href="#the-error-term" title="Link to this heading">#</a></h3>
+<p>One thing I have explained is the error term, or the ‘noise’ <span class="math notranslate nohighlight">\(\epsilon\)</span>. The function <code class="docutils literal notranslate"><span class="pre">linear_mdl</span></code> takes two parameters: mean (or <span class="math notranslate nohighlight">\(\mu\)</span>) and spread (or <span class="math notranslate nohighlight">\(\sigma\)</span>). In a linear model, we are stating that the data are equal to <span class="math notranslate nohighlight">\(\beta_0 + \beta_1x + \epsilon\)</span>, and this <span class="math notranslate nohighlight">\(\epsilon\)</span> is the reason why the dots above don’t fall exactly on the line. For our problem, what could this error be? Well there can be an infinity of reasons why the weight of a penguin isn’t fully determined by its flipper length. The weight of a penguin surely depends strongly on food availability for example. And food availability depends on the season: in fish season, penguins are probably a bit heavier than when there is little fish around. Furthermore, the weight of a penguin might also depends from its life history more than its flipper length: a penguin that had a comfortable life might be a bit chubbier, while a penguin that got dealt poorer cards in life might be a bit lighter (disclaimer: I am not proposing to eat the rich). And surely the length of the flipper might depend on genetic factors that are independent from the weight: some penguin may have quite disproportionately long flippers, the michael phelps of penguins if you like. None of these additional parameters are taken into account for our model, which results in some error.</p>
+<p>The point is that whatever variation isn’t described by <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> falls into the error term, which is random. But as we saw in the previous chapters, a random variables most often follows a particular probability distribution. Which one should that be for our model? The answer is the <strong>Normal distribution</strong>. If you heard about variational Laplace and were interested enough to keep reading until now, I would guess you know what the normal distribution is. If by a miracle you haven’t, let’s just say it is the single most important probability distribution in the world. You will encounter it times and times again, in this book and beyond. The formulae of the normal distribution is the following:</p>
+<div class="math notranslate nohighlight">
+\[P(x) = \frac{1}{\sqrt{2\pi\sigma^2}}e^{-\frac{(x-\mu)^2}{2\sigma^2}}\]</div>
+<p>In probability theory linguo, we say that it is a type of continuous probability distribution for real-valued random variables, which means that it is a distribution for continuous variables defined between <span class="math notranslate nohighlight">\(-\infty\)</span> and <span class="math notranslate nohighlight">\(+\infty\)</span>. In other words, it is kind of the default distribution for any random variables that can take any values within that range. If you want to get a better understanding of why the normal distribution describes so many different processes, check out this youtube <a class="reference external" href="https://www.youtube.com/watch?v=zeJD6dqJ5lo&amp;amp;list=PL4cNQ1YkG5WhQGmPnRe4vDUImh_nviriy&amp;amp;index=5">video</a> (and please check out more videos from that channel). Ah and one last thing, the normal distribution is said to be <strong>Gaussian</strong>, read ‘it is shaped like a bell’.</p>
+<p>Again, quite simple to implement programmatically:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">normal_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="n">p_x</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">e</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">p_x</span>
+</pre></div>
+</div>
+</div>
+</div>
+<p>Now let’s have a look at what that distribution looks like:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># Define values of x</span>
+<span class="n">mu</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="mi">1</span>
+
+<span class="c1"># Compute the probability of each value of x:</span>
+<span class="n">pdf</span> <span class="o">=</span> <span class="p">[</span><span class="n">normal_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">]</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">pdf</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">mu=0$, $</span><span class="se">\\</span><span class="s1">sigma=1$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(X=x)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/b68597886c2ea8b97ea7ba8e65cc15936dc7a1b383deef92956559cb0d13bf03.png" src="_images/b68597886c2ea8b97ea7ba8e65cc15936dc7a1b383deef92956559cb0d13bf03.png" />
+</div>
+</div>
+<p>The shape of the curve is familiar, it looks like the beta distribution we used before as our prior, except the beta distribution was limited to values between 0 and 1. In this case, there is no limits. When you think about it, it kinds of make sense. In the model above, the use of a normal distribution is basically saying ‘it is most likely that the error of our model is small’. The flipper weight of the penguin isn’t expected to fall exactly on the regression line, because that would entail that penguins weight is fully determined by their flipper length. But at the same time, it probably isn’t very likely to have a penguin with flipper length 170mm that weight 200 kg. Provided that we have fitted a linear model to our data and that there is a linear relationship between the two variables of interest, values that are far away from our predictions are less likely than values close around it.</p>
+<p>Now of course, all of this is relative. For some cases, you may have very tight correlation between the two variables, which would mean that the independent variable (x) is one of the main factor determining your dependent variable (y), in which case you may have a small error. But in other cases, you may have a not so tight correlation, meaning that while the two variables of interest might be related to one another, there may be a lot of error remaining. One important thing to understand when it comes to linear model is that the strength of the <span class="math notranslate nohighlight">\(\beta\)</span> alone doesn’t tell you anything about the strength of the association between your two variables. You may have two variables that are very strongly associated but with a small <span class="math notranslate nohighlight">\(\beta\)</span>, or you may have variables that are not so strongly associated but have high better.</p>
+<p>And as you can see in the <code class="docutils literal notranslate"><span class="pre">linear_mdl</span></code> function and in the formulae of the normal distribution, there are two important parameters: <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>. The mean parameter <span class="math notranslate nohighlight">\(\mu\)</span> specifies the middle of the distribution, and the spread parameter <span class="math notranslate nohighlight">\(\sigma\)</span> controls the width of the distribution. We can illustrate it by plotting the same distribution with different parameters:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)</span>  <span class="c1"># Define values of x</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">sig</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">]:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="p">[</span><span class="n">normal_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sig</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">mu=0$, $</span><span class="se">\\</span><span class="s1">sigma=</span><span class="si">{</span><span class="n">sig</span><span class="si">}</span><span class="s1">$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(X=x)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Normal distributions with various spreads&#39;</span><span class="p">)</span>
+<span class="k">for</span> <span class="n">mu</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">]:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="p">[</span><span class="n">normal_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">mu=</span><span class="si">{</span><span class="n">mu</span><span class="si">}</span><span class="s1">$, $</span><span class="se">\\</span><span class="s1">sigma=1$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(X=x)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Normal distributions with various means&#39;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/ec627bef393dccd2208b84a5ea88098d7c1c0d58997249cb497d28dc95a8ca0c.png" src="_images/ec627bef393dccd2208b84a5ea88098d7c1c0d58997249cb497d28dc95a8ca0c.png" />
+</div>
+</div>
+<p>In the simulated data, we chose <span class="math notranslate nohighlight">\(\mu=0\)</span> and <span class="math notranslate nohighlight">\(\sigma=2\)</span>. Importantly, in linear model, the mean of the error term should always be 0, which means that the error should oscillate around 0. This makes sense: even if your model doesn’t capture the data really well, you would still expect the dots to be randomly distributed around your regression line. If all the dots were above the regression line, that would be strange and it would in fact indicate that something is very wrong with your model or with your data. We won’t go into the why, but the one big assumption of linear model is that the error follows a normal distribution centered on zero.</p>
+<p>On the other hand, the <span class="math notranslate nohighlight">\(\sigma\)</span> parameter depends on your data: if your model captures the data really well, then the error should be on average closer to zero, which implies that probability of large errors is lower, which in turn implies that the error follows a normal distribution with a small <span class="math notranslate nohighlight">\(\sigma\)</span>. On the other hand, if you have a model that doesn’t capture the data really well, then you’d expect the error to follow a normal distribution with a large error. We can illustrate all of that simply. First, let’s look at the <strong>empirical distribution</strong> of the error of our model in the example above:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">error</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="p">(</span><span class="n">beta_0</span> <span class="o">+</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">)</span>  <span class="c1"># Calculate the error: the data - the predicted values (i.e. beta_0 + beta_1 x flipper length)</span>
+
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">4</span><span class="p">))</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;# Samples&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Distribution of the error (mean(error)=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="p">[</span><span class="n">normal_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">mu=0$, $</span><span class="se">\\</span><span class="s1">sigma=1$&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(X=x)&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Normal distribution&#39;</span><span class="p">)</span>
+<span class="n">ax</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/1760323da59f0f3ff8ccdd15dd17c130d34871520efd44a32c50032153543383.png" src="_images/1760323da59f0f3ff8ccdd15dd17c130d34871520efd44a32c50032153543383.png" />
+</div>
+</div>
+<p>We can see that indeed, the mean error is close to 0 and that the error values are between -5 and 5. And when you look at the normal distribution on the right, it looks possible that the error was sampled from such a distribution. They don’t look exactly the same, but that’s because the residuals are only a few samples. If we had many more obstractions, we would get the left to look closer to the right.</p>
+<p>In the simulation, we chose a <span class="math notranslate nohighlight">\(\sigma=2\)</span>, which is completely arbitrary, just to illustrate the various points. We can easily simulate data with other parameters to illustrate what that would look like and the impact of sigma on the error:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Simulate the data with various noise levels:</span>
+<span class="n">sigmas</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">10</span><span class="p">]</span>
+<span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">figsize</span><span class="o">=</span><span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">12</span><span class="p">))</span>
+<span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">sigma</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">sigmas</span><span class="p">):</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">linear_mdl</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">beta_0</span><span class="p">,</span> <span class="n">beta_1</span><span class="p">,</span> <span class="n">error_mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+    <span class="n">error</span> <span class="o">=</span> <span class="n">y</span> <span class="o">-</span> <span class="p">(</span><span class="n">beta_0</span> <span class="o">+</span> <span class="n">flipper_length_mm</span> <span class="o">*</span> <span class="n">beta_1</span><span class="p">)</span>
+
+    <span class="c1"># Plot regression:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>  <span class="c1"># Plot the simulated data</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">beta_0</span> <span class="o">+</span> <span class="n">beta_1</span> <span class="o">*</span> <span class="n">flipper_length_mm</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;k&#39;</span><span class="p">,</span> <span class="n">linestyle</span><span class="o">=</span><span class="s1">&#39;--&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;Regression line&#39;</span><span class="p">)</span>  <span class="c1"># Plot the regression line</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Flipper length (mm)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;Body weight (kg)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;regression&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Plot error:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">error</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;Residuals&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;# Samples&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;Distribution of the error (mean(error)=</span><span class="si">{</span><span class="n">np</span><span class="o">.</span><span class="n">round</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">error</span><span class="p">),</span><span class="w"> </span><span class="mi">2</span><span class="p">)</span><span class="si">}</span><span class="s1">)&#39;</span><span class="p">)</span>
+
+    <span class="c1"># Plot the true error distribution:</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">),</span> <span class="p">[</span><span class="n">normal_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">)],</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s1">&#39;$</span><span class="se">\\</span><span class="s1">mu=0$, $</span><span class="se">\\</span><span class="s1">sigma=</span><span class="si">{</span><span class="n">sigma</span><span class="si">}</span><span class="s1">$&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s1">&#39;P(X=x)&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s1">&#39;x&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Normal distribution&#39;</span><span class="p">)</span>
+    <span class="n">ax</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">tight_layout</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<img alt="_images/e6e12fd2dce0d9e0d022ff5db5cdc53720a6b1a1ef9c49da16a4c08f9b2f1f4f.png" src="_images/e6e12fd2dce0d9e0d022ff5db5cdc53720a6b1a1ef9c49da16a4c08f9b2f1f4f.png" />
+</div>
+</div>
+<p>As expected, the larger the sigma, the more spread and the more ‘noisy’ the data are.</p>
+<p>So hopefully, we this you should understand each bit of the linear model. We can now move on to the Bayes theorem part to try and get the probability of the parameters given the (simulated) data</p>
+</section>
+<section id="the-linear-model-in-vector-form">
+<h3>The linear model in vector form<a class="headerlink" href="#the-linear-model-in-vector-form" title="Link to this heading">#</a></h3>
+<p>One last thing before we get started though. The expression we have used for the linear model above is only one way to write it down. There is another way that is a bit more convenient, but requires a bit of knowledge and skill in matrix algebra. Previously, we wrote the model as:</p>
+<div class="math notranslate nohighlight">
+\[y = \beta_0 + \beta_1x + \epsilon\]</div>
+<p>where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(y\)</span>: the data (weight of the penguin)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta_0\)</span>: the intercept parameter, to be estimated (weight of a penguin with flipper length 0 according to our model)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\beta_1\)</span>: regression coefficient between <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(x\)</span>, to be estimated (for each unit increase in flipper length, what is the change in body weight)</p></li>
+<li><p><span class="math notranslate nohighlight">\(x\)</span>: regressor, fixed, i.e. this will not be estimated by our model (flipper length of each penguin)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\epsilon\)</span>: error, whatever isn’t captured by our model, to be estimated (difference between the actual body weight of our penguin and what our model expected)</p></li>
+</ul>
+<p>Note that for our problem, there is only one <span class="math notranslate nohighlight">\(x\)</span>, but generally speaking, we would call it <span class="math notranslate nohighlight">\(x_1\)</span>, because there may be several regressor. For example, after you ran your model to look at the weight of penguin as a function of their flipper length, you might realize that actually, a better model would also take into account the size of their feet, so you could add another regressor with its own beta <span class="math notranslate nohighlight">\(\beta_2x_2\)</span> referring to the feet sizes. One way to vizualize the model is this:</p>
+<div class="pst-scrollable-table-container"><table class="table">
+<thead>
+<tr class="row-odd"><th class="head"><p>penguins</p></th>
+<th class="head"><p>y (body weight)  =</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\beta_0\)</span> *</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(x_0\)</span> +</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\beta_1\)</span> *</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(x_1\)</span> (flipper length) +</p></th>
+<th class="head"><p><span class="math notranslate nohighlight">\(\epsilon\)</span></p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>penguin 1</p></td>
+<td><p>62kg</p></td>
+<td><p>????</p></td>
+<td><p>1</p></td>
+<td><p>????</p></td>
+<td><p>170</p></td>
+<td><p>????</p></td>
+</tr>
+<tr class="row-odd"><td><p>penguin 2</p></td>
+<td><p>70kg</p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p></p></td>
+<td><p>175</p></td>
+<td><p>????</p></td>
+</tr>
+<tr class="row-even"><td><p>penguin 3</p></td>
+<td><p>66kg</p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p></p></td>
+<td><p>180</p></td>
+<td><p>????</p></td>
+</tr>
+<tr class="row-odd"><td><p>penguin 4</p></td>
+<td><p>72kg</p></td>
+<td><p></p></td>
+<td><p>1</p></td>
+<td><p></p></td>
+<td><p>185</p></td>
+<td><p>????</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<p>We have the body weight of each penguin, as well as their flipper lengths, and we try to figure out what is the one value we can multiply their flipper length with to get their body weight by. Note that I have added <span class="math notranslate nohighlight">\(x_0\)</span> for the intercept, this is only 1, because the intercept is a constant to this model. So if <span class="math notranslate nohighlight">\(\beta_0=0.5\)</span>, that just makes sure that we add 0.5 to the body weight of every single penguin. Note that if we have many <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>, the final results would just be the sum of all of that plus some error.</p>
+<p>We can rewrite the linear model as such:</p>
+<div class="math notranslate nohighlight">
+\[y =  X\boldsymbol{\beta} + \epsilon\]</div>
+<p>This is exactly the same thing, except this time, xs and betas are matrices. So in other words, we have:</p>
+<div class="math notranslate nohighlight">
+\[ \begin{align}\begin{aligned}\begin{split}
+\begin{bmatrix}
+y_1\\
+y_2\\
+y_3\\
+y_4\\
+\end{bmatrix}
+=\end{split}\\\begin{split}
+\begin{bmatrix}
+1 &amp; x_{1, 1}\\
+1 &amp; x_{1, 2}\\
+1 &amp; x_{1, 3}\\
+1 &amp; x_{1, 4}\\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+\beta_0\\
+\beta_1
+\end{bmatrix}\end{split}\\+\\\begin{split}\begin{bmatrix}
+\epsilon_1\\
+\epsilon_2\\
+\epsilon_3\\
+\epsilon_4\\
+\end{bmatrix}\end{split}\end{aligned}\end{align} \]</div>
+<p>If you aren’t familiar with matrix operations, that might not be terribly obvious. But in matrix algebra, there a few specific rule about how you are supposed to muliply and combine matrices together. In our specific case, when you have:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{bmatrix}
+1 &amp; x_{1, 1}\\
+1 &amp; x_{1, 2}\\
+1 &amp; x_{1, 3}\\
+1 &amp; x_{1, 4}\\
+\end{bmatrix}
+\times
+\begin{bmatrix}
+\beta_0\\
+\beta_1
+\end{bmatrix}
+\end{split}\]</div>
+<p>what you have to do is multiply the first column of the <span class="math notranslate nohighlight">\(X\)</span> matrix by <span class="math notranslate nohighlight">\(\beta_0\)</span>, then the second column of the <span class="math notranslate nohighlight">\(X\)</span> matrix by <span class="math notranslate nohighlight">\(\beta_1\)</span> and then take the sum of the two column. So that’s basically the exact same thing as we did before. It’s just a more compact notation, especially because if you have many regressors, the same formulae:</p>
+<div class="math notranslate nohighlight">
+\[y =  X\boldsymbol{\beta} + \epsilon\]</div>
+<p>Only this time you have more columns in your <span class="math notranslate nohighlight">\(X\)</span> matrix, and as many <span class="math notranslate nohighlight">\(\boldsymbol{\beta}\)</span> as you have columns in x. Don’t worry too much if that’s a bit confusing, it’s really just a question of notation, and you can always stick to the more ‘classical notation’ if that’s what you prefer. In what follows, I will always provide both notations to make it easier.</p>
+</section>
+</section>
+<div class="toctree-wrapper compound">
+</div>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./."
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="BayesTheorem.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">The Bayes theorem</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="LMBayes/LMAndBayesTheorem.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Bayes theorem applied to the linear model</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-linear-model">The linear model:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#simulating-our-data-the-linear-model-in-action">Simulating our data: the linear model in action</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#fitting-a-linear-model-to-retrieve-the-parameters-based-on-the-data">Fitting a linear model to retrieve the parameters based on the data</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-error-term">The error term</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-linear-model-in-vector-form">The linear model in vector form</a></li>
+</ul>
+</li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alex Lepauvre, Jan Gabriel Hartel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

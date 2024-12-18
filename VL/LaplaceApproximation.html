@@ -1,0 +1,563 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Laplace approximation &#8212; Variational Laplace For Dummies</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!-- 
+    this give us a css class that will be invisible only if js is disabled 
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=26a4bc78f4c0ddb94549" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=26a4bc78f4c0ddb94549"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'VL/LaplaceApproximation';</script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+        
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Variational Laplace for Dummies
+                </a>
+            </li>
+        </ul>
+        <ul class="nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ProbabilityDistribution.html">Probablities and probability distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BayesTheorem.html">The Bayes theorem</a></li>
+
+<li class="toctree-l1 has-children"><a class="reference internal" href="../LMBayes.html">Linear models and Bayes theorem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMAndBayesTheorem.html">Bayes theorem applied to the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMLikelihood.html">The likelihood of the estimated parameters of a linear model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMPriors.html">The prior of the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMIntermediaryRecap.html">Intermediary recap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMMarginalLikelihood.html">Marginal likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 has-children"><a class="reference internal" href="../VariationalLaplace.html">Variational Laplace</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+  </div>
+  
+  <div id="rtd-footer-container"></div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FVL/LaplaceApproximation.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/VL/LaplaceApproximation.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Laplace approximation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-recap">Quick recap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dealing-with-the-integral">Dealing with the integral</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-approximation">Quadratic approximation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-appproximation-of-q-theta">Quadratic appproximation of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span></a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="laplace-approximation">
+<h1>Laplace approximation<a class="headerlink" href="#laplace-approximation" title="Link to this heading">#</a></h1>
+<section id="quick-recap">
+<h2>Quick recap<a class="headerlink" href="#quick-recap" title="Link to this heading">#</a></h2>
+<p>We started with our simple question: ‘Is there a relationship between the flipper length of penguin and their weights’. We saw that we can use the linear model to answer that question based on some data. We also need the Bayes theorem to be able to calculate the posterior, which will inform us of the likelihood of the values of the parameters of our model given the data. And if, given our data, the value that characterize the relationship between flipper length and weight is unlikely to be close to 0, then we can answer our question with some amount of confidence.</p>
+<p>In order to apply the Bayes theorem to our linear model, we need to multiply the likelihood of our data given any values of the parameters (<span class="math notranslate nohighlight">\(P(y|\Theta)\)</span>) by our prior (<span class="math notranslate nohighlight">\(P(\Theta)\)</span>), which characterizes our belief about likelily values of the parameters of our model. Then, we need to divide that whole thing by a scaling constant: the marginal likelihood or the model evidence, which is basically the integration of the numerator (<span class="math notranslate nohighlight">\(P(y|\Theta)  * P(\Theta)\)</span>) over all possible values of <span class="math notranslate nohighlight">\(\Theta\)</span>. And as we saw, in the case of our model, the likelihood is a multivariate distribution, while the prior consists of the product between a normal distribution for the <span class="math notranslate nohighlight">\(\beta\)</span> parameters of our model and a Delta distribution for the <span class="math notranslate nohighlight">\(\sigma^2\)</span> parameter of our model. And unfortunately, with this combination of distributions, we can’t find an easy (i.e. analytical) solution for the integral in the denominator.</p>
+<p>In other words, for our simple model, we can’t compute the model evidence. In the previous chapter, we found a way to circumvent that by relying on the Jensen inequality. Instead of directly computing the model evidence, we can instead optimize the free energy function, which is defined as:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = E_{Q(\Theta)}[lnP(y, \Theta) - ln Q(\Theta)]\]</div>
+<p>So we have to find the <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> distribution with which the output of the free energy functional is maximal, in which case that output is the <strong>free energy</strong>, which is an approximation of the log of the marginal likelihood. And also, the distribution <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is maximal is itself an approximation of the posterior.</p>
+<p>So now, in order to answer our question ‘Is there a relationship between the flipper length of penguin and their weights’, our goal is to maximize the free energy functional, which will yield the model evidence and the posterior so that we can get our confidence for the true value of our model parameter to be able to answer our question. In other words, what we have to do conceptually is try out a lot of different possible <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> distribution until we find the one that yields the largest value of <span class="math notranslate nohighlight">\(F[Q(\Theta)]\)</span>.</p>
+<p>Yeah? All good? Perfect, now let’s get to it.</p>
+</section>
+<section id="dealing-with-the-integral">
+<h2>Dealing with the integral<a class="headerlink" href="#dealing-with-the-integral" title="Link to this heading">#</a></h2>
+<p>To compute the free energy, we still need to deal with integrals. Indeed, the E symbol hides an integral over all values of <span class="math notranslate nohighlight">\(\Theta\)</span>. We can actually rewrite it like so:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = \int_{-\infty}^{+\infty}[ln P(y, \Theta) - ln Q(\Theta)] d(\Theta)\]</div>
+<p>One thing we can do to make the free energy functional a bit easier to deal with is this:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = E[ln P(y, \Theta)] - E[ln Q(\Theta)]\]</div>
+<p>That doesn’t solve anything. But now, we can deal with the Expectation of the log of the joint probability <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span> and the expectation of the log of the approximate posterior <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> separately, meaning if we can figure each part out, then we can simply take the substraction of the latter with the former.</p>
+<p>But how do we solve the integral in each of the part? This is where the Laplace comes in. Basically, everything that comes below is to find a way to get rid of the integral in each of the parts of the free energy functional. The Laplacian method will enable us to approximate the result of the integral without actually having to calculate it. In this particular instance, you can actually skip most of the math and go right to the end, where I will provide the formula for the free energy without any integral. With that, you could go straight ahead and actually implement a function to solve it. I of course encourage you nonetheless to at least read the math once, so that you have coarse idea of how we did it.</p>
+</section>
+<section id="quadratic-approximation">
+<h2>Quadratic approximation<a class="headerlink" href="#quadratic-approximation" title="Link to this heading">#</a></h2>
+<p>The maths discussed in the previous chapter was perhaps  a bit difficult to wrap your head around from a conceptual standpoint, because it was a bit difficult to see where it was leading to. But at least each single bit was rather simple mathematic, the expectation being a general formula of something you have used many times. So not too complicated mathematic, just a bit complicated to motivate at first.</p>
+<p>In this chapter, it is a bit the opposite: what need to do is really clear (get rid of the integral), but the math behind it are unfortunately more complicated than what we saw before. The first piece of that puzzle is the so-called Quadratic approximation.</p>
+<p>Depending on your background, you may already have heard of “Taylor series expansion”. This is a mathematical concept that says that you can approximate any function around a particular point by taking the sum of the derivatives of that function. In other words, for any function for which you can actually compute many derivatives, you can approximate it around a point <span class="math notranslate nohighlight">\(x_0\)</span> like so:</p>
+<div class="math notranslate nohighlight">
+\[f(x) \approx f(x_0) + \frac{f'(x_0)}{1!}(x-x_0) + \frac{f''(x_0)}{2!}(x-x_0)^2 + \frac{f'''(x_0)}{3!}(x-x_0)^3 ...\]</div>
+<p>The quadratic approximation is a Taylor series expansion where you stop at the second derivative basically:</p>
+<p>So we say that:</p>
+<p><span class="math notranslate nohighlight">\(f(x_0) + \frac{f'(x_0)}{1!}(x-x_0) + \frac{f''(x_0)}{2!}(x-x_0)^2\)</span></p>
+<p>Is the quadratic approximation of <span class="math notranslate nohighlight">\(f(x)\)</span></p>
+<p>We can write it a bit more simply:</p>
+<div class="math notranslate nohighlight">
+\[f(x) \approx f(x_0) + f'(x_0)(x-x_0) + \frac{1}{2}f''(x_0)(x-x_0)^2 \]</div>
+<p>You are probably familiar with the concept of a derivative of the first and second order. If you have a function:</p>
+<p><span class="math notranslate nohighlight">\(f(x) = x^2\)</span></p>
+<p>The the first order derivative of that function is:</p>
+<p><span class="math notranslate nohighlight">\(f'(x) = 2x\)</span></p>
+<p>And the second order derivative is the derivative of the derivative:</p>
+<p><span class="math notranslate nohighlight">\(f''(x) = 2\)</span></p>
+<p>And you might also remember that the first order derivative defines the slope of the tangent of function at any given point. So for our function <span class="math notranslate nohighlight">\(f(x) = x^2\)</span>, the slope at say <span class="math notranslate nohighlight">\(x=2.5\)</span> is <span class="math notranslate nohighlight">\(f'(2.5)=2*2.5=5\)</span>. In other words, the derivative is the rate of a change of a function at a single point. Hopefully, that should already be familiar. The second order derivative perhaps a bit less, but it defines the curvature of a function at a particular point. What that exaclty means isn’t very important right now, this is just a very quick refresher about what derivatives are.</p>
+<p>Now one thing you might be less familiar with (at least I was before diving into this) is what happens to the concept of derivatives when we are dealing with functions that don’t take single values as inputs, but rather vectors. The whole reason why we are talking about any of this is because ultimately, we want to approximate the expectation of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> and <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span>. But <span class="math notranslate nohighlight">\(\Theta\)</span> isn’t a single value, it is a vector that contains a value for each parameter of our model. In the case of vectors, the first order derivative of a function is something we call a gradient. And the second order derivative is something we call a Hessian matrix. We won’t have time to dig into this much further here, but if you want to know more about each, I highly recommend <a class="reference external" href="https://www.youtube.com/&#64;digitallearninghub-imperia3540">this series</a> of videos on youtube, which are explaining multivariate calculus very well.</p>
+<p>In any case, when dealing with functions that take vectors as their input, the quadratic approximate becomes this:</p>
+<div class="math notranslate nohighlight">
+\[f(x) \approx f(x_0) + \nabla f(x_0)^T(x-x_0) + \frac{1}{2}(x-x_0)^T H_f(x_0)(x-x_0)\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\nabla f(x_0)\)</span>: is the gradient (i.e. the first order derivative of a vector function) of <span class="math notranslate nohighlight">\(f(x)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(H_f(x_0)\)</span> is the Hessian matrix at <span class="math notranslate nohighlight">\(x_0\)</span></p></li>
+</ul>
+<p>This may look a bit intimidating, and you might not know how to compute each of the parts. But we don’t need to worry about it just now, as parts of the complicated bits will disappear as we move along</p>
+</section>
+<section id="quadratic-appproximation-of-q-theta">
+<h2>Quadratic appproximation of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span><a class="headerlink" href="#quadratic-appproximation-of-q-theta" title="Link to this heading">#</a></h2>
+<p>As we saw in the previous chapter, we don’t really know what kind of a distribution <span class="math notranslate nohighlight">\(ln Q(\Theta)\)</span> is, we just know that it is a probability distribution. So it is one of the function that we want to approximate in order to be able to calculate the free energy. This may sound very confusing: I said before that the problem of the free energy functional are the integrals, not <span class="math notranslate nohighlight">\(ln Q(\Theta)\)</span>. And while it is true that <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is not know and needs to be figured out, it is not what we set out to do, is it? Well as you will see down the line, we are kind of tackling both at the same time: <strong>we approximate <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> with something else for which we can compute the integral analytically!</strong></p>
+<p>You might wonder: why not apply the quadratic approximation to <span class="math notranslate nohighlight">\(E_{Q(\Theta)}[ln Q(\Theta)]\)</span>? The answer is simply that we can’t</p>
+<p>So let’s write the quadratic approximation of <span class="math notranslate nohighlight">\(ln Q(\Theta)\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[ln Q(\Theta) \approx ln Q(\Theta) + \nabla ln Q(\Theta)^T(\Theta-\Theta_0) + \frac{1}{2}(\Theta-\Theta_0)^T H_Q(\Theta_0)(\Theta-\Theta_0)\]</div>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./VL"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-recap">Quick recap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dealing-with-the-integral">Dealing with the integral</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-approximation">Quadratic approximation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-appproximation-of-q-theta">Quadratic appproximation of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span></a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alex Lepauvre, Jan Gabriel Hartel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=26a4bc78f4c0ddb94549"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=26a4bc78f4c0ddb94549"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>

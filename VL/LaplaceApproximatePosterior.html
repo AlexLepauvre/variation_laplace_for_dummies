@@ -1,0 +1,772 @@
+
+<!DOCTYPE html>
+
+
+<html lang="en" data-content_root="../" >
+
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Approximating the log posterior using quadratic approximation and the Laplace approximation &#8212; Variational Laplace For Dummies</title>
+  
+  
+  
+  <script data-cfasync="false">
+    document.documentElement.dataset.mode = localStorage.getItem("mode") || "";
+    document.documentElement.dataset.theme = localStorage.getItem("theme") || "";
+  </script>
+  <!--
+    this give us a css class that will be invisible only if js is disabled
+  -->
+  <noscript>
+    <style>
+      .pst-js-only { display: none !important; }
+
+    </style>
+  </noscript>
+  
+  <!-- Loaded before other Sphinx assets -->
+  <link href="../_static/styles/theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+<link href="../_static/styles/pydata-sphinx-theme.css?digest=8878045cc6db502f8baf" rel="stylesheet" />
+
+    <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=fa44fd50" />
+    <link rel="stylesheet" type="text/css" href="../_static/styles/sphinx-book-theme.css?v=a3416100" />
+    <link rel="stylesheet" type="text/css" href="../_static/togglebutton.css?v=13237357" />
+    <link rel="stylesheet" type="text/css" href="../_static/copybutton.css?v=76b2166b" />
+    <link rel="stylesheet" type="text/css" href="../_static/mystnb.4510f1fc1dee50b3e5859aac5469c37c29e427902b24a333a5f9fcb2f0b3ac41.css?v=be8a1c11" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-thebe.css?v=4fa983c6" />
+    <link rel="stylesheet" type="text/css" href="../_static/sphinx-design.min.css?v=95c83b7e" />
+  
+  <!-- So that users can add custom icons -->
+  <script src="../_static/scripts/fontawesome.js?digest=8878045cc6db502f8baf"></script>
+  <!-- Pre-loaded scripts that we'll load fully later -->
+  <link rel="preload" as="script" href="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf" />
+<link rel="preload" as="script" href="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf" />
+
+    <script src="../_static/documentation_options.js?v=9eb32ce0"></script>
+    <script src="../_static/doctools.js?v=9a2dae69"></script>
+    <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/clipboard.min.js?v=a7894cd8"></script>
+    <script src="../_static/copybutton.js?v=f281be69"></script>
+    <script src="../_static/scripts/sphinx-book-theme.js?v=887ef09a"></script>
+    <script>let toggleHintShow = 'Click to show';</script>
+    <script>let toggleHintHide = 'Click to hide';</script>
+    <script>let toggleOpenOnPrint = 'true';</script>
+    <script src="../_static/togglebutton.js?v=4a39c7ea"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script src="../_static/design-tabs.js?v=f930bc37"></script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script async="async" src="../_static/sphinx-thebe.js?v=c100c467"></script>
+    <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
+    <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
+    <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
+    <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>DOCUMENTATION_OPTIONS.pagename = 'VL/LaplaceApproximatePosterior';</script>
+    <link rel="icon" href="../_static/logo.png"/>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="Approximating the Expectation of the log of the joint probabilitiy" href="LogJointApprox.html" />
+    <link rel="prev" title="Jensen inequality: from an intractable integral to an optimization problem" href="JensenInequality.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <meta name="docsearch:language" content="en"/>
+  <meta name="docsearch:version" content="" />
+  </head>
+  
+  
+  <body data-bs-spy="scroll" data-bs-target=".bd-toc-nav" data-offset="180" data-bs-root-margin="0px 0px -60%" data-default-mode="">
+
+  
+  
+  <div id="pst-skip-link" class="skip-link d-print-none"><a href="#main-content">Skip to main content</a></div>
+  
+  <div id="pst-scroll-pixel-helper"></div>
+  
+  <button type="button" class="btn rounded-pill" id="pst-back-to-top">
+    <i class="fa-solid fa-arrow-up"></i>Back to top</button>
+
+  
+  <dialog id="pst-search-dialog">
+    
+<form class="bd-search d-flex align-items-center"
+      action="../search.html"
+      method="get">
+  <i class="fa-solid fa-magnifying-glass"></i>
+  <input type="search"
+         class="form-control"
+         name="q"
+         placeholder="Search this book..."
+         aria-label="Search this book..."
+         autocomplete="off"
+         autocorrect="off"
+         autocapitalize="off"
+         spellcheck="false"/>
+  <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd>K</kbd></span>
+</form>
+  </dialog>
+
+  <div class="pst-async-banner-revealer d-none">
+  <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
+</div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
+
+  
+    <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
+    </header>
+  
+
+  <div class="bd-container">
+    <div class="bd-container__inner bd-page-width">
+      
+      
+      
+      <dialog id="pst-primary-sidebar-modal"></dialog>
+      <div id="pst-primary-sidebar" class="bd-sidebar-primary bd-sidebar">
+        
+
+  
+  <div class="sidebar-header-items sidebar-primary__section">
+    
+    
+    
+    
+  </div>
+  
+    <div class="sidebar-primary-items__start sidebar-primary__section">
+        <div class="sidebar-primary-item">
+
+  
+    
+  
+
+<a class="navbar-brand logo" href="../intro.html">
+  
+  
+  
+  
+  
+    
+    
+      
+    
+    
+    <img src="../_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+  
+  
+</a></div>
+        <div class="sidebar-primary-item">
+
+<button class="btn search-button-field search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+ <i class="fa-solid fa-magnifying-glass"></i>
+ <span class="search-button__default-text">Search</span>
+ <span class="search-button__kbd-shortcut"><kbd class="kbd-shortcut__modifier">Ctrl</kbd>+<kbd class="kbd-shortcut__modifier">K</kbd></span>
+</button></div>
+        <div class="sidebar-primary-item"><nav class="bd-links bd-docs-nav" aria-label="Main">
+    <div class="bd-toc-item navbar-nav active">
+        
+        <ul class="nav bd-sidenav bd-sidenav__home-link">
+            <li class="toctree-l1">
+                <a class="reference internal" href="../intro.html">
+                    Variational Laplace for Dummies
+                </a>
+            </li>
+        </ul>
+        <ul class="current nav bd-sidenav">
+<li class="toctree-l1"><a class="reference internal" href="../SomeIntuitions.html">Some intuitions: answering questions when faced with uncertainty</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../ProbabilityDistribution.html">Probablities and probability distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../BayesTheorem.html">The Bayes theorem</a></li>
+
+<li class="toctree-l1 has-children"><a class="reference internal" href="../LMBayes.html">Linear models and Bayes theorem</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMAndBayesTheorem.html">Bayes theorem applied to the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMLikelihood.html">The likelihood of the estimated parameters of a linear model:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMPriors.html">The prior of the linear model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMIntermediaryRecap.html">Intermediary recap</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../LMBayes/LMMarginalLikelihood.html">Marginal likelihood</a></li>
+</ul>
+</details></li>
+<li class="toctree-l1 current active has-children"><a class="reference internal" href="../VariationalLaplace.html">Variational Laplace</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2 current active"><a class="current reference internal" href="#">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
+</ul>
+</details></li>
+</ul>
+
+    </div>
+</nav></div>
+    </div>
+  
+  
+  <div class="sidebar-primary-items__end sidebar-primary__section">
+      <div class="sidebar-primary-item">
+<div id="ethical-ad-placement"
+      class="flat"
+      data-ea-publisher="readthedocs"
+      data-ea-type="readthedocs-sidebar"
+      data-ea-manual="true">
+</div></div>
+  </div>
+
+
+      </div>
+      
+      <main id="main-content" class="bd-main" role="main">
+        
+        
+
+<div class="sbt-scroll-pixel-helper"></div>
+
+          <div class="bd-content">
+            <div class="bd-article-container">
+              
+              <div class="bd-header-article d-print-none">
+<div class="header-article-items header-article__inner">
+  
+    <div class="header-article-items__start">
+      
+        <div class="header-article-item"><button class="sidebar-toggle primary-toggle btn btn-sm" title="Toggle primary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <span class="fa-solid fa-bars"></span>
+</button></div>
+      
+    </div>
+  
+  
+    <div class="header-article-items__end">
+      
+        <div class="header-article-item">
+
+<div class="article-header-buttons">
+
+
+
+
+
+<div class="dropdown dropdown-source-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Source repositories">
+    <i class="fab fa-github"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
+   class="btn btn-sm btn-source-repository-button dropdown-item"
+   title="Source repository"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fab fa-github"></i>
+  </span>
+<span class="btn__text-container">Repository</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/VL/LaplaceApproximatePosterior.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FVL/LaplaceApproximatePosterior.html&body=Your%20issue%20content%20here." target="_blank"
+   class="btn btn-sm btn-source-issues-button dropdown-item"
+   title="Open an issue"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-lightbulb"></i>
+  </span>
+<span class="btn__text-container">Open issue</span>
+</a>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+
+
+<div class="dropdown dropdown-download-buttons">
+  <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" aria-label="Download this page">
+    <i class="fas fa-download"></i>
+  </button>
+  <ul class="dropdown-menu">
+      
+      
+      
+      <li><a href="../_sources/VL/LaplaceApproximatePosterior.ipynb" target="_blank"
+   class="btn btn-sm btn-download-source-button dropdown-item"
+   title="Download source file"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file"></i>
+  </span>
+<span class="btn__text-container">.ipynb</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li>
+<button onclick="window.print()"
+  class="btn btn-sm btn-download-pdf-button dropdown-item"
+  title="Print to PDF"
+  data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-file-pdf"></i>
+  </span>
+<span class="btn__text-container">.pdf</span>
+</button>
+</li>
+      
+  </ul>
+</div>
+
+
+
+
+<button onclick="toggleFullScreen()"
+  class="btn btn-sm btn-fullscreen-button"
+  title="Fullscreen mode"
+  data-bs-placement="bottom" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-expand"></i>
+  </span>
+
+</button>
+
+
+
+<button class="btn btn-sm nav-link pst-navbar-icon theme-switch-button pst-js-only" aria-label="Color mode" data-bs-title="Color mode"  data-bs-placement="bottom" data-bs-toggle="tooltip">
+  <i class="theme-switch fa-solid fa-sun                fa-lg" data-mode="light" title="Light"></i>
+  <i class="theme-switch fa-solid fa-moon               fa-lg" data-mode="dark"  title="Dark"></i>
+  <i class="theme-switch fa-solid fa-circle-half-stroke fa-lg" data-mode="auto"  title="System Settings"></i>
+</button>
+
+
+<button class="btn btn-sm pst-navbar-icon search-button search-button__button pst-js-only" title="Search" aria-label="Search" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <i class="fa-solid fa-magnifying-glass fa-lg"></i>
+</button>
+<button class="sidebar-toggle secondary-toggle btn btn-sm" title="Toggle secondary sidebar" data-bs-placement="bottom" data-bs-toggle="tooltip">
+    <span class="fa-solid fa-list"></span>
+</button>
+</div></div>
+      
+    </div>
+  
+</div>
+</div>
+              
+              
+
+<div id="jb-print-docs-body" class="onlyprint">
+    <h1>Approximating the log posterior using quadratic approximation and the Laplace approximation</h1>
+    <!-- Table of contents -->
+    <div id="print-main-content">
+        <div id="jb-print-toc">
+            
+            <div>
+                <h2> Contents </h2>
+            </div>
+            <nav aria-label="Page">
+                <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-recap">Quick recap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dealing-with-the-integral">Dealing with the integral</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-approximation">Quadratic approximation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-quadratic-approximation-of-the-approximate-posterior">The quadratic approximation of the approximate posterior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-laplace-approximation-of-q-theta">The Laplace approximation of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assumption-of-gaussianity-under-the-laplace-approximation">Assumption of Gaussianity under the Laplace approximation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-expectation-of-the-approximation-of-the-approximate-posterior">The expectation of the approximation of the approximate posterior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-modes-and-covariance-matrix-of-the-distribution-is-what-we-optimize-for">The modes and covariance matrix of the distribution is what we optimize for</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-recap">Final recap</a></li>
+</ul>
+            </nav>
+        </div>
+    </div>
+</div>
+
+              
+                
+<div id="searchbox"></div>
+                <article class="bd-article">
+                  
+  <section class="tex2jax_ignore mathjax_ignore" id="approximating-the-log-posterior-using-quadratic-approximation-and-the-laplace-approximation">
+<h1>Approximating the log posterior using quadratic approximation and the Laplace approximation<a class="headerlink" href="#approximating-the-log-posterior-using-quadratic-approximation-and-the-laplace-approximation" title="Link to this heading">#</a></h1>
+<section id="quick-recap">
+<h2>Quick recap<a class="headerlink" href="#quick-recap" title="Link to this heading">#</a></h2>
+<p>We started with our simple question: ‘Is there a relationship between the flipper length of penguin and their weights’. We saw that we can use the linear model to answer that question based on some data. We also need the Bayes theorem to be able to calculate the posterior, which will inform us of the likelihood of the values of the parameters of our model given the data. And if, given our data, the value that characterize the relationship between flipper length and weight is unlikely to be close to 0, then we can answer our question with some amount of confidence.</p>
+<p>In order to apply the Bayes theorem to our linear model, we need to multiply the likelihood of our data given any values of the parameters (<span class="math notranslate nohighlight">\(P(y|\Theta)\)</span>) by our prior (<span class="math notranslate nohighlight">\(P(\Theta)\)</span>), which characterizes our belief about likelily values of the parameters of our model. Then, we need to divide that whole thing by a scaling constant: the marginal likelihood or the model evidence, which is basically the integration of the numerator (<span class="math notranslate nohighlight">\(P(y|\Theta)  * P(\Theta)\)</span>) over all possible values of <span class="math notranslate nohighlight">\(\Theta\)</span>. And as we saw, in the case of our model, the likelihood is a multivariate distribution, while the prior consists of the product between a normal distribution for the <span class="math notranslate nohighlight">\(\beta\)</span> parameters of our model and a Delta distribution for the <span class="math notranslate nohighlight">\(\sigma^2\)</span> parameter of our model. And unfortunately, with this combination of distributions, we can’t find an easy (i.e. analytical) solution for the integral in the denominator.</p>
+<p>In other words, for our simple model, we can’t compute the model evidence. In the previous chapter, we found a way to circumvent that by relying on the Jensen inequality. Instead of directly computing the model evidence, we can instead optimize the free energy function, which is defined as:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = \mathbb{E}_{Q(\Theta)}[lnP(y, \Theta) - ln Q(\Theta)]\]</div>
+<p>So we have to find the <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> distribution with which the output of the free energy functional is maximal, in which case that output is the <strong>free energy</strong>, which is an approximation of the log of the marginal likelihood. And also, the distribution <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is maximal is itself an approximation of the posterior.</p>
+<p>So now, in order to answer our question ‘Is there a relationship between the flipper length of penguin and their weights’, our goal is to esimate the parameters of our model that maximize the free energy functional, which will yield the model evidence and the approximate posterior so that we can get our confidence for the true value of our model parameter to be able to answer our question. In other words, what we have to do conceptually is try out a lot of different possible <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> distributions until we find the one that yields the largest value of <span class="math notranslate nohighlight">\(F[Q(\Theta)]\)</span>.</p>
+<p>Yeah? All good? Perfect, now let’s get to it.</p>
+</section>
+<section id="dealing-with-the-integral">
+<h2>Dealing with the integral<a class="headerlink" href="#dealing-with-the-integral" title="Link to this heading">#</a></h2>
+<p>Wait a minute: how do we actually calculate the result of the free energy functional for each <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> we try? Because just to reiterate, <strong>eventhough the integral symbol is absent from the Free energy equation, it is still there!</strong>. It is hidden in the E symbol, which is an integral over all values of <span class="math notranslate nohighlight">\(\Theta\)</span>. We can actually rewrite it like so:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = \int_{-\infty}^{+\infty}[ln P(y, \Theta) - ln Q(\Theta)] \cdot Q(\Theta) d(\Theta)\]</div>
+<p>One thing we can do to make the free energy functional a bit easier to deal with is this:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = \mathbb{E}[ln P(y, \Theta)] - \mathbb{E}[ln Q(\Theta)]\]</div>
+<p>That doesn’t solve anything. But now, we can deal with the Expectation of the log of the joint probability <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span> and the expectation of the log of the approximate posterior <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> separately, meaning if we can figure each part out, then we can simply take the substraction of the latter with the former.</p>
+<p>So how do we solve the integral in each of the part? Unfortunately, we cannot solve it analytically for either the log of the joint probability nor for the log of the approximate posterior (which again means that to calculate the exact result we would need to first calculate the probability at each possible values of <span class="math notranslate nohighlight">\(\Theta\)</span> of which we have an infinity, so it’s impossible to calculate them all). What we will do instead is <strong>approximate the part inside the expectation by some other function, hoping that we can use tricks to derive analytically the expectation of that function we use an approximation</strong>. Or said differently, we will replace the function inside the expectation by some other function that we know should be roughly equal to it, and try to calculate analytically the expectation of that other function instead. It’s really important to understand this. Just to be extra clear: we will approximate what’s inside the expectation, so <span class="math notranslate nohighlight">\(ln P(y, \Theta)\)</span> and <span class="math notranslate nohighlight">\(ln Q(\Theta)\)</span>, not the expectation itself directly.</p>
+<p>This may all seem confusing and contradictory: if we approximate the function inside the Expectation by another function, then we are calculating the Expectation of the approximation and not of the function itself. The expectation of the approximation should yield different results from the expectation of the actual function we are interested in. So are we in fact calculating an approximation of the expectation of the function when we are calculating the expectation of the approximation? That is correct, we will in fact be calculating an approximation of each expectations as a way to sidestep the integral. But <strong>it is important to understand that we do so by finding a function that approximate what’s inside each of the expectations, and not by finding a function that approximates the expectation directly</strong>.</p>
+<p>In this chapter and the next, the math is going to be a little bit more complicated that we have seen so far, and goes beyond typical highschool curriculum. In a sense, this chapter and the next are a bit the opposite of the previous chapter. In the previous chapter, the maths involved was fairly straightforward, but it was a bit difficult to wrap your head around conceptually, because it wasn’t quite clear where it was going. In this chapter and the next, the math involved is more complex, but where we are going is more straight forward: calculate (or approximate) the expectation terms so that we can then compute the free energy for each <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> we try.</p>
+<p>In this chapter, we will focus on approximating the <span class="math notranslate nohighlight">\(ln Q(\Theta)\)</span> term and show how we can calculate the expectation of the approximation analytically.</p>
+</section>
+<section id="quadratic-approximation">
+<h2>Quadratic approximation<a class="headerlink" href="#quadratic-approximation" title="Link to this heading">#</a></h2>
+<p>We want to find an approximation of the log approximate posterior <span class="math notranslate nohighlight">\(ln Q(\Theta)\)</span>, such that we can derive the expectation of the approximation analytically. But as we saw in the previous chapter, the only thing we know is that <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is a probability distribution, but we don’t know much more about it: we don’t know what kind of a probability distribution it is, nor how it is parametrized. So even if we knew say that <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is a multivariate normal distribution, we wouldn’t know what’s the mean (i.e. the mode) nor the standard deviation of that distribution. So you might wonder, if we don’t have any clue of what that distribution is (i.e. we don’t know it’s formulae, nor its parameters), how can we know what function should be roughly equal to it, i.e. what would be a good approximation of it?</p>
+<p>These are all very valid question, and the goal of this whole chapter is answering it. But for now, put these questions aside. Depending on your background, you might be familiar with something called <strong>Taylor series expansion</strong>. This is a mathematical tool to approximate any function around a particular point by taking the sume of the derivatives of that function. In other words, for any function, you can actually compute many derivatives, you can approximate it around a point <span class="math notranslate nohighlight">\(x_0\)</span>, like so:</p>
+<div class="math notranslate nohighlight">
+\[f(x) \approx f(x_0) + \frac{f'(x_0)}{1!}(x-x_0) + \frac{f''(x_0)}{2!}(x-x_0)^2 + \frac{f'''(x_0)}{3!}(x-x_0)^3 ...\]</div>
+<p>You can go as far as you want (or as far as the function let you, depending on the function). But if you approximate a function by only going to the second derivative, it is called a <strong>quadratic approximation</strong>. And we say that:</p>
+<p><span class="math notranslate nohighlight">\(f(x_0) + \frac{f'(x_0)}{1!}(x-x_0) + \frac{f''(x_0)}{2!}(x-x_0)^2\)</span></p>
+<p>Is the quadratic approximation of <span class="math notranslate nohighlight">\(f(x)\)</span></p>
+<p>We can write it a bit more simply:</p>
+<div class="math notranslate nohighlight">
+\[f(x) \approx f(x_0) + f'(x_0)(x-x_0) + \frac{1}{2}f''(x_0)(x-x_0)^2 \]</div>
+<p>You are probably familiar with the concept of a derivative of the first and second order. If you have a function:</p>
+<p><span class="math notranslate nohighlight">\(f(x) = x^2\)</span></p>
+<p>The the first order derivative of that function is:</p>
+<p><span class="math notranslate nohighlight">\(f'(x) = 2x\)</span></p>
+<p>And the second order derivative is the derivative of the derivative:</p>
+<p><span class="math notranslate nohighlight">\(f''(x) = 2\)</span></p>
+<p>And you might also remember that the first order derivative defines the slope of the tangent of function at any given point. So for our function <span class="math notranslate nohighlight">\(f(x) = x^2\)</span>, the slope at say <span class="math notranslate nohighlight">\(x=2.5\)</span> is <span class="math notranslate nohighlight">\(f'(2.5)=2*2.5=5\)</span>. In other words, the derivative is the rate of a change of a function at a single point. Hopefully, that should already be familiar. The second order derivative perhaps a bit less, but it defines the curvature of a function at a particular point. What that exaclty means isn’t very important right now, this is just a very quick refresher about what derivatives are.</p>
+<p>Now one thing you might be less familiar with (at least I was before diving into this) is what happens to the concept of derivatives when we are dealing with functions that don’t take single values as inputs, but rather vectors. The whole reason why we are talking about any of this is because ultimately, we want to approximate of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> and <span class="math notranslate nohighlight">\(P(y, \Theta)\)</span> to easily find their expecations. But <span class="math notranslate nohighlight">\(\Theta\)</span> isn’t a single value, it is a vector that contains a value for each parameter of our model. In the case of vectors, the first order derivative of a function is something we call a gradient. And the second order derivative is something we call a Hessian matrix. We won’t have time to dig into this much further here, but if you want to know more about each, I highly recommend <a class="reference external" href="https://www.youtube.com/&#64;digitallearninghub-imperia3540">this series</a> of videos on youtube, which are explaining multivariate calculus very well.</p>
+<p>In any case, when dealing with functions that take vectors as their input, the quadratic approximate becomes this:</p>
+<div class="math notranslate nohighlight">
+\[f(x) \approx f(x_0) + \nabla f(x_0)^T(x-x_0) + \frac{1}{2}(x-x_0)^T H_f(x_0)(x-x_0)\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\nabla f(x_0)\)</span>: is the gradient (i.e. the first order derivative of a vector function) of <span class="math notranslate nohighlight">\(f(x)\)</span></p></li>
+<li><p><span class="math notranslate nohighlight">\(H_f(x_0)\)</span> is the Hessian matrix at <span class="math notranslate nohighlight">\(x_0\)</span></p></li>
+</ul>
+<p>This may look a bit intimidating, and you might not know how to compute each of the parts. Just remember this: <strong><span class="math notranslate nohighlight">\(H_f(x_0)\)</span> is a matrix</strong> which captures the curvature of a function at a particular point. The rest you don’t need to worry about, it will mostly disappear by the end of this chapter!</p>
+</section>
+<section id="the-quadratic-approximation-of-the-approximate-posterior">
+<h2>The quadratic approximation of the approximate posterior<a class="headerlink" href="#the-quadratic-approximation-of-the-approximate-posterior" title="Link to this heading">#</a></h2>
+<p>Even if we don’t know what <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is, we can still write the formulae of its quadratic approximation of it’s log based on what we saw above. We could of course also write the quadratic approximation of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> itself and then take the log of that, but since we want to compute the expectation of the log of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>, we will write the quadratic approximation of <span class="math notranslate nohighlight">\(ln Q(\Theta)\)</span> directly. The quadratic approximation of <span class="math notranslate nohighlight">\(ln Q(\Theta)\)</span> is the following:</p>
+<div class="math notranslate nohighlight">
+\[ln Q(\Theta) \approx ln Q(\Theta_0) + \nabla ln Q(\Theta_0)^T(\Theta-\Theta_0) + \frac{1}{2}(\Theta-\Theta_0)^T H_{ln Q}(\Theta_0)(\Theta-\Theta_0)\]</div>
+<p>Or something like that. I have just replaced the f(x) by the actual function, and the <span class="math notranslate nohighlight">\(x_0\)</span> by <span class="math notranslate nohighlight">\(\Theta_0\)</span>. There is actually a little notation issue with the formulae above. I have written the hessian as <span class="math notranslate nohighlight">\(H_{ln Q}\)</span>. That’s a little bit unconventional, because it would typically be written as H_f, and then you would define the function in a separate formulae (“where f=…”). There is however a different notatation that you can adopt which is the following:</p>
+<div class="math notranslate nohighlight">
+\[[H_f(x_0)] = \delta_{x_i, x_j}f(x_0)\]</div>
+<p>These two formulae mean the same thing (hence the equal term), but the latter displays the function we are computing the Hessian from more clearly. So we can replace the H in the formulae above by that notation. Again, it doesn’t change anything, it just makes it clearer and easier to read:</p>
+<div class="math notranslate nohighlight">
+\[ln Q(\Theta) \approx ln Q(\Theta_0) + \nabla ln Q(\Theta_0)^T(\Theta-\Theta_0) + \frac{1}{2}(\Theta-\Theta_0)^T [\delta_{\Theta_0, \Theta_0} ln Q(\Theta_0)](\Theta-\Theta_0)\]</div>
+<p>Okay, so if we want to approximate the log of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> from a certain point <span class="math notranslate nohighlight">\(\Theta_0\)</span>, we need to calcuate the log of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> at that point, plus the first order derivative (i.e. the gradient) at that point with some scaling parameter, plus the second order derivative (hessian) with some scaling. And of course, you must be thinking “since we don’t know <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>, we can’t calculate any of this, so what’s the point?”. Again, keep that thought in the back of your mind for now. But now you may have another question: “What is <span class="math notranslate nohighlight">\(\mu\)</span> supposed to be, how do we find the modes of a distribution we don’t even know?”. Very good question, but once again, keep that in the back of your mind.</p>
+<p>One other thing we need to do is decide what <span class="math notranslate nohighlight">\(\Theta_0\)</span> should be. This is basically a set of values for each of the parameters from which to start approximating from. If you remember the 3D plots of multivariate distribution we saw before, the <span class="math notranslate nohighlight">\(\Theta_0\)</span> is just a point on that distribution, which corresponds to a given value for each of the parameter. But which point should we chose? One thing to note about quadratic approximation (and any kind of finite Taylor series expansion) is that the approximate is most accurate around the point we start from (i.e. around <span class="math notranslate nohighlight">\(\Theta_0\)</span>, no matter which <span class="math notranslate nohighlight">\(\Theta_0\)</span> we chose). And remember that the reason we are approximating the log of the joint probability using the quadratic approximation is because perhaps we can solve the expectation (i.e. integral) the quadratic approximation of the approximate posterior. So in other words, our final goal is to approximate the Expectation of the log of the approximate posterior by calculating the Expectation of the quadratic approximation of the approximate posterior (I know, it’s a mouthful).</p>
+<p>Accordingly, we should chose our <span class="math notranslate nohighlight">\(\Theta_0\)</span> to be the point of the distribution which surroundings has the strongest impact on the Expectation. So what is the point in a probability distribution that has the strongest impact on the expectation? The mode! The mode is the point in your distribution with the highest probabilty. And because the Expectation is a weighted average, the mode of the distribution (the point with the highest probability) has the strongest influence. This is why we will take <span class="math notranslate nohighlight">\(\Theta_0\)</span> to be <span class="math notranslate nohighlight">\(\mu\)</span>, where <span class="math notranslate nohighlight">\(\mu\)</span> stands for the mode. So we can rewrite the function above like this to make it more explicit:</p>
+<div class="math notranslate nohighlight">
+\[ln Q(\Theta) \approx ln Q(\Theta_0) + \nabla ln Q(\mu)^T(\Theta-\mu) + \frac{1}{2}(\Theta-\mu)^T [\delta_{\mu, \mu} ln Q(\mu)](\Theta-\mu)\]</div>
+<p>There is one important consequence to taking the mode as our point to approximate from. The mode of a distribution is a peak, meaning that if you move in any direction from there, you go down. As we have explain, the <span class="math notranslate nohighlight">\(\nabla ln Q(\mu)\)</span> is the gradient of the distribution, which is the same thing as the derivative you know from high school, just in multidimension space. But it describes the same thing: the slope of the tangent to a point in your distribution. Now if the point you calculate from it a peak, the slope of the tangent is… 0. That’s right, if you approximate a function at its peak (i.e. mode), then the gradient term is equal to 0, so the above function simplifies to:</p>
+<div class="math notranslate nohighlight">
+\[ln Q(\Theta) \approx ln Q(\mu) + \frac{1}{2}(\Theta-\mu)^T [\delta_{\mu, \mu} ln Q(\mu)](\Theta-\mu)\]</div>
+<p>We still don’t know what <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is, but the the approximation at the mode of this distribution seems easy enough to deal with. And remember that the Hessian (<span class="math notranslate nohighlight">\(\delta_{\mu, x_j} ln P(y, \mu)\)</span>) is a matrix.</p>
+</section>
+<section id="the-laplace-approximation-of-q-theta">
+<h2>The Laplace approximation of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span><a class="headerlink" href="#the-laplace-approximation-of-q-theta" title="Link to this heading">#</a></h2>
+<p>Here is where we adress the central question: “what on earth is the approximate posterior <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>”. We still don’t know what it is, but we know the quadratic approximation of its log. Granted, we also don’t really know what the quadratic approximation of its log is, because the quadratic approximation from its log still requires us to compute the log of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> at a particular point, which we can’t do if we don’t know <span class="math notranslate nohighlight">\(Q(\Theta)\)</span>. This is all true.</p>
+<p>But we can do something quite interesting. Since we know the approximation of the log of the distribution, the approximation <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is simply the exponential of that:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+exp[ln Q(\Theta)] &amp;\approx exp[ln Q(\Theta_0) + \frac{1}{2}(\Theta-\mu)^T [\delta_{\mu, \mu} ln Q(\mu)](\Theta-\mu)] \\
+Q(\Theta) &amp;\approx Q(\Theta_0) \times exp[\frac{1}{2}(\Theta-\mu)^T [\delta_{\mu, \mu} ln Q(\mu)](\Theta-\mu)]
+\end{align}
+\end{split}\]</div>
+<p>We just got rid of the log signs, and with the exponential, a sum becomes a multiplication, hence the formulae on the second line. Now, there is one more important thing about approximating a probability distribution at its peak. The hessian term represents the curvature at that particular point. And so since we are dealing with probability distribution, there is only one way we can go from the peak: down. So this means that the Hessian at the peak will always be negative definite. And again remember that it is a matrix. So we will rewrite the equation above like so:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+Q(\Theta) &amp;\approx Q(\Theta_0) \times exp[-\frac{1}{2}(\Theta-\mu)^T\Lambda (\Theta-\mu)] \\
+\Lambda &amp;= -\delta_{\mu, \mu} ln Q(\mu)
+\end{align}
+\end{split}\]</div>
+<p>Does that remind you of anything? We have seen a very similar formulae in previous chapters, the formulae of the multivariate normal distribution:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta) = \frac{1}{(2*\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\Theta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\Theta}-\mathcal{\mu}))\]</div>
+<p>In the multivariate normal distribution, we have an exponentiated term that gets divided by something (<span class="math notranslate nohighlight">\((2*\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}\)</span>). That something is just a normalization constant to ensure that the whole sums to 1. In the quadratic approximation of our probability distribution, we have some exponentiated term multiplied by some number <span class="math notranslate nohighlight">\(G(x_0)\)</span> (which is a single number remember).</p>
+<p>If we look at the exponentiated term, they are almost exactly teh same across both formulae, to the difference that in the multivariate we have the term <span class="math notranslate nohighlight">\(\Sigma\)</span>, while in the quadratic approximation, we have <span class="math notranslate nohighlight">\(\Lambda\)</span>. But if you remember, both these terms are matrices. So in fact, we have:</p>
+<div class="math notranslate nohighlight">
+\[\Lambda = \Sigma^{-1}\]</div>
+<p>The exponentiated term is the same between the two formulae, so the only difference is the one number by which we multiply it. In the multiavariate normal distribution, this is the normalization constant to ensure that it all sums to 1. In the case of the exponential of the quadratic approximation, we don’t quite know what it is. But since we multiply the exponentiated term by that instead of the normalization constant, we say that the exponential quadratic approximation of a probability distribution is a <strong>scaled multivariate distribution</strong>.</p>
+<p>This is what the Laplace approximation is. It is bascially the observation that the exponential quadratic approximation of the log of a probability distribution near its mode is a scaled multivariate normal distribution (i.e. a Gaussian). That’s just the way it is.</p>
+<p>What you might wonder is what should we do about the <span class="math notranslate nohighlight">\(G(x_0)\)</span> term? Should we calculate it? Should we somehow figure out if its equal to the normalization constant? The truth is that we don’t quite care about it. Since it is a constant, it won’t impact the Expectation, no matter what we set it as. However, since <span class="math notranslate nohighlight">\(G(x)\)</span> is a probability distribution, this value has to be a constant that ensures that the whole integrates to 1. So the only valid option is the following:</p>
+<div class="math notranslate nohighlight">
+\[G(x_0) = \frac{1}{(2*\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}\]</div>
+</section>
+<section id="assumption-of-gaussianity-under-the-laplace-approximation">
+<h2>Assumption of Gaussianity under the Laplace approximation<a class="headerlink" href="#assumption-of-gaussianity-under-the-laplace-approximation" title="Link to this heading">#</a></h2>
+<p>There is an important implication to all of this. If we approximate the approximate posterior <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> using the quadratic approximation, it implies that we approximate the posterior as a Gaussian. In other words, <strong>we will assume that the posterior is a normal distribution</strong>. This is why you will often read about how the Free energy method for Bayesian statistics has an “assumption of Gaussianity” about the posterior, or that the method assumes that the posterior is a normal distribution. This is all true, but it is important to understand where this “assumption” comes from. It comes from the methodological choice to approximate <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> using Laplace approximation, i.e. <strong>quadratic approximation of the log approximate posterior around its mode</strong>. It doesn’t come from a general assumption that any posteriors will look like a normal distribution, but from the fact that around its mode, the posterior will look like one.</p>
+</section>
+<section id="the-expectation-of-the-approximation-of-the-approximate-posterior">
+<h2>The expectation of the approximation of the approximate posterior<a class="headerlink" href="#the-expectation-of-the-approximation-of-the-approximate-posterior" title="Link to this heading">#</a></h2>
+<p>So from now on, we will just <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> to be a multivariate Gaussian distribution. So we will now try to compute the expectation of the log of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> by trying to find a solution to the expectation of the log of a multivariate normal distribution.</p>
+<p>Let’s first roll back to the quadratic approximation. We have written before that the approximation of the log of the approximate prior is:</p>
+<p><span class="math notranslate nohighlight">\(ln Q(\Theta_0) + -\frac{1}{2}(\Theta-\mu)^T \Sigma^{-1}(\Theta-\mu)\)</span></p>
+<p>So the expectation of that is simply that:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{align}
+\mathbb{E}_{Q(\Theta)}[ln Q(\Theta)] \approx \mathbb{E}_{Q(\Theta)}[ln Q(\mu) + -\frac{1}{2}(\Theta-\mu)^T \Sigma^{-1} (\Theta-\mu)]
+\end{align}
+\]</div>
+<p>This may seem utterly confusing. Didn’t we just say that we figured out <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is a normal distribution, can’t we just see if we can calculate the expectation of the log of the multivariate distribution instead? The answer is no, we can’t. There is not analytical solution to the expectation of the log of a multivariate distribution. But then, how does the above help, we still have <span class="math notranslate nohighlight">\(ln Q(\mu)\)</span> inside the expectation? Devil is in the detail: this is <span class="math notranslate nohighlight">\(ln Q(\mu)\)</span>, not <span class="math notranslate nohighlight">\(ln Q(\Theta)\)</span>! So it is not a problem. The <span class="math notranslate nohighlight">\(ln Q(\mu)\)</span> does not depend on <span class="math notranslate nohighlight">\(\Theta\)</span>, so we can take it out of the Expectation (same old trick). So we can rewrite the above function by taking out of the expectation term everything that doesn’t depend on <span class="math notranslate nohighlight">\(\Theta\)</span>:</p>
+<div class="math notranslate nohighlight">
+\[
+\begin{align}
+\mathbb{E}_{Q(\Theta)}[ln Q(\Theta)] \approx ln Q(\mu) - \frac{1}{2}\mathbb{E}_{Q(\Theta)}[(\Theta-\mu)^T \Sigma^{-1}(\Theta-\mu)]
+\end{align}
+\]</div>
+<p>Now that we know that <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> is a normal distribution, let’s see if we can write down the function of the log of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> at its modes:</p>
+<div class="math notranslate nohighlight">
+\[\begin{split}
+\begin{align}
+ln Q(\mu) &amp;= ln \bigg[\frac{1}{(2*\pi)^{p/2}|\Sigma|^{1/2}}exp(-\frac{1}{2}(\mu - \mu)^T\Sigma^{-1}(\mu - \mu))\bigg]\\
+&amp;= ln \bigg[\frac{1}{(2*\pi)^{p/2}|\Sigma|^{1/2}}exp(-\frac{1}{2}(0)^T\Sigma^{-1}(0))\bigg]\\
+&amp;= ln \bigg[\frac{1}{(2*\pi)^{p/2}|\Sigma|^{1/2}}exp(0)\bigg]\\
+&amp;= ln \bigg[\frac{1}{(2*\pi)^{p/2}|\Sigma|^{1/2}}\bigg]\\
+&amp;= ln[1] - ln[(2*\pi)^{p/2}|\Sigma|^{1/2}]\\
+&amp;= -\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi]
+\end{align}
+\end{split}\]</div>
+<p>So we can add that in the formulae of the expectation of the approximation of the log approximate posterior:
+$<span class="math notranslate nohighlight">\(
+\begin{align}
+\mathbb{E}_{Q(\Theta)}[ln Q(\Theta)] \approx -\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi] - \frac{1}{2}\mathbb{E}_{Q(\Theta)}[(\Theta-\mu)^T \Sigma^{-1}(\Theta-\mu)]
+\end{align}
+\)</span>$</p>
+<p>Still wondering what the mode of the approximate posterior is? We are getting there, I promise, have patience. In the equation above, we only have to deal with the Expectation for the right hand term. Remember when I said we will use complicated maths in this chapter? Well this is is where that happens. In order to get rid of the Expectation sign, we will use something called the trace trick. You don’t actually need to understand that part, but we might write a chapter to explain how that works (drop an issue on github if you’d like us to). We will simply repraise the derivation from <a class="reference external" href="https://doi.org/10.1016/j.neuroimage.2023.120310">“A primer on variational Laplace”</a>:</p>
+<p>“To simplify these expressions, note that each quadratic term inside the square brackets is a scalar. This means we can use the ‘trace trick’, <span class="math notranslate nohighlight">\(tr(ABC) = tr(CAB)\)</span>. Applying this gives the simpler expressions:”
+$<span class="math notranslate nohighlight">\(
+\begin{align}
+\mathbb{E}_{Q(\Theta)}[ln Q(\Theta)] &amp;\approx -\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi] - \frac{1}{2}\mathbb{E}_{Q(\Theta)}[tr\bigg((\Theta-\mu)^T \Sigma^{-1}(\Theta-\mu)\bigg)] \\
+&amp;= -\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi] - \frac{1}{2}tr\bigg(\mathbb{E}_{Q(\Theta)}[(\Theta-\mu)^T(\Theta-\mu)\Sigma^{-1}]\bigg)\\
+&amp;= -\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi] - \frac{1}{2}tr\bigg(\Sigma^{-1}\mathbb{E}_{Q(\Theta)}[(\Theta-\mu)^T(\Theta-\mu)]\bigg)
+\end{align}
+\)</span>$</p>
+<p>Okay, we are making progress. The term in between the expectation bracket probably looks familar from previous chapters. Indeed, the expectation of the <span class="math notranslate nohighlight">\((\Theta-\mu)^T(\Theta-\mu)\)</span> is the formulae of the covariance matrix we saw before. And one thing we haven’t explained (but we will below) is that in fact, the <span class="math notranslate nohighlight">\(\Sigma\)</span> is also the covariance matrix. So in fact,</p>
+<div class="math notranslate nohighlight">
+\[\mathbb{E}_{Q(\Theta)}\big[(\Theta-\mu)^T(\Theta-\mu)\big] = \Sigma\]</div>
+<p>Let’s replace it in the equation:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{E}_{Q(\Theta)}[ln Q(\Theta)] \approx -\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi] - \frac{1}{2}tr(\Sigma\Sigma^-1)
+\]</div>
+<p>As it turns out, multiplying a matrix by its inverse yields the identity matrix. The trace of the identity matrix is equal to the number of rows of the matrix. Since <span class="math notranslate nohighlight">\(\Sigma\)</span> is the covariance matrix, we have as many rows as we have parameters, so we have:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{E}_{Q(\Theta)}[ln Q(\Theta)] \approx -\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi] - \frac{n}{2}
+\]</div>
+<p>Where <span class="math notranslate nohighlight">\(n\)</span> is the number of parameters in our model! So here we are, we have gotten rid of the Expectation, and we now have an analytical solution to the expectation of the log of the approximate posterior!</p>
+</section>
+<section id="the-modes-and-covariance-matrix-of-the-distribution-is-what-we-optimize-for">
+<h2>The modes and covariance matrix of the distribution is what we optimize for<a class="headerlink" href="#the-modes-and-covariance-matrix-of-the-distribution-is-what-we-optimize-for" title="Link to this heading">#</a></h2>
+<p>The formulae above seems straight forward enough and easy to calculate, and we will in a bit how we do that. But there are two things that you are probably still confused about: <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>. What should these values be? At this point, it’s important to step back to remind ourselves why we did everything we did so far. Otherwise, you’ll surely feel lost in the details of the maths and fail to see the whole picture. To go back to our penguin example, we are fitting the following model:</p>
+<div class="math notranslate nohighlight">
+\[y = \boldsymbol{\beta X} + \epsilon\]</div>
+<p>Where</p>
+<div class="math notranslate nohighlight">
+\[\epsilon ~ \mathcal{N}(0, \sigma^2)\]</div>
+<p>And the whole goal is to compute the probability of the <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> parameters after seeing the data, which is the posterior:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta|y)\]</div>
+<p>Where <span class="math notranslate nohighlight">\(\Theta\)</span> is a vector containing the parameters <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span>. The posterior is a probability distribution that gives us for each value of the parameter, what the probability is of that parameter given the data we have observed. The whole tricky bit with Bayes is that getting this value requires to calculate this:</p>
+<div class="math notranslate nohighlight">
+\[P(\Theta|y) = \frac{P(y|\Theta)P(\Theta)}{P(y)}\]</div>
+<p>Which is made difficult by the fact that <span class="math notranslate nohighlight">\(P(y)\)</span> contains an integral. But regardlless, our ultimate goal is to be able to find the parameter of the posterior distribution, so that we can answer our final question.</p>
+<p>As we have said in the previous chapter, with the Free energy functional, we converted the problem of the integral in an issue of variational calculus. We can aim to find the approximate posterior <span class="math notranslate nohighlight">\(Q(\Theta)\)</span> that results in the highest possible value for the free energy, as that distribution should be closest to the true posterior. And we have seen in this chapter that if we use the quadratic approximation to find the expectation of the log of that approximate posterior, it implies that the approximate posterior is in fact a multivariate normal distribution.</p>
+<p>So what that means is that our approximate posterior has the following formulae:</p>
+<div class="math notranslate nohighlight">
+\[Q(\Theta) = \frac{1}{(2*\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\Theta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\Theta}-\mathcal{\mu}))\]</div>
+<p>So based on the formulae above, what does it mean to find the approximate posterior that maximizes the free energy functional? That’s right, it means finding the values of <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\Sigma\)</span> that yield the highest possible values of the free energy function. Accordingly, in the formulae above, the fact that we don’t know what the values of <span class="math notranslate nohighlight">\(\mu\)</span> and <span class="math notranslate nohighlight">\(\Sigma\)</span> are is normal: <strong>that’s exactly what we are looking for!</strong>. Indeed, if we know the modes and the covariance of the posterior, then we have found the posterior, in other words, we have solved (or approximated) the Bayes theorem for our problem. So conceptually, the optimization of the free energy functional entails that we try many different values for the modes <span class="math notranslate nohighlight">\(\mu\)</span> and the covariance <span class="math notranslate nohighlight">\(\Sigma\)</span> of our approximate posterior distribution.</p>
+<p>You can think about it that way: in the case of the likelihood function <span class="math notranslate nohighlight">\(P(y|Theta)\)</span>, the maximum likelihood estimate are the values of <span class="math notranslate nohighlight">\(\Beta\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> under which the data are the most likely. In the posterior, we are trying to find the same thing but the other way around: the values of <span class="math notranslate nohighlight">\(\Beta\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> that are most likelly undere the data, but we also add the covariance matrix <span class="math notranslate nohighlight">\(\Sigma\)</span>. This is one thing that’s perhaps confusing at first: aren’t <span class="math notranslate nohighlight">\(\sigma^2\)</span> and <span class="math notranslate nohighlight">\(\Sigma\)</span> both variance terms? If yes, why is <span class="math notranslate nohighlight">\(\sigma^2\)</span> part of the mode, separate from <span class="math notranslate nohighlight">\(\Sigma\)</span>, shouldn’t it be inside it? The answer is no, because <span class="math notranslate nohighlight">\(\Sigma\)</span> is the error term about the parameters of the model. So it is also something about error and with variance in it, but not about the observations, but about the parameters we have computed instead.</p>
+</section>
+<section id="final-recap">
+<h2>Final recap<a class="headerlink" href="#final-recap" title="Link to this heading">#</a></h2>
+<p>In this chapter, we have seen that we can use the quadratic approximation to compute the Expection of the log of the approximate prior analytically. And we have seen that using the quadratic method to approximate the log of the approximate prior entails that approximate prior is a scaled gaussian, which means that the approximate prior is a multivariate normal distribution, which is what the Laplace approximation is. With all that in mind, we could write a simple function for the one side of the free energy functional:</p>
+<div class="math notranslate nohighlight">
+\[
+\mathbb{E}_{Q(\Theta)}[ln Q(\Theta)] \approx -\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi] - \frac{n}{2}
+\]</div>
+<p>Where:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(\mu\)</span> is the mode of the approximate prior, i.e. the most likely values of <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> given the data in our penguin example</p></li>
+<li><p><span class="math notranslate nohighlight">\(\Sigma\)</span> is the covariance matrix of our parameters</p></li>
+<li><p><span class="math notranslate nohighlight">\(n\)</span> is the number of parameters (so 3 if we have <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span>)</p></li>
+</ul>
+<p>And so when we try to optimize the free energy functional, we will try many different values of <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> and <span class="math notranslate nohighlight">\(\Sigma\)</span>, until we find the right combination that maximizes the formulae:</p>
+<div class="math notranslate nohighlight">
+\[F[Q(\Theta)] = \mathbb{E}[ln P(y, \Theta)] - [-\frac{1}{2}[ln(|\Sigma|) + n ln 2\pi] - \frac{n}{2}]\]</div>
+<p>But before we can do that, we still need to get rid of the expectation in that other term <span class="math notranslate nohighlight">\(\mathbb{E}[ln P(y, \Theta)]\)</span>. We will see in the next chapter how we do that.</p>
+</section>
+</section>
+
+    <script type="text/x-thebe-config">
+    {
+        requestKernel: true,
+        binderOptions: {
+            repo: "binder-examples/jupyter-stacks-datascience",
+            ref: "master",
+        },
+        codeMirrorConfig: {
+            theme: "abcdef",
+            mode: "python"
+        },
+        kernelOptions: {
+            name: "python3",
+            path: "./VL"
+        },
+        predefinedOutput: true
+    }
+    </script>
+    <script>kernelName = 'python3'</script>
+
+                </article>
+              
+
+              
+              
+              
+              
+                <footer class="prev-next-footer d-print-none">
+                  
+<div class="prev-next-area">
+    <a class="left-prev"
+       href="JensenInequality.html"
+       title="previous page">
+      <i class="fa-solid fa-angle-left"></i>
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">previous</p>
+        <p class="prev-next-title">Jensen inequality: from an intractable integral to an optimization problem</p>
+      </div>
+    </a>
+    <a class="right-next"
+       href="LogJointApprox.html"
+       title="next page">
+      <div class="prev-next-info">
+        <p class="prev-next-subtitle">next</p>
+        <p class="prev-next-title">Approximating the Expectation of the log of the joint probabilitiy</p>
+      </div>
+      <i class="fa-solid fa-angle-right"></i>
+    </a>
+</div>
+                </footer>
+              
+            </div>
+            
+            
+              
+                <dialog id="pst-secondary-sidebar-modal"></dialog>
+                <div id="pst-secondary-sidebar" class="bd-sidebar-secondary bd-toc"><div class="sidebar-secondary-items sidebar-secondary__inner">
+
+
+  <div class="sidebar-secondary-item">
+  <div class="page-toc tocsection onthispage">
+    <i class="fa-solid fa-list"></i> Contents
+  </div>
+  <nav class="bd-toc-nav page-toc">
+    <ul class="visible nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quick-recap">Quick recap</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#dealing-with-the-integral">Dealing with the integral</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#quadratic-approximation">Quadratic approximation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-quadratic-approximation-of-the-approximate-posterior">The quadratic approximation of the approximate posterior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-laplace-approximation-of-q-theta">The Laplace approximation of <span class="math notranslate nohighlight">\(Q(\Theta)\)</span></a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#assumption-of-gaussianity-under-the-laplace-approximation">Assumption of Gaussianity under the Laplace approximation</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-expectation-of-the-approximation-of-the-approximate-posterior">The expectation of the approximation of the approximate posterior</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-modes-and-covariance-matrix-of-the-distribution-is-what-we-optimize-for">The modes and covariance matrix of the distribution is what we optimize for</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#final-recap">Final recap</a></li>
+</ul>
+  </nav></div>
+
+</div></div>
+              
+            
+          </div>
+          <footer class="bd-footer-content">
+            
+<div class="bd-footer-content__inner container">
+  
+  <div class="footer-item">
+    
+<p class="component-author">
+By Alex Lepauvre, Jan Gabriel Hartel
+</p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+
+  <p class="copyright">
+    
+      © Copyright 2023.
+      <br/>
+    
+  </p>
+
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+  <div class="footer-item">
+    
+  </div>
+  
+</div>
+          </footer>
+        
+
+      </main>
+    </div>
+  </div>
+  
+  <!-- Scripts loaded after <body> so the DOM is not blocked -->
+  <script defer src="../_static/scripts/bootstrap.js?digest=8878045cc6db502f8baf"></script>
+<script defer src="../_static/scripts/pydata-sphinx-theme.js?digest=8878045cc6db502f8baf"></script>
+
+  <footer class="bd-footer">
+  </footer>
+  </body>
+</html>
