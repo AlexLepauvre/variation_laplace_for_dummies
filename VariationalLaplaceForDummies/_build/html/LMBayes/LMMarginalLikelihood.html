@@ -63,6 +63,7 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'LMBayes/LMMarginalLikelihood';</script>
+    <link rel="icon" href="../_static/logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Variational Laplace" href="../VariationalLaplace.html" />
@@ -107,6 +108,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -148,8 +152,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
-    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
   
   
 </a></div>
@@ -185,6 +189,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../VariationalLaplace.html">Variational Laplace</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
 </ul>
 </details></li>
 </ul>
@@ -241,7 +249,7 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -258,7 +266,24 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FLMBayes/LMMarginalLikelihood.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/LMBayes/LMMarginalLikelihood.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FLMBayes/LMMarginalLikelihood.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -387,10 +412,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="alert alert-info"><h4>Note</h4><p> 
-    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
-</p></div>
-<section class="tex2jax_ignore mathjax_ignore" id="marginal-likelihood">
+  <section class="tex2jax_ignore mathjax_ignore" id="marginal-likelihood">
 <h1>Marginal likelihood<a class="headerlink" href="#marginal-likelihood" title="Link to this heading">#</a></h1>
 <p>With everything we have seen so far, we are ready to tackle the marginal likelihhood of our linear model. The marginal likelihood is the denominator of the Bayes theorem:</p>
 <div class="math notranslate nohighlight">
@@ -400,7 +422,7 @@
 \[P(\Theta|y) = \frac{P(y|\theta)P(\Theta)}{\int P(y|\theta)P(\Theta)}\]</div>
 <p>By now, we know that the numerator is:</p>
 <div class="math notranslate nohighlight">
-\[P(y|\theta)P(\Theta) = (\frac{1}{\sqrt{2\pi\sigma^2}})^nexp(-\frac{1}{2\sigma^2}(y - \bold{X}\bold{\beta})^T(y-\bold{X}\bold{\beta})) \times \Bigg(\frac{1}{(2\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu})) \times \frac{b^\alpha}{\Gamma(\alpha)}(1/x)^{\alpha+1}exp(-b/x)\Bigg)\]</div>
+\[P(y|\theta)P(\Theta) = (\frac{1}{\sqrt{2\pi\sigma^2}})^nexp(-\frac{1}{2\sigma^2}(y - \boldsymbol{X}\boldsymbol{\beta})^T(y-\boldsymbol{X}\boldsymbol{\beta})) \times \Bigg(\frac{1}{(2\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu})) \times \frac{b^\alpha}{\Gamma(\alpha)}(1/x)^{\alpha+1}exp(-b/x)\Bigg)\]</div>
 <p>(<span class="math notranslate nohighlight">\(\alpha\)</span> and <span class="math notranslate nohighlight">\(b\)</span> are the parameter of the prior distribution of <span class="math notranslate nohighlight">\(\sigma^2\)</span>)</p>
 <p>That’s a big scary formula, but that’s not a problem. Note that here, everything is expressed in vector form, otherwise it would be way too long. We can plug in the various bits and pieces and compute the numerator for all values of the parameters, given our data. In fact, we can write a simple python function to express it, by simply combining the various functions we have already created!</p>
 <div class="cell docutils container">
@@ -552,7 +574,7 @@
 <p>That is unfortunately not the case for the marginal likelihood. Because of the integral, the marginal likelihood cannot be computed. As we saw in the case of our coin toss example, we could manipulate the various formulae to basically remove the integral symbol from the equation. We say that we found a <strong>closed form solution</strong> for the equation. If we do not find a <strong>closed form solution</strong>, we cannot solve the equation, meaning we can’t find the result of that equation. It is simple to understand why, as we briefly mentioned in the coin toss example. We are here dealing with continuous variables: the <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span> parameters can take any values between <span class="math notranslate nohighlight">\(-\infty\)</span> and <span class="math notranslate nohighlight">\(+\infty\)</span>. The integral term means that we need to take the sum of the value of the numerator for any possible values the <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span> parameter. But since there is an infinity of them (<span class="math notranslate nohighlight">\(\beta_1=0.2\)</span> but also <span class="math notranslate nohighlight">\(\beta_1=0.0000000001\)</span> and so on), we can’t possibly compute it.</p>
 <p>But then, maybe we can find a trick, like in the case of the coin toss example, to get rid of that nasty integral? Let’s give it a try:</p>
 <div class="math notranslate nohighlight">
-\[P(y|\theta)P(\Theta) = \int(\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\Beta]^2}{2\sigma^2}} \times \Bigg(\frac{1}{(2\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu})) \times \frac{\beta^\alpha}{\Gamma(\alpha)}(1/x)^{\alpha+1}exp(-\beta/x)\Bigg) d\beta d\sigma^2\]</div>
+\[P(y|\theta)P(\Theta) = \int(\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\boldsymbol{\beta}]^2}{2\sigma^2}} \times \Bigg(\frac{1}{(2\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu})) \times \frac{\beta^\alpha}{\Gamma(\alpha)}(1/x)^{\alpha+1}exp(-\beta/x)\Bigg) d\beta d\sigma^2\]</div>
 <p>In this case, we can’t get rid of the integral, so we can’t compute the denominator. And it’s not that I, the author of this book, failed to figure it out in this book and that it has been solved somewhere else. And it is also not such that mathematicians haven’t been able to solve it just yet and will eventually. It just is the case that this equation has no <strong>closed form solution</strong>, which is the same as saying that this equation has no <strong>analytical solution</strong>. It never will. Now maybe you will read this book and go on to pursue a successful career as a mathematician to prove me wrong and actually solve that equation analytically. If you actually were to do that, you would shatter everything we know about mathematics and be crowned the smartest person that has ever lived. It’s no exaggeration, it would be that big a deal.</p>
 </section>
 <section id="what-do-we-do-now">

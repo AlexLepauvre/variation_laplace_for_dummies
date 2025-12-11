@@ -1,11 +1,5 @@
 # Variational Laplace for Dummies
 
-<div class="alert alert-info"><h4>Note</h4><p> 
-    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
-</p></div>
-
-Introduction
-
 Welcome to Variational Laplace for dummies: A Journey from Zero to Understanding. This book is born out of a personal journey—a quest to understand complex statistical methods without the heavy mathematical background often assumed by experts in the field.
 
 As a biologist with a PhD in consciousness neuroscience, my academic path included minimal formal training in advanced mathematics. My experience with statistics was rooted in practical applications: from simple t-tests to more complex linear models, and incorporating machine learning and multivariate methods into my research. However, as I delved deeper into the nuances of scientific inquiry, I found myself drawn to Bayesian statistics.

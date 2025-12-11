@@ -63,6 +63,7 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'LMBayes/LMLikelihood';</script>
+    <link rel="icon" href="../_static/logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="The prior of the linear model" href="LMPriors.html" />
@@ -107,6 +108,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -148,8 +152,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
-    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
   
   
 </a></div>
@@ -185,6 +189,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../VariationalLaplace.html">Variational Laplace</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
 </ul>
 </details></li>
 </ul>
@@ -241,7 +249,7 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -258,7 +266,24 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FLMBayes/LMLikelihood.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/LMBayes/LMLikelihood.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FLMBayes/LMLikelihood.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -389,10 +414,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="alert alert-info"><h4>Note</h4><p> 
-    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
-</p></div>
-<section class="tex2jax_ignore mathjax_ignore" id="the-likelihood-of-the-estimated-parameters-of-a-linear-model">
+  <section class="tex2jax_ignore mathjax_ignore" id="the-likelihood-of-the-estimated-parameters-of-a-linear-model">
 <h1>The likelihood of the estimated parameters of a linear model:<a class="headerlink" href="#the-likelihood-of-the-estimated-parameters-of-a-linear-model" title="Link to this heading">#</a></h1>
 <p>The first need we need is a function for the likelihood of the data under given parameters. That’s the same concept as before, but it is a little bit more complicated, for several reasons. The first reason is that compared to our coin toss example where the probability of observing a given number of heads depended on a single parameter of interest (the probability of getting head), in our current problem we have several parameters: <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span> (but also the error term). Accordingly, we need a likelihood function that tells us the probability of observing a given outcome <span class="math notranslate nohighlight">\(y_i\)</span> given the value of several parameters. In addition, compared to the previous example where the data were a single observation <span class="math notranslate nohighlight">\(y\)</span> (the number of head we observed in our experiment), in the current case we have many observations <span class="math notranslate nohighlight">\(y_i\)</span> (one per penguin). We will see how to deal with these two complications one by one before putting everything together.</p>
 <section id="the-likelihood-of-one-observation">
@@ -486,12 +508,12 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Estimated beta_1=0.204
-Estimated beta_0=3.642
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Estimated beta_1=0.252
+Estimated beta_0=-6.181
 ----------------------------------------
-The smallest error is of 0.009047247692230087 kg
-The model predicted 43.202129988025746 kg
-The observed weigth is 43.211177235717976 kg
+The smallest error is of -0.12963432383973128 kg
+The model predicted 40.678043341296544 kg
+The observed weigth is 40.54840901745681 kg
 </pre></div>
 </div>
 </div>
@@ -530,10 +552,10 @@ The observed weigth is 43.211177235717976 kg
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Computing the likelihood of y=43.211177235717976 for the penguin with flipper length=194
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Computing the likelihood of y=40.54840901745681 for the penguin with flipper length=186
 </pre></div>
 </div>
-<img alt="../_images/e8a39dba382775fe6006a4cb0c6df9aa2719319d5cf0ae3a5e349149579db006.png" src="../_images/e8a39dba382775fe6006a4cb0c6df9aa2719319d5cf0ae3a5e349149579db006.png" />
+<img alt="../_images/1090b2530c198f1a2c02d3e95f86f5a49a16d54abd6a93f18fd50376cacefae3.png" src="../_images/1090b2530c198f1a2c02d3e95f86f5a49a16d54abd6a93f18fd50376cacefae3.png" />
 </div>
 </div>
 <p>This probably doesn’t look like what you’d have expected (at least it doesn’t look like what I would have expected). The results look like there is a ridge along which the probability of the data is very high, and everyhing outside of it is very low. This shape is however to be expected. This is because with a single data point, there isn’t enough data to determine the likelihood of the data given the parameter. In the current example, we are looking at the likelihood of observing a penguin weighting 43.85Kg with flipper size of 196mm, given the values of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> and our model <span class="math notranslate nohighlight">\(y = \beta_0 + \beta_1 * x\)</span>. But of course, there are many possible values of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> that can yield 43.85:</p>
@@ -640,7 +662,7 @@ The observed weigth is 43.211177235717976 kg
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/d32485ae4df735175f5c35a430b560241ed81a023e3cb4c25ac8624c2e889786.png" src="../_images/d32485ae4df735175f5c35a430b560241ed81a023e3cb4c25ac8624c2e889786.png" />
+<img alt="../_images/12b79097ad1de5703f82ca30dd9844038e86e095286a3f31cc88e6b82424c072.png" src="../_images/12b79097ad1de5703f82ca30dd9844038e86e095286a3f31cc88e6b82424c072.png" />
 </div>
 </div>
 <p>Hm, okay, that doesn’t look quite like what you may have expected. Let’s think about it for a sec. The likelihood is once again very elongated, which means that there is some sort of a correlation between <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(beta_1\)</span> in terms of likelihood. Indeed, the observed data are more likely for particular values of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(beta_1\)</span>, but the pairs of values of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(beta_1\)</span> for which the data are most likely clearly follow a line. Why is that? There is actually a very good reason. It’s because the different values of <span class="math notranslate nohighlight">\(beta_1\)</span>, you can adjust the intercept <span class="math notranslate nohighlight">\(\beta_0\)</span> to make them fit the data better. Or the other way around, you can offset changes in the intercept by changing the slope to make the data fit better. Here is a vizualization for why that’s the case</p>
@@ -663,7 +685,7 @@ The observed weigth is 43.211177235717976 kg
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/b60401cccea8a848385bfdb92aa8478f32f6a38be479f7f7ebc03676f4a366f8.png" src="../_images/b60401cccea8a848385bfdb92aa8478f32f6a38be479f7f7ebc03676f4a366f8.png" />
+<img alt="../_images/dd793e834fb7eda2b51541d3fd2036514c677816d05716d181bf7c4845eb9b0c.png" src="../_images/dd793e834fb7eda2b51541d3fd2036514c677816d05716d181bf7c4845eb9b0c.png" />
 </div>
 </div>
 <p>You can see in the plot above that when the intercept parameter <span class="math notranslate nohighlight">\(\beta_0\)</span> is far from its ground truth value (as indicated by the red lines), you can still obtain a line that closely approximates the true relationship by adjusting the slope parameter <span class="math notranslate nohighlight">\(\beta_1\)</span>. Similarly, if β1β1​ deviates from its true value (as shown by the blue lines), adjusting <span class="math notranslate nohighlight">\(\beta_0\)</span> can compensate for this discrepancy, resulting in a line that aligns well with the observed data. This illustrates why there is a correlation between <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> in the likelihood function: there are multiple pairs of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> that yield similar fits to the data. Adjusting one parameter can offset changes in the other, allowing the model to maintain a good approximation of the true relationship.</p>
@@ -719,7 +741,7 @@ The observed weigth is 43.211177235717976 kg
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/995e005150bfa2ca8b3540be7eac7bc660668d0e56afe353568a6509e233619b.png" src="../_images/995e005150bfa2ca8b3540be7eac7bc660668d0e56afe353568a6509e233619b.png" />
+<img alt="../_images/60edf672ff236b007d6db4e91f2722e81e8b8eac06d0901dad129b526cbcd7bc.png" src="../_images/60edf672ff236b007d6db4e91f2722e81e8b8eac06d0901dad129b526cbcd7bc.png" />
 </div>
 </div>
 <p>Now that looks better: it is nice bell surface. This makes intuitive sense and is what we were expecting since the very beginning: the data are most likely around a given parameter of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> (i.e. the peak of the bell) and they decrease when we go away from both <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> values in a way consistent with a normal distribution. Note that in order to generate this surface, we did not specify the fitted values of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> from the optimal least square, nor the ground truth values of <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span>. Yet, the surface seems to be concentrated on a particular point that is close to what we would expect. We can find the parameters for which <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> the likelihood of our data is maximum:</p>
@@ -739,14 +761,14 @@ The observed weigth is 43.211177235717976 kg
 </div>
 <div class="cell_output docutils container">
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The maximum likelihood of the data is observed at:
-b0=198.62
-b1=0.21
+b0=199.65
+b1=0.22
 The ground truth values are:
 b0=199.00
 b1=0.22
 Fitted values with OLS:
-b0=198.62
-b1=0.21
+b0=199.65
+b1=0.22
 </pre></div>
 </div>
 </div>
@@ -762,7 +784,7 @@ b1=0.21
 <p>With <span class="math notranslate nohighlight">\(m\)</span> regressors <span class="math notranslate nohighlight">\(k\)</span></p>
 <p>Now it becomes obvious why the matrix notation may become handy. The exponential term is a bit complicated and tough to read. We can reformulate the above like so:</p>
 <div class="math notranslate nohighlight">
-\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\Beta]^2}{2\sigma^2}}\]</div>
+\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\boldsymbol{\beta}]^2}{2\sigma^2}}\]</div>
 <p>That’s exactly the same thing, just a bit less clunky.</p>
 </section>
 <section id="the-error-term-and-estimation-of-the-sigma-parameter">
@@ -819,28 +841,16 @@ b1=0.21
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="../_images/55c7ed88a7d3e00c61cc78cffabd0fa6a5cc0eebe60f72d28d72e8126baaad4a.png" src="../_images/55c7ed88a7d3e00c61cc78cffabd0fa6a5cc0eebe60f72d28d72e8126baaad4a.png" />
+<img alt="../_images/cf74e9dc8034a051970c1fc4f52519b8924cff52f13b272886bd5d3aa705564d.png" src="../_images/cf74e9dc8034a051970c1fc4f52519b8924cff52f13b272886bd5d3aa705564d.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The maximum likelihood of the data is observed at:
-b0=199.62
-b1=0.20
+b0=199.14
+b1=0.21
 </pre></div>
 </div>
-<img alt="../_images/c42e73c90f81fac586d9812d6819ddcb81c93b1350b39dd0fcf52d680b33facc.png" src="../_images/c42e73c90f81fac586d9812d6819ddcb81c93b1350b39dd0fcf52d680b33facc.png" />
+<img alt="../_images/239c03838becf696c0118a1a41d68f545316af050f1f610d91fa51288f91c643.png" src="../_images/239c03838becf696c0118a1a41d68f545316af050f1f610d91fa51288f91c643.png" />
 <div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The maximum likelihood of the data is observed at:
-b0=199.62
-b1=0.20
-</pre></div>
-</div>
-<img alt="../_images/be851120db26941fab95348d51338d5eea7ac36a7462a07d103e6cecd8f1d40b.png" src="../_images/be851120db26941fab95348d51338d5eea7ac36a7462a07d103e6cecd8f1d40b.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The maximum likelihood of the data is observed at:
-b0=199.62
-b1=0.20
-</pre></div>
-</div>
-<img alt="../_images/eedf2f715dbfe30339041824d7676d014b78776ccbd69596d6fc6e71f904bffe.png" src="../_images/eedf2f715dbfe30339041824d7676d014b78776ccbd69596d6fc6e71f904bffe.png" />
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>The maximum likelihood of the data is observed at:
-b0=199.62
-b1=0.20
+b0=199.14
+b1=0.21
 </pre></div>
 </div>
 <div class="output traceback highlight-ipythontb notranslate"><div class="highlight"><pre><span></span><span class="gt">---------------------------------------------------------------------------</span>
@@ -879,11 +889,11 @@ b1=0.20
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(y|198.75, 0.19, 0.5) = 5.43811210748569e-120
-P(y|198.75, 0.19, 1) = 8.843283594454096e-42
-P(y|198.75, 0.19, 2) = 5.323901345637373e-29
-P(y|198.75, 0.19, 3) = 3.0372233537737223e-30
-P(y|198.75, 0.19, 4) = 1.4059154657678168e-32
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(y|198.98, 0.24, 0.5) = 7.449936204562e-79
+P(y|198.98, 0.24, 1) = 1.7013342772437084e-31
+P(y|198.98, 0.24, 2) = 1.9827776918780066e-26
+P(y|198.98, 0.24, 3) = 4.2185476972967595e-29
+P(y|198.98, 0.24, 4) = 6.176183838751245e-32
 </pre></div>
 </div>
 </div>
@@ -891,7 +901,7 @@ P(y|198.75, 0.19, 4) = 1.4059154657678168e-32
 <p>The maximal likelihood values are really low overall, but we can see that the likelihood values peak at <span class="math notranslate nohighlight">\(\sigma=2\)</span>. This implies that the data are maximally likely at <span class="math notranslate nohighlight">\(beta_0=198\)</span>, <span class="math notranslate nohighlight">\(beta_0=0.24\)</span> and <span class="math notranslate nohighlight">\(\sigma=2\)</span> or close thereof. So this also adds up: just as the data were most likely for <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span> parameter close to our ground truth, the data are also most likely when the <span class="math notranslate nohighlight">\(\sigma\)</span> is close to the ground truth. So that also makes sense.</p>
 <p>And just as there was a function to estimate <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(beta_1\)</span> values with which the likelihood of the data are maximized, there is a function to find the value of <span class="math notranslate nohighlight">\(\sigma\)</span> that maximizes the likelihood of the data:</p>
 <div class="math notranslate nohighlight">
-\[\sigma^2 = \frac{1}{n}\sum_{i=1}^{n}[y_i-(\hat{\Beta}X)]\]</div>
+\[\sigma^2 = \frac{1}{n}\sum_{i=1}^{n}[y_i-(\hat{\boldsymbol{\beta}}X)]\]</div>
 <p>This is the matrix notation, which is equivalent to:</p>
 <div class="math notranslate nohighlight">
 \[\hat{\sigma}^2 = \frac{1}{n}\sum_{i=1}^{n}[y_i-(\sum_{k=1}^{m}\beta_k x_k)]\]</div>
@@ -904,7 +914,7 @@ P(y|198.75, 0.19, 4) = 1.4059154657678168e-32
 \[y = \beta_0 + \beta_1x_i + \epsilon\]</div>
 <p>Which is equivalent to:</p>
 <div class="math notranslate nohighlight">
-\[y = \Beta X + \epsilon\]</div>
+\[y = \boldsymbol{\beta} X + \epsilon\]</div>
 <p>For which the error is normally distributed and independently and identically distributed (i.i.d.):</p>
 <div class="math notranslate nohighlight">
 \[\epsilon \sim \mathcal{N}(0, \sigma^2)\]</div>
@@ -920,10 +930,10 @@ P(y|198.75, 0.19, 4) = 1.4059154657678168e-32
 \[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-(\sum_{k=0}^{m}{\beta_kx_k})]^2}{2\sigma^2}}\]</div>
 <p>Which is equivalent to:</p>
 <div class="math notranslate nohighlight">
-\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\Beta]^2}{2\sigma^2}}\]</div>
+\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\boldsymbol{\beta}]^2}{2\sigma^2}}\]</div>
 <p>One last thing: the current formula for the OLS assumes that there are only 2 regressors (intercept and  <span class="math notranslate nohighlight">\(x\)</span>), but we can write the formula to be a bit more general. In that case, it would be really cumbersome to write without relying on the matrix format, so we will stick to that:</p>
 <div class="math notranslate nohighlight">
-\[\hat{\Beta} = (\mathbf{X}^T \mathbf{X})^{-1}\mathbf{X}^Ty\]</div>
+\[\hat{\boldsymbol{\beta}} = (\mathbf{X}^T \mathbf{X})^{-1}\mathbf{X}^Ty\]</div>
 <p>Okay, with that we have everything we need for the likelihood. And just one last thing: notice that I have been very precise in the phrasing in this section, the likelihood tells us the likelihood of the data under various values of the parameters of our model.</p>
 </section>
 </section>

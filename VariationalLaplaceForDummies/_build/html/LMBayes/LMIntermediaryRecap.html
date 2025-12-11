@@ -63,6 +63,7 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'LMBayes/LMIntermediaryRecap';</script>
+    <link rel="icon" href="../_static/logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Marginal likelihood" href="LMMarginalLikelihood.html" />
@@ -107,6 +108,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -148,8 +152,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
-    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
   
   
 </a></div>
@@ -185,6 +189,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../VariationalLaplace.html">Variational Laplace</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
 </ul>
 </details></li>
 </ul>
@@ -241,7 +249,7 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -258,7 +266,24 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FLMBayes/LMIntermediaryRecap.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/LMBayes/LMIntermediaryRecap.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FLMBayes/LMIntermediaryRecap.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -390,10 +415,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="alert alert-info"><h4>Note</h4><p> 
-    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
-</p></div>
-<section class="tex2jax_ignore mathjax_ignore" id="intermediary-recap">
+  <section class="tex2jax_ignore mathjax_ignore" id="intermediary-recap">
 <h1>Intermediary recap<a class="headerlink" href="#intermediary-recap" title="Link to this heading">#</a></h1>
 <p>The content we have seen so far was quite dense, so before we move forward, let’s recapitulate everything we have seen so far and keep things straight.</p>
 <section id="the-linear-model">
@@ -419,8 +441,9 @@
 </section>
 <section id="the-likelihood">
 <h2>The likelihood<a class="headerlink" href="#the-likelihood" title="Link to this heading">#</a></h2>
-<p>So, in our penguin example, where we have 2 <span class="math notranslate nohighlight">\(\beta\)</span>, the <span class="math notranslate nohighlight">\(\Theta\)</span> of the Bayes theorem above is replaced by <span class="math notranslate nohighlight">\(\beta_0, \beta_1, \sigma^2\)</span>, so we can rewrite the Bayes theorem as such for that specific case:
-$<span class="math notranslate nohighlight">\(P(\beta_0, \beta_1, \sigma^2|y) = \frac{P(y|\beta_0, \beta_1, \sigma^2)P(\beta_0, \beta_1, \sigma^2)}{p(y)}\)</span>$</p>
+<p>So, in our penguin example, where we have 2 <span class="math notranslate nohighlight">\(\beta\)</span>, the <span class="math notranslate nohighlight">\(\Theta\)</span> of the Bayes theorem above is replaced by <span class="math notranslate nohighlight">\(\beta_0, \beta_1, \sigma^2\)</span>, so we can rewrite the Bayes theorem as such for that specific case:</p>
+<div class="math notranslate nohighlight">
+\[P(\beta_0, \beta_1, \sigma^2|y) = \frac{P(y|\beta_0, \beta_1, \sigma^2)P(\beta_0, \beta_1, \sigma^2)}{p(y)}\]</div>
 <p>In the case of the linear model, the likelihood is the probability of observing all the data <span class="math notranslate nohighlight">\(y\)</span> given the values of <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>. Importantly, by the very formula of the linear model, the value of <span class="math notranslate nohighlight">\(y\)</span> depend on the values of each <span class="math notranslate nohighlight">\(\beta\)</span> combined, as well as the value of <span class="math notranslate nohighlight">\(\sigma\)</span> for the error. In other words, the likelihood of <span class="math notranslate nohighlight">\(y\)</span> is not <strong>independent of the parameters</strong>, instead it is <strong>dependent jointly</strong> on the parameters of the model. Accordingly, the likelihood is not equal to the product of the likelihood of the data under each parameter independently. Instead, the likelihood is a multivariate distribution, providing the likelihood of the data <span class="math notranslate nohighlight">\(y\)</span> given the combination of the <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span> parameters.</p>
 <p>What kind of distribution? A multivariate distribution. This is because of the main assumption of linear models: the error should be normally distributed and independently and identically distributed (i.i.d.). Because the error is normally distributed, so is the likelihood.</p>
 <p>The general formula a multivariate normal distribution is:</p>
@@ -428,7 +451,7 @@ $<span class="math notranslate nohighlight">\(P(\beta_0, \beta_1, \sigma^2|y) = 
 \[P(\Theta) = \frac{1}{(2*\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\Theta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\Theta}-\mathcal{\mu}))\]</div>
 <p>What we mean that by the “general formula” is that any normal distribution follow this formulae. It can however be written in more specific ways depending on the parameters it refers to. In the case of the liklihood function, it describes the probability of the data given the parameters, so can write the following:</p>
 <div class="math notranslate nohighlight">
-\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\Beta]^2}{2\sigma^2}}\]</div>
+\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\boldsymbol{\beta}a]^2}{2\sigma^2}}\]</div>
 <p>How is that the same? Well that’s because product of exponentials can be combined into a single exponential of a sum:</p>
 <div class="math notranslate nohighlight">
 \[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^nexp\bigg(-\frac{1}{2\sigma^2}\sum_{i=1}^{n}[y_i-(\beta_0 + \beta_1x_i)]\bigg)\]</div>
@@ -488,7 +511,7 @@ Since we have three parameters that we don’t know—<span class="math notransl
 </ol>
 <p>The likelihood of the data given the parameters, <span class="math notranslate nohighlight">\(P(y \mid \beta_0, \beta_1, \sigma^2)\)</span>, defines the probability of observing the data we have observed (e.g., the weights of the penguins), given the values of the parameters. It is calculated as:</p>
 <div class="math notranslate nohighlight">
-\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\Beta]^2}{2\sigma^2}}\]</div>
+\[P(y|\beta_0, \beta_1, \sigma) = (\frac{1}{\sqrt{2\pi\sigma^2}})^n\prod_{i=1}^{n}exp^{-\frac{[y_i-X\boldsymbol{\beta}]^2}{2\sigma^2}}\]</div>
 <ul class="simple">
 <li><p>Here, <span class="math notranslate nohighlight">\(n\)</span> is the number of observations.</p></li>
 <li><p>The parameters <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span>, and <span class="math notranslate nohighlight">\(\sigma^2\)</span> are what we’re trying to estimate.</p></li>

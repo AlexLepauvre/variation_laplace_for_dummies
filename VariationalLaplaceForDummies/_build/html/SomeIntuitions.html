@@ -61,6 +61,7 @@
     <script>var togglebuttonSelector = '.toggle, .admonition.dropdown';</script>
     <script>const THEBE_JS_URL = "https://unpkg.com/thebe@0.8.2/lib/index.js"; const thebe_selector = ".thebe,.cell"; const thebe_selector_input = "pre"; const thebe_selector_output = ".output, .cell_output"</script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'SomeIntuitions';</script>
+    <link rel="icon" href="_static/logo.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Probablities and probability distribution" href="ProbabilityDistribution.html" />
@@ -105,6 +106,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -146,8 +150,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+    <img src="_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
   
   
 </a></div>
@@ -183,6 +187,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="VariationalLaplace.html">Variational Laplace</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
 </ul>
 </details></li>
 </ul>
@@ -239,7 +247,7 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -256,7 +264,24 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FSomeIntuitions.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/SomeIntuitions.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FSomeIntuitions.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -390,30 +415,27 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="alert alert-info"><h4>Note</h4><p> 
-    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
-</p></div>
-<section class="tex2jax_ignore mathjax_ignore" id="some-intuitions-answering-questions-when-faced-with-uncertainty">
+  <section class="tex2jax_ignore mathjax_ignore" id="some-intuitions-answering-questions-when-faced-with-uncertainty">
 <h1>Some intuitions: answering questions when faced with uncertainty<a class="headerlink" href="#some-intuitions-answering-questions-when-faced-with-uncertainty" title="Link to this heading">#</a></h1>
 <p>Before we get started with any maths, let’s explore an everyday problem to illustrate what statistics are about. In daily life, we often wonder about things we don’t know. I think most people would like to figure out how much pasta they need to cook for dinner, to finally stop eating pasta for three days when we just wanted a light meal for a single evening. Or when we get dressed in the morning, we would like to know whether it is hot or cold outside, so that we dress appropriately. In empirical sciences, we might want to know whehther and how some quantities relate to other, such as length of penguin wings and their body size, or whether the activation in a particular brain regions reflects the attentional demands of a cognitive task.</p>
-<p>In some cases, the answer is straightforward: if we want to know if it is warm outside, we can stick our arm out of the window, the answer is straightforward: we can open the window and stick our arm out. Sometimes it is a bit more complicated: if we want to know how much pasta we should cook, we should probably cook different amounts of pasta over different meals (and make sure we are equally hungry for each meal) and check which amount was the most adequate. The field of probability and statistics are basically dedicated to describe this kind of problems: there is something we can’t know directly, but we can gather some observations and based on those make an educated guess about what we want to know, and that’s particularly useful the more complex a problem gets.</p>
-<p>We could use many example to illustrate all the necessary concepts of statistics and the usefulness of Bayesian statistics. But it just so happens that some of these examples are a bit easier to wrap ones head around. There is nothing special about such problems and any other problems could work, I simply find them more intuitive. I will build on these intuition to illustrate the math behind Bayesian inference and variational Laplace in a way that I hope remains intuitive from beginning to end.</p>
-<p>To keep things simple, we will use the example of tossing a coin. Let’s say we are making a bet with a colleague that our coin is going to land on head, while our colleague bets that it is going to land on tail. Our colleague has trust issues, and he argues that we need to make sure that the coin is fair–meaning it has an equal chance of landing on heads or tail. If the coin is biased, say it lands more often on head than on tail, then the bet isn’t quite fair, and the person betting on head has an advantage. So before we get started, we need to make sure that the coin is fair.</p>
+<p>In some cases, the answer is straightforward: if we want to know if it is warm outside, we can stick our arm out of the window. Sometimes it is a bit more complicated: if we want to know how much pasta we should cook, we should probably cook different amounts of pasta over different meals (and make sure we are equally hungry for each meal) and check which amount was the most adequate. The field of probability and statistics are basically dedicated to describe this kind of problems: there is something we can’t know directly, but we can gather some observations and based on those make an educated guess about what we want to know, and that’s particularly useful the more complex a problem gets.</p>
+<p>To illustrate basic concepts of statistics and the usefulness of Bayesian inference, we will use a simple example: tossing a coin. Let’s say we are making a bet with a colleague that our coin is going to land on head, while our colleague bets that it is going to land on tail. Our colleague has trust issues, and he argues that we need to make sure that the coin is fair–meaning it has an equal chance of landing on heads or tail. If the coin is biased, say it lands more often on head than on tail, then the bet isn’t quite fair, and the person betting on head has an advantage. So before making our bet, we need to make sure that the coin is fair. Note that there’s nothing special about that example, the same concepts would apply to any other, it just so happen that it’s a particularly simple and intuitive example.</p>
 <section id="intuitions-about-probabilities-using-a-coin-toss-example">
 <h2>Intuitions about probabilities using a coin toss example<a class="headerlink" href="#intuitions-about-probabilities-using-a-coin-toss-example" title="Link to this heading">#</a></h2>
 <p>We are trying to answer a simple question: <strong>is the coin fair or not?</strong></p>
 <section id="running-simulated-experiments">
 <h3>Running (simulated) experiments<a class="headerlink" href="#running-simulated-experiments" title="Link to this heading">#</a></h3>
-<p>We don’t know how often the coin lands on head and how often it lands on tail (given a total number of tosses), yet we need to figure it out somehow. One way to do this is to run a little experiment. We can throw the coin in the air twice. If the coin is balanced, then we would expect it to land once on head, once on tail. This is not a very good experiment, because this is not what we mean by fair. If the coin would alternate between head and tail on every second try, then it wouldn’t be fair bet, beacuse if anyone knew what the coin landed on in the previous throw, they could know what it will land on in this throw and would win any bet. What we mean by fair is that the chances for the coin to land on head or tail are equal on every single throw.</p>
+<p>Put in more mathematical terms, we want to know if the coin has a 50% chance of landing on head, and a 50% chance of landing on tail. If that’s not the case, then our coin is not fair.</p>
+<p>The problem is that we don’t know how often the coin lands on head and how often it lands on tail (given a total number of tosses), but we need to figure it out somehow. One way to do this is to run a little experiment. We can throw the coin in the air twice. If the coin is balanced, then we would expect it to land once on head, once on tail. This is not a very good experiment, because this is not what we mean by fair. It should be true on average (i.e. across many throws) that the coin land half of the time on head and half of the time on tail, but that doesn’t imply that the coin should always fall on head after it fell on tail (or the other way around).</p>
 <p>So how can we know whether that is truly the case? It would seem intuitive to say “let’s throw the coin many times”. Then, we can count how often the coin lands on head and how often it lands on tail to see if across all these tosses, we get half head and half tail. We can conduct this experiment programatically. Even if you don’t understand exactly how the code works, you only need to understand the following:</p>
 <ul class="simple">
-<li><p>n_throw: how often we throw our simulated coin</p></li>
-<li><p>n_head: each time the coin lands on head, add 1, so that then we know the total number of head out of 10 tosses</p></li>
-<li><p>n_tail: each time the coin lands on tail, add 1, so that then we know the total number of tail out of 10 tosses</p></li>
-<li><p>p_head: <strong>Probability of getting head</strong> out of our 10 tosses, i.e. how often it lands on head out of 10</p></li>
-<li><p>p_head: <strong>Probability of getting tail</strong> out of our 10 tosses, i.e. how often it lands on tail out of 10</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_throw</span></code>: how often we throw our simulated coin</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_head</span></code>: each time the coin lands on head, add 1, so that then we know the total number of head out of <code class="docutils literal notranslate"><span class="pre">n_throw</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">n_tail</span></code>: each time the coin lands on tail, add 1, so that then we know the total number of tail out of <code class="docutils literal notranslate"><span class="pre">n_throw</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">p_head</span></code>: <strong>Probability of getting head</strong> out of our <code class="docutils literal notranslate"><span class="pre">n_throw</span></code>, i.e. how often it lands on head out of 10</p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">p_head</span></code>: <strong>Probability of getting tail</strong> out of our <code class="docutils literal notranslate"><span class="pre">n_throw</span></code>, i.e. how often it lands on tail out of 10</p></li>
 </ul>
-<p>Let’s say we do 10 tosses and see what happens:</p>
+<p>Let’s say we do 10 throws and see what happens:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -460,12 +482,12 @@ P(Tail)=0.7
 </section>
 <section id="interpreting-the-data">
 <h3>Interpreting the data<a class="headerlink" href="#interpreting-the-data" title="Link to this heading">#</a></h3>
-<p>After 10 throw, the coin didn’t land half of the time on head and half of the time on head. Instead, it landed 30% of the time on head and 70% of the time on tail. That doesn’t seem very balanced. At the same time, you might argue that maybe the coin is indeed balanced, it is just that in these 10 throws, we got “unlucky” because it landed more often on tail than on head. Indeed, if whether we get head or tail is random in each toss, then even if the coin is balanced, it is not impossible to get 7 times tail out of 10 throws. It is also not impossible to get 10 times head in a row.</p>
+<p>After 10 throws, the coin didn’t land half of the time on head and half of the time on head. Instead, it landed 30% of the time on head and 70% of the time on tail. That doesn’t seem very balanced. At the same time, you might argue that maybe the coin is indeed balanced, it is just that in these 10 throws, we got “unlucky” because it landed more often on tail than on head. If whether we get head or tail is random in each toss, then even if the coin is balanced, it is not impossible to get 7 times tail out of 10 throws. It is also not impossible to get 10 times head in a row.</p>
 <p>That being said, you probably get the intuition that while it is possible to get 10 times head in a row, it is not very likely. And you are even less likely to get 1000 heads in a row if you were to do a 1000 throws.</p>
 </section>
 <section id="running-a-better-experiment">
 <h3>Running a better experiment<a class="headerlink" href="#running-a-better-experiment" title="Link to this heading">#</a></h3>
-<p>Back to our initial problem: <strong>we want to know if our coin is fair</strong>. Based on our initial experiment, it is unclear whether we should answer yes, because we don’t know if we just got unlucky and ended up in a case that is not representative of the true head/tail ratio of our coin. How can we do a better experiment? Well just as when we said that throwing the coin twice isn’t enough to tell whether the coin is balanced, it is quite intuitive to think that 10 times isn’t enough either. So we can try to increase the number of coin tosses we make: the more often we repeat our little experiment the more confident we can be in our final answer as to whether the coin is biased.</p>
+<p>Back to our initial problem: <strong>is our coin is fair</strong>. Based on our initial experiment, it is unclear whether we should answer yes, because we don’t know if we just got unlucky and ended up in a case that is not representative of the true head/tail ratio of our coin. How can we do a better experiment? Well just as when we said that throwing the coin twice isn’t enough to tell whether the coin is balanced, it is quite intuitive to think that 10 times isn’t enough either. So we can try to increase the number of coin tosses we make: the more often we repeat our little experiment the more confident we can be in our final answer as to whether the coin is biased.</p>
 <p>Let’s try it out (single toss results aren’t shown anymore, only the final proportion of head to tail):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -526,8 +548,8 @@ P(Tail)=0.477
 </div>
 </div>
 </div>
-<p>When we increase the number of iterations to a 1000, the probability of head and tail seems to get close to 50/50. And if our intuition that we should get more reliable answer if we throw the coin more often is true, then the result of this experiment would lead us to believe that our coin is probably not biased. There is one way in which we can show that increasing the number of throws yields a more reliable answer. We could perform the same experiment several times.</p>
-<p>Let’s say we have a first experiment in which we throw the coin 10 times, and a second experiment in which we throw the coin 1000 times. To know which of these two experiments is most reliable, we can repeat each experiment 10 times. A more reliable experiment should gives similar results across repetitions.</p>
+<p>When we increase the number of iterations to a 1000, the probability of head and tail seems to get close to 50/50. If our intuition that the more times we throw the coin, the more reliable the answer gets, then we should be more confident based on this experiment that the coin is probably not biased, or if it is, it’s not by much.</p>
+<p>We can actually show that when we throw the coin more times, we get a more reliable answer. We can perform the same experiment several times. Let’s say we have a first experiment in which we throw the coin 10 times, and a second experiment in which we throw the coin 1000 times. To know which of these two experiments is most reliable, we can repeat each experiment 10 times. A more reliable experiment should gives similar results across repetitions.</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="c1"># Same as before, but let&#39;s increase the number of throws:</span>
@@ -596,20 +618,20 @@ P(Head)=0.507/P(Tail)=0.493
 </div>
 </div>
 </div>
-<p>In the first experiment (where we throw the coin 10 times), the results we get differ quite a bit between repetition, sometimes we get 50/50, but sometimes we get 20% head, 80% tail. In comparison, the results of the second experiment (where we throw the coin 1000 times) vary much less across repeats: we get results between 40% and 60% probability for head and tail. So it would seem that our intuition that throwing the coin many times gets us more reliable results. So if we want to know if our coin is biased or not, we should throw the coin many many times.</p>
+<p>In the first experiment (where we throw the coin 10 times), the results we get differ quite a bit between repetition, sometimes we get 50/50, but sometimes we get 60% head, 40% tail or the other way around. In comparison, the results of the second experiment (where we throw the coin 1000 times) vary much less across repeats: we get results between 47% and 53% probability for head and tail. This confirms our intuition: if we want to know if our coin is biased or not, we should throw the coin many many times.</p>
 <p>And based on the 1000 throws experiment, it would seem that we get results that are close to 50/50, which seems to be what we would expect to happen if our coin isn’t biased</p>
 </section>
 <section id="answering-the-question-based-on-our-data">
 <h3>Answering the question based on our data<a class="headerlink" href="#answering-the-question-based-on-our-data" title="Link to this heading">#</a></h3>
-<p>Our intuition seems to tell us that our coin isn’t biased, because when we throw it a 1000 times, we get close to 50/50. So a resonable answer is <strong>our coin isn’t biased</strong>.</p>
-<p>Along the way, we also noticed a few interesting things. First, we realized that we can’t trust a 100% the results of our experiment, because even if the coin is balanced, we might not get exactly 50/50 head and tail when we throw the coin several times. In a sense, this means that we can never know for sure whether or not our coin is biased:</p>
+<p>Our intuition tells us that our coin isn’t biased, because when we throw it a 1000 times, we get close to 50/50. So a resonable answer is <strong>our coin isn’t biased</strong>.</p>
+<p>Along the way, we also noticed a few interesting things. First, we realized that we can’t trust a 100% the results of our experiment, because even if the coin is balanced, we might not get exactly 50/50 head and tail when we throw the coin several times. This means that we can never know for sure whether or not our coin is biased:</p>
 <ul class="simple">
 <li><p>If the coin is perfectly fair, we will not get exactly 50/50 every time</p></li>
 <li><p>If the coin isn’t fair, we might still get 50/50 in some experiments</p></li>
 </ul>
-<p>But then, how can we know based on the results of our experiment whether the best answer is Yes or no, if the same outcome can occur with a biased and with a fair coin? The answer is this: while we can not know with certainty whether or not our coin is biased, we can figure out <strong>how likely is it that the coin is not biased, given the results of my experiment</strong>. In other words, we can get the answer to the question: “How confident are you that the coin is not biased?”. If the answer is very, then the best answer is to say: the coin is not biased.</p>
-<p>This may sound very familiar with the intuition of increasing the number of coin toss to get an answer that we felt we can trust more. This begs the question: why should we trust the results of the experiment where we throw the coin more often more than the one of the experiment where we throw the coin only a few times? A logical answer is that if the coin isn’t biased, we are less likely to observe something very different from the 50/50 ratio when we throw the coin many times. Another way to say that is: <strong>given that our coin is not biased, the probability of observing something close to 50/50 is larger when we throw the coin many times than when we throw the coin a few times</strong></p>
-<p>This sentence sounds a bit similar to the one above (<strong>how likely is it that my coin is not biased, given the results of my experiment</strong>), but it is phrased the other way around. In our experiment, because we felt <strong>confident that the results of our experiment accurately reflects the true ratio of the coin and because our final results was about 50/50</strong> we deduce that <strong>we are confident that the true ratio is 50/50, given that we have observed a ratio of 50/50 in our experiment</strong>. It is crucial to understand that these are not the same. ThThe difference is the same as between saying “How confident am I that the sky is cloudy given that it is raining” vs. “How confident am I that it is raining, given that the sky is cloudy?”. While the sky is most often cloudy when it is raining, it is not always true that it is raining when the sky is cloudy. To decide whether or not to proceed with our bet, we need to know how confident we are that our coin isn’t biased, given the results of our experiment.</p>
+<p>But then, how can we know based on the results of our experiment if our coin is biased, given that the same outcome can occur with a biased and with a fair coin? Here is the answer: while we can not know with certainty whether or not our coin is biased, we can figure out <strong>how likely is it that the coin is not biased, given the results of my experiment</strong>. In other words, we can get the answer to the question: “How confident are you that the coin is not biased?”. If the answer is very, then the best answer is to say: the coin is not biased.</p>
+<p>This may sound very familiar with the intuition of increasing the number of coin toss to get an answer that is more trustworthy. But why exactly should we trust the results of the experiment where we throw the coin more often more than the one of the experiment where we throw the coin only a few times? A logical answer is that if the coin isn’t biased, we are less likely to observe something very different from the 50/50 ratio when we throw the coin many times. Another way to say that is: <strong>given that our coin is not biased, the probability of observing something close to 50/50 is larger when we throw the coin many times than when we throw the coin a few times</strong></p>
+<p>This sentence sounds a bit similar to the one above (<strong>how likely is it that my coin is not biased, given the results of my experiment</strong>), but it is phrased the other way around. In our experiment, because we felt <strong>confident that the results of our experiment accurately reflects the true ratio of the coin and because our final results was about 50/50</strong> we deduce that <strong>we are confident that the true ratio is 50/50, given that we have observed a ratio of 50/50 in our experiment</strong>. It is crucial to understand that these are not the same. The difference is the same as between saying “How confident am I that the sky is cloudy given that it is raining” vs. “How confident am I that it is raining, given that the sky is cloudy?”. While the sky is most often cloudy when it is raining, it is not always true that it is raining when the sky is cloudy. To decide whether or not to proceed with our bet, we need to know how confident we are that our coin isn’t biased, given the results of our experiment.</p>
 <p>This is in a nutshell the goal of Bayesian statistics: figuring out the <strong>probability of a parameter</strong> (such as the true head/tail ratio), given some data (such as the result of an experiment in which we throw the coin a bunch of times). Knowing the probability of a parameter basically tells us how much we should trust the results of our experiment. In our example, we did it all based on intuition, but we will now dig into the actual math that enable to get that probability for any kinds of problems.</p>
 </section>
 </section>

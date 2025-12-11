@@ -63,6 +63,7 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'LMBayes';</script>
+    <link rel="icon" href="_static/logo.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Bayes theorem applied to the linear model" href="LMBayes/LMAndBayesTheorem.html" />
@@ -107,6 +108,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -148,8 +152,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+    <img src="_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
   
   
 </a></div>
@@ -185,6 +189,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="VariationalLaplace.html">Variational Laplace</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
 </ul>
 </details></li>
 </ul>
@@ -241,7 +249,7 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -258,7 +266,24 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FLMBayes.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/LMBayes.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FLMBayes.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -392,10 +417,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="alert alert-info"><h4>Note</h4><p> 
-    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
-</p></div>
-<section class="tex2jax_ignore mathjax_ignore" id="linear-models-and-bayes-theorem">
+  <section class="tex2jax_ignore mathjax_ignore" id="linear-models-and-bayes-theorem">
 <h1>Linear models and Bayes theorem<a class="headerlink" href="#linear-models-and-bayes-theorem" title="Link to this heading">#</a></h1>
 <p>We based our previous chapters on an intuitive example: tossing a coin and trying to find whether the probability of head is 0.5, i.e. whether our coin is biased. And we saw that we can use the Bayes Theorem to obtain the probability of each value of <span class="math notranslate nohighlight">\(\Theta\)</span> based on the observed data, based on which we can reach a principled decision.</p>
 <p>In this chapter, we will use another example to illustrate that even for rather simple models, some terms of the Bayes theorem might not have an analytical solution (you will see what that means in a bit ), making computing the posterior difficult. Importantly, the reason we introduce that is to motivate the use of the bag of tricks this book is about: <strong>Variational Laplace</strong>. Once you understand why we can’t simply solve the equation, it should be more intuitive to understand why we need to call on seemingly unrelated concepts.</p>
@@ -452,7 +474,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9ce7ea3e3e3ad9cb3c4b28aed02fc870479137a1de322b531910d356103219c9.png" src="_images/9ce7ea3e3e3ad9cb3c4b28aed02fc870479137a1de322b531910d356103219c9.png" />
+<img alt="_images/8d7409e7163c78caa42808d00229484f7330624dbb2fcd2df3cb4129ec0fb14d.png" src="_images/8d7409e7163c78caa42808d00229484f7330624dbb2fcd2df3cb4129ec0fb14d.png" />
 </div>
 </div>
 <p>There we go, we have generated semi-realistic data: penguin flippers size is correlated with their body weights. A penguin with flippers of 200mm is going to weight around 36-38kg, while a penguin with flipper lengths of 170mm is most likely going to weight around 32-34kg. That doesn’t seem too crazy, but full disclosure I am not a penguin experts, so I have no idea. In comparison, our model could also have a non-zero intercept:</p>
@@ -479,7 +501,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/c9b2ca74a085d783efeb430006e4b8ee78a326e16a049471e35b764b5b434097.png" src="_images/c9b2ca74a085d783efeb430006e4b8ee78a326e16a049471e35b764b5b434097.png" />
+<img alt="_images/4e2e35e131ef3da10d87f993832508a05d6041b5cb66e82484c159458d1207e4.png" src="_images/4e2e35e131ef3da10d87f993832508a05d6041b5cb66e82484c159458d1207e4.png" />
 </div>
 </div>
 <p>You can see that when we modulate the intercept term, we move the line up or down. The intercept as the name indicates refers to the value on the y axis at which our regression line crosses when x is 0. In our penguin example, you can think about it like this: if we had a hypothetical penguin of flipper length 0, would that penguin also weight 0 kg? When you draw your regression line, imagine you extend it until a flipper length of 0mm, the intercept is the weight of such a hypothetical 0mm length penguin according to our model.</p>
@@ -509,7 +531,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/1c4725a545121a4fd2e1bc56b30fd671f3f1814071a0caa79e786cd4fa1b63ae.png" src="_images/1c4725a545121a4fd2e1bc56b30fd671f3f1814071a0caa79e786cd4fa1b63ae.png" />
+<img alt="_images/1672f0e1aa6a201d2e7b27f334d323c2eab502d1561b539a87cee40146722fb6.png" src="_images/1672f0e1aa6a201d2e7b27f334d323c2eab502d1561b539a87cee40146722fb6.png" />
 </div>
 </div>
 <p>That way, you can see that for each penguin (i.e. each dot), their weight is <span class="math notranslate nohighlight">\(\beta_1 * Flipper\ Length + some\ error\)</span>. If you take the left most dot, the weight is <span class="math notranslate nohighlight">\(170*0.19=32.3kg\)</span> to which you add (or sutract) some error. That little something is the error, and we need to find the parameter of our model so that the sum of the vertical distance between each dot and the regression line is as small as possible. Because we are working with simulated data, the best parameters should be close to the one we selected. And if we choose any other parameters (different values for <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span>), the error should be larger:</p>
@@ -538,7 +560,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/eff7138f74d66b992d6cdd7bb6f1c510c62ab3e9bfed72bcaaeec4b6fa8d75a9.png" src="_images/eff7138f74d66b992d6cdd7bb6f1c510c62ab3e9bfed72bcaaeec4b6fa8d75a9.png" />
+<img alt="_images/07347670fea6fbbbdbd4e12fa9ee57235fd2c506862d282e5a1405ea4698fbf1.png" src="_images/07347670fea6fbbbdbd4e12fa9ee57235fd2c506862d282e5a1405ea4698fbf1.png" />
 </div>
 </div>
 <p>You can see that the distance between the orange line and each dot is larger than the distance between the red line for most points. There are a few points where that is not the case, but on average, it’s easy to see that red line does a better job than the orange one. Formally, when we try to minimize the error, we try to minimize the <strong>residual sum of square error</strong>:</p>
@@ -576,8 +598,8 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Estimated beta_1=0.189
-Estimated beta_0=0.665
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>Estimated beta_1=0.201
+Estimated beta_0=-1.634
 </pre></div>
 </div>
 </div>
@@ -680,7 +702,7 @@ Estimated beta_0=0.665
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/6d4632e0189ccaf79a343d942ce959584779027379f36507c8fd23f30b57e674.png" src="_images/6d4632e0189ccaf79a343d942ce959584779027379f36507c8fd23f30b57e674.png" />
+<img alt="_images/d936dc3ffeda00128cffb7137ee099471513f220850300eeba7b2769abed738c.png" src="_images/d936dc3ffeda00128cffb7137ee099471513f220850300eeba7b2769abed738c.png" />
 </div>
 </div>
 <p>We can see that indeed, the mean error is close to 0 and that the error values are between -5 and 5. And when you look at the normal distribution on the right, it looks possible that the error was sampled from such a distribution. They don’t look exactly the same, but that’s because the residuals are only a few samples. If we had many more obstractions, we would get the left to look closer to the right.</p>
@@ -720,7 +742,7 @@ Estimated beta_0=0.665
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/a0a85df5bb03349f5923f88d995acf1e6544dbb90254643c59954f4e0f4394fc.png" src="_images/a0a85df5bb03349f5923f88d995acf1e6544dbb90254643c59954f4e0f4394fc.png" />
+<img alt="_images/30fae1e12b4df68953d418d4ee2dc4debd0499431468b7087c076632182d7eb5.png" src="_images/30fae1e12b4df68953d418d4ee2dc4debd0499431468b7087c076632182d7eb5.png" />
 </div>
 </div>
 <p>As expected, the larger the sigma, the more spread and the more ‘noisy’ the data are.</p>
@@ -790,7 +812,7 @@ Estimated beta_0=0.665
 <p>We have the body weight of each penguin, as well as their flipper lengths, and we try to figure out what is the one value we can multiply their flipper length with to get their body weight by. Note that I have added <span class="math notranslate nohighlight">\(x_0\)</span> for the intercept, this is only 1, because the intercept is a constant to this model. So if <span class="math notranslate nohighlight">\(\beta_0=0.5\)</span>, that just makes sure that we add 0.5 to the body weight of every single penguin. Note that if we have many <span class="math notranslate nohighlight">\(x\)</span> and <span class="math notranslate nohighlight">\(\beta\)</span>, the final results would just be the sum of all of that plus some error.</p>
 <p>We can rewrite the linear model as such:</p>
 <div class="math notranslate nohighlight">
-\[y =  X\Beta + \epsilon\]</div>
+\[y =  X\boldsymbol{\beta} + \epsilon\]</div>
 <p>This is exactly the same thing, except this time, xs and betas are matrices. So in other words, we have:</p>
 <div class="math notranslate nohighlight">
 \[ \begin{align}\begin{aligned}\begin{split}
@@ -834,8 +856,8 @@ y_4\\
 \end{split}\]</div>
 <p>what you have to do is multiply the first column of the <span class="math notranslate nohighlight">\(X\)</span> matrix by <span class="math notranslate nohighlight">\(\beta_0\)</span>, then the second column of the <span class="math notranslate nohighlight">\(X\)</span> matrix by <span class="math notranslate nohighlight">\(\beta_1\)</span> and then take the sum of the two column. So that’s basically the exact same thing as we did before. It’s just a more compact notation, especially because if you have many regressors, the same formulae:</p>
 <div class="math notranslate nohighlight">
-\[y =  X\Beta + \epsilon\]</div>
-<p>Only this time you have more columns in your <span class="math notranslate nohighlight">\(X\)</span> matrix, and as many <span class="math notranslate nohighlight">\(\Beta\)</span> as you have columns in x. Don’t worry too much if that’s a bit confusing, it’s really just a question of notation, and you can always stick to the more ‘classical notation’ if that’s what you prefer. In what follows, I will always provide both notations to make it easier.</p>
+\[y =  X\boldsymbol{\beta} + \epsilon\]</div>
+<p>Only this time you have more columns in your <span class="math notranslate nohighlight">\(X\)</span> matrix, and as many <span class="math notranslate nohighlight">\(\boldsymbol{\beta}\)</span> as you have columns in x. Don’t worry too much if that’s a bit confusing, it’s really just a question of notation, and you can always stick to the more ‘classical notation’ if that’s what you prefer. In what follows, I will always provide both notations to make it easier.</p>
 </section>
 </section>
 <div class="toctree-wrapper compound">

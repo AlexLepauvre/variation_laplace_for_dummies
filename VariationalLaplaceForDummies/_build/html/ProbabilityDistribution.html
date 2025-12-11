@@ -63,6 +63,7 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'ProbabilityDistribution';</script>
+    <link rel="icon" href="_static/logo.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="The Bayes theorem" href="BayesTheorem.html" />
@@ -107,6 +108,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -148,8 +152,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+    <img src="_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
   
   
 </a></div>
@@ -185,6 +189,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="VariationalLaplace.html">Variational Laplace</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
 </ul>
 </details></li>
 </ul>
@@ -241,7 +249,7 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -258,7 +266,24 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FProbabilityDistribution.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/ProbabilityDistribution.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FProbabilityDistribution.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -374,15 +399,21 @@
             </div>
             <nav aria-label="Page">
                 <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions">Definitions:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#true-vs-observed-probabilities">True vs. Observed Probabilities:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mathetmatical-functions-as-probability-distribution">Mathetmatical functions as probability distribution</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions-and-properties">Definitions and properties:</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-spaces">Sample spaces</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#events">Events</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#probability">Probability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mini-recap">Mini recap</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-axioms">Probability axioms</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-fair-coin-in-mathematical-terms">A fair coin in mathematical terms:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distribution">Probability distribution</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bernoulli-distribution-a-single-formulae-to-express-the-probability-of-each-event">The Bernoulli distribution: a single formulae to express the probability of each event</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-binomial-distribution-a-probability-distribution-for-the-number-of-success">The Binomial distribution: a probability distribution for the number of success</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-we-have-seen-so-far">What we have seen so far:</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-probability-distribution-of-p-x-k">The probability distribution of <span class="math notranslate nohighlight">\(P(X=k)\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-tosses-as-a-series-of-bernoulli-trials">Multiple tosses as a series of Bernoulli trials</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relating-the-binomial-distribution-to-our-intuition">Relating the binomial distribution to our intuition</a></li>
 </ul>
 </li>
@@ -398,108 +429,160 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="alert alert-info"><h4>Note</h4><p> 
-    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
-</p></div>
-<section class="tex2jax_ignore mathjax_ignore" id="probablities-and-probability-distribution">
+  <section class="tex2jax_ignore mathjax_ignore" id="probablities-and-probability-distribution">
 <h1>Probablities and probability distribution<a class="headerlink" href="#probablities-and-probability-distribution" title="Link to this heading">#</a></h1>
-<p>In the previous section, we mentioned a couple of terms and thought about how to answer a simple question based on some common-sense ideas. While this kind of worked and we were able to get a sense of whether or not our coin is biased, we also couldn’t really know for sure if our reasoning made sense, and ultimately our answer was based on gut-feeling. We can rely on mathematics to do better and get the best possible answer based on <strong>How confident we are that our coin isn’t biased based on the results of our experiment</strong> or put differently <strong>How probable is it that our coin isn’t biased, given the reuslts of our experiment</strong>?</p>
-<section id="definitions">
-<h2>Definitions:<a class="headerlink" href="#definitions" title="Link to this heading">#</a></h2>
-<p>To be able to do that, we need to define a couple of terms we use, and provide some mathematical notation to be able to do some math with them.</p>
+<p>In the previous section, we mentioned a couple of terms and thought about how to answer a simple question based on some common-sense ideas. While this kind of worked and we were able to get a sense of whether our coin is biased, we couldn’t really know for sure if our reasoning made sense, and ultimately our answer was based on gut-feeling. We can rely on mathematics to get the best possible answer based on <strong>how confident we are that our coin isn’t biased based on the results of our experiment</strong> or put differently <strong>how probable is it that our coin isn’t biased, given the reuslts of our experiment</strong>?</p>
+<p>The structure of this chapter will be slightly confusing, because we need several concepts that are necessary to answer our problem first but won’t seem particularly useful at first. After laying down some definitions, we will cover:</p>
 <ul class="simple">
-<li><p><strong>Probability</strong>: the likelihood of the occurence of a particular event out of all possible events. Our question of whether or coin is fair can be rephrased as “Is the probability of getting head 0.5?”. As there are only two possible outcomes for a coin toss (head or tail), if we have 50% chances of getting head, then we have 50% chances of getting tail and therefore our coin is balanced. The probability of a particular event is written like so:</p></li>
+<li><p><strong>Probability distribution functions</strong>: functions that take in a particular outcome of an experiment and return their probability</p></li>
+<li><p><strong>The Bernoulli distribution</strong>: a probability distribution characterizing experiments with binary outcomes (pass or fail), such as a coin toss where we get either head or tail</p></li>
+<li><p><strong>The binomial distribution</strong>: a probability distribution characterizing experiments consisting of a series of experiments with binary outcomes, such as tossing a coin many time in a row</p></li>
+<li><p><strong>The likelihood function</strong>: another probability distribution that tells us what the likelihood of getting <span class="math notranslate nohighlight">\(k\)</span> heads out of <span class="math notranslate nohighlight">\(n\)</span> throws, given the probability of getting head on each throw</p></li>
+</ul>
+<p>Once we have mastered all these concepts, we will be ready to obtain what we are after: how probably it is that our coin is not biased, given the results of our experiment.</p>
+<section id="definitions-and-properties">
+<h2>Definitions and properties:<a class="headerlink" href="#definitions-and-properties" title="Link to this heading">#</a></h2>
+<p>Everything we have seen in the previous chapter can be re-expressed in mathematical terms, which will then enable us to get a principle answer to our question (rather than relying on gut feeling). For that, we need to lay out a few definitions from probability theory.</p>
+<section id="sample-spaces">
+<h3>Sample spaces<a class="headerlink" href="#sample-spaces" title="Link to this heading">#</a></h3>
+<p>When we throw a coin one time, we have two possible outcomes. In comparison, when we threw the coin multiple times in a row in the previous chapter, we have many possible outcomes (for example, if we throw the coin twice, we can have [Head, Head] or [Tail, Tail], but also [Tail, Head], and so on). The set of all possible outcomes of an experiment is called the <strong>sample space</strong> and is formally defined as:</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Definition 1: Sample Space)
+A sample space, denoted <span class="math notranslate nohighlight">\(\Omega\)</span>, is the set of all possible outcomes for a random experiment.</p>
+</div>
+</section>
+<section id="events">
+<h3>Events<a class="headerlink" href="#events" title="Link to this heading">#</a></h3>
+<p>When we run an experiment, we obtain one of all the possible outcomes within our <strong>sample space</strong>. For example, when we throw the coin once, we might get head or tail. And when we throw the coin multiple times in a row, we might obtain [Head, Head], or [Head, Tail] and so on. We call these outcomes <strong>events</strong>, which are formally defined as:</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Definition 2: Event
+An event is any subset of the sample space, <span class="math notranslate nohighlight">\(E \subseteq \Omega \)</span>,  describing the outcome we care about.</p>
+</div>
+<p>Importantly, events are not limited to being only one possible outcome of an experiment, an event can also be a group of possible outcomes (which is still a subset of <span class="math notranslate nohighlight">\(\Omega\)</span>). For example, when we toss the coin twice, an event can be defined as “Getting head once”, which can occur for two different outcomes ([Head, Tail], [Tail, Head]).</p>
+</section>
+<section id="probability">
+<h3>Probability<a class="headerlink" href="#probability" title="Link to this heading">#</a></h3>
+<p>Within a given experiment, different events have a given <strong>probability</strong> of occuring on each experiment. For example, when we throw the coin one, if the coin is fair, we have 1 in 2 chances of getting head (and tail). A probability is defined formally as:</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Definition 3: Probability
+Probability is a (real-valued) set function that assigns to each event <span class="math notranslate nohighlight">\(E\)</span> in the sample space <span class="math notranslate nohighlight">\(\Omega\)</span> a number <span class="math notranslate nohighlight">\(P(A)\)</span>, called the probability of the event, and it is calculatd like so:
+$<span class="math notranslate nohighlight">\(P(A) = \frac{|A|}{|\Omega|}\)</span><span class="math notranslate nohighlight">\(
+Where \)</span>|A|<span class="math notranslate nohighlight">\( is the number of outcomes that belong to \)</span>A<span class="math notranslate nohighlight">\( and \)</span>|\Omega|$ is the number of possible outcomes</p>
+</div>
+<p>This definition probably need a bit of unpacking. First, about the <span class="math notranslate nohighlight">\(|\)</span> symbol in the equation. Taking the example of tossing the coin once, the sample space <span class="math notranslate nohighlight">\(\Omega=[Head, Tail]\)</span>. The <span class="math notranslate nohighlight">\(|\)</span> symbol indicate that we take the number of elements in teh sample space <span class="math notranslate nohighlight">\(\Omega\)</span>. So since <span class="math notranslate nohighlight">\(\Omega=[Head, Tail]\)</span>, <span class="math notranslate nohighlight">\(|\Omega|=2\)</span>. The same apply for <span class="math notranslate nohighlight">\(|A|\)</span>. <span class="math notranslate nohighlight">\(A\)</span> on its own is an event, and in order to calculate its probability, we need to know the number of outcomes that belong to it, not what the event contains.</p>
+<p>Another thing that might be a bit confusing is the statement that a probability “is a set function”. It just means that a probability is a rule whose inputs are sets of outcomes (the events) and whose output is a single real number between 0 and 1. Because every event is itself a subset of the sample space, calling <span class="math notranslate nohighlight">\(P\)</span> a set function simply reminds us that probability is defined on sets: for each event <span class="math notranslate nohighlight">\(E \subseteq \Omega\)</span> the function <span class="math notranslate nohighlight">\(P\)</span> assigns a number <span class="math notranslate nohighlight">\(P(E)\)</span>.</p>
+</section>
+<section id="mini-recap">
+<h3>Mini recap<a class="headerlink" href="#mini-recap" title="Link to this heading">#</a></h3>
+<p>Just to recap in simple terms, when we throw the coin once, the sample space is [Head, Tail], and we have only two possible outcomes when we throw the coin once, head or tail, and we can define an event as “Getting head”, and another event as “Getting tail”. Note that we can also define an event “Getting head or Getting tail”, in which case our event covers the entirety of the sample space. That’s still okay because <span class="math notranslate nohighlight">\(E \subseteq \Omega \)</span>, the subset symbol has the equal bit, which means having an event being the entire sample space is okay.</p>
+<p>In comparison, when we throw the coin multiple times (say twice for the sake of the example), our sample size is larger. Here are all the possible outcomes:</p>
+<ul class="simple">
+<li><p>[Head, Head]</p></li>
+<li><p>[Head, Tail]</p></li>
+<li><p>[Tail, Tail]</p></li>
+<li><p>[Tail, Head]</p></li>
+</ul>
+<p>So here we have <span class="math notranslate nohighlight">\(|\Omega|=4\)</span>. Try to do it with 3 tosses, you will see that you have a much larger sample size. For such an experiment, we can define an event as “Getting twice head in a row” ([Head, Head]). This would be a single point event, there is only one option among our sample space that yields twice head. In contrast, we could define our event as “Getting head only half the time”, which means getting only once head. This events encapsulates two different outcomes from the sample space ([Head, Tail] and [Tail, Head]). Alternatively, we can define an event as “Getting at least 1 head”, in which case our event is composed of three outcomes ([Head, Head], [Head, Tail] and [Tail, Head]). Again, we can define our event however we please, just depends on what we are interested in.</p>
+</section>
+<section id="probability-axioms">
+<h3>Probability axioms<a class="headerlink" href="#probability-axioms" title="Link to this heading">#</a></h3>
+<p>There are a few properties probabilities must follow to count as probabilities. These properties we call axioms and these were defined by a Kolmogorov in 1933. We will lay the mathematical formulae first but explain it clearly down below:</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>Definition 3: Probability
+Probability is a (real-valued) set function that assigns to each event <span class="math notranslate nohighlight">\(E\)</span> in the sample space <span class="math notranslate nohighlight">\(\Omega\)</span> a number <span class="math notranslate nohighlight">\(P(A)\)</span>, called the probability of the event, and it is calculatd like so:
+$<span class="math notranslate nohighlight">\(P(A) = \frac{|A|}{|\Omega|}\)</span><span class="math notranslate nohighlight">\(
+Where \)</span>|A|<span class="math notranslate nohighlight">\( is the number of outcomes that belong to \)</span>A<span class="math notranslate nohighlight">\( and \)</span>|\Omega|$ is the number of possible outcomes</p>
+</div>
+<p>To discuss whether a coin is fair we first need a bit of vocabulary and some conventional mathematical symbols.</p>
+<ul class="simple">
+<li><p><strong>Probability</strong>. The probability of an <strong>event</strong> <span class="math notranslate nohighlight">\(A\)</span> is written <span class="math notranslate nohighlight">\(P(A)\)</span>. The probability of event <span class="math notranslate nohighlight">\(A\)</span> among the <strong>sample space</strong> <span class="math notranslate nohighlight">\(|\Omega|\)</span> is equal to:</p></li>
 </ul>
 <div class="math notranslate nohighlight">
 \[P(A) = \frac{|A|}{|\Omega|}\]</div>
-<p>Which reads: The probability of a particular event occuring is the number of time that particular event occurs divided by the total number of possible events. In probability theory, each of the terms used in the definition of a probability also has a precise definition:</p>
 <ul class="simple">
-<li><p><strong>Event</strong>: a specific outcome of an experiment. In the case of a coin toss, this is either getting head or tail. But say we want to run another experiment in which we draw a card in a 52 cards deck at random, drawing a king of spade would also be an event for example.</p></li>
-<li><p><strong>Sample space</strong>: set of all possible outcomes of the experiment. In our coin toss example, the sample space is basically head and tail, as these are the only two possible outcomes from throwing a coin. Similarly, if we draw a card from a deck, the sample space is basically all the cards in the deck. And so in the case of a coin toss, the total number of possible outcome in the sample space is 2, but in an experiment where we draw a card, it’s 52.</p></li>
-<li><p><strong>Number of favorable outcomes for event A</strong>: how often does the event occurs out of all the possible outcomes. This is basically the quantity that defines the probability of that particular event.</p></li>
+<li><p><strong>Sample space <span class="math notranslate nohighlight">\(\Omega\)</span></strong>. This is the set of all possible outcomes. For a single coin toss, we have two possible outcomes: head or tail, so  <span class="math notranslate nohighlight">\(\Omega=2\)</span>. But if we wanted to know the probability of pulling a specific card out of a 52 cards’ deck, <span class="math notranslate nohighlight">\(\Omega=52\)</span>.</p></li>
+<li><p><strong>Event</strong>.  A subset of the sample space describing the outcome we care about. For a coin toss, we most often care about events heads or tail, so we have two single-point event. But say we want to know the probability of pulling an ace of spade, or a king of heart, the event we are interested in has two points. This is why in the <span class="math notranslate nohighlight">\(P(A)\)</span> formulae, we write <span class="math notranslate nohighlight">\(|A|\)</span>. <span class="math notranslate nohighlight">\(|A|\)</span> is the number of outcomes that belong to <span class="math notranslate nohighlight">\(A\)</span>!</p></li>
 </ul>
-<p>So in the case of our coin toss example, head is an event and tail is another. If the coin is balanced, we have:
-$<span class="math notranslate nohighlight">\(P(Head) = \frac{1}{2}\)</span>$</p>
+<p>We have two important properties that a probability must fullfil:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(0\le P(A)\le1\)</span> for every event <span class="math notranslate nohighlight">\(A\)</span>. That is because either an event never occurs or it always occurs, there are no other options.</p></li>
+<li><p>The total probability satisfies <span class="math notranslate nohighlight">\(\sum_{\omega\in\Omega}P({\omega})=1\)</span>. This means that when we sum all possible events together, we must arrive to exactly 1. This makes sense: when we throw a coin, something will always happen, either it lands on head or on tail. In our coin example, if the probability of getting a head and the probability of getting a tail wouldn’t sum up to 1, that would mean that sometimes when we throw the coin, it doesn’t land, which is not possible except if you play in space.</p></li>
+</ul>
+<p>And these two properties have quite handy implications in our particular problem. Since we have only two possible outcomes and that they together must sum to 1, we have:</p>
+<div class="math notranslate nohighlight">
+\[P(Head) + P(Tail) = 1\]</div>
+<p>Which implies that:</p>
+<div class="math notranslate nohighlight">
+\[P(Tail) = 1 - P(Head)\]</div>
+<p>So this means that if we know the probability of one event, we know the probability of the other.</p>
+</section>
+</section>
+<section id="a-fair-coin-in-mathematical-terms">
+<h2>A fair coin in mathematical terms:<a class="headerlink" href="#a-fair-coin-in-mathematical-terms" title="Link to this heading">#</a></h2>
+<p>So with this simple terminology, we can clearly define what it means to have a fair coin. It means that:</p>
+<div class="math notranslate nohighlight">
+\[P(Head) = \frac{1}{2}\]</div>
 <p>And</p>
 <div class="math notranslate nohighlight">
 \[P(Tail) = \frac{1}{2}\]</div>
-<p>We could also have:</p>
+<p>In other words, having a fair coin means that:</p>
 <div class="math notranslate nohighlight">
-\[P(Head) = \frac{1.2}{2}\]</div>
-<p>In which case our coin isn’t balanced, because head is more likely than tail. This brings us to an important properties that all probabilities have:</p>
-<div class="math notranslate nohighlight">
-\[\sum{P(X=x)=1}\]</div>
-<p>This means that when we sum all the probability of each possible event, we always get 1. This makes sense: when we throw a coin, something will always happen, either it lands on head or on tail. There is no scenario in which we toss a coin and the coin doesn’t land on anything. You could argue that the coin could land on the side. Fair, that is a possible outcome, albeit not very likely. But that’s fine with probability theory, we just have to say that when we throw a coin, the <strong>sample space</strong> cointains head, tail and side. Each should have a probability. But I would argue that tail is really unlikely (never saw it myself, and I tossed a few coins in my days), so we can probably say something like:</p>
-<div class="math notranslate nohighlight">
-\[P(Head)=1.49/3, P(Tail)=1.49/3, P(Side)=0.02\]</div>
-<p><span class="math notranslate nohighlight">\(P(Side)\)</span> is so unlikely that we can ignore it. And so because the sum of the probability of all events in the <strong>sample space</strong> should be 1 and that we have only two outcomes, then we can say the following:</p>
-<div class="math notranslate nohighlight">
-\[P(Tail) + P(Head) = 1\]</div>
-<p>So</p>
+\[P(Head) = P(Tail)\]</div>
+<p>which means that we have equal probability of landing on head or tail. But remember, we know that:</p>
 <div class="math notranslate nohighlight">
 \[P(Tail) = 1 - P(Head)\]</div>
-<p>In the case of a coin toss, if we know the probability of one event, we know the probability of the other.</p>
-<p>Probability have another important property:</p>
-<div class="math notranslate nohighlight">
-\[0=&gt;P(A)=&gt;1\]</div>
-<p>Which means that for any event A, it’s probability is minimally 0 (it can’t happen and will never happen) and maximally 1 (it will always happen). This makes sense in the case of a coin toss: we can’t get two times head when we toss the coin once, we can at most always get head when we throw a coin.</p>
-<p>Of course probability theory is not only about tossing coins. We can apply the same definitions we have given above to any random things. For example, if you have a 52 cards deck and you pick a card at random. In this case, picking up a particular card is a specific event, and your sample space is 52, because you have 52 different cards. For example, the probability of picking a King of Spade is described as:</p>
-<div class="math notranslate nohighlight">
-\[P(King\ of\ Spade) = \frac{1}{52}\]</div>
-<p>And of picking up a jack of heart:</p>
-<div class="math notranslate nohighlight">
-\[P(Jack\ of\ Heart) = \frac{1}{52}\]</div>
-<p>The same properties described above: the probability of each event is between 0 and 1, and the sum of the probability of all events is 1.</p>
-</section>
-<section id="true-vs-observed-probabilities">
-<h2>True vs. Observed Probabilities:<a class="headerlink" href="#true-vs-observed-probabilities" title="Link to this heading">#</a></h2>
-<p>Our question is: <strong>Is our coin biased or not</strong>. But that is basically the same as asking: <strong>Is the probability of obtaining head 0.5?</strong>. That’s because if we consider that there are only two possible outcomes to throwing a coin (head or tail), then if: <span class="math notranslate nohighlight">\(P(Head)=0.5\)</span>,</p>
-<p>then</p>
-<div class="math notranslate nohighlight">
-\[P(Tail)=1-P(Head)=1-0.5=0.5\]</div>
-<p>So we have:</p>
-<div class="math notranslate nohighlight">
-\[P(Tail) = P(Head)\]</div>
-<p>In other words, if the probability of getting head is 0.5, so is the probability to get tail and our coin is balanced.</p>
-<p>What we want to know is what is the <strong>True probability</strong> of head. And as we saw in the previous page, we can run an experiment (toss the coin a bunch of times) to try and estimate what that <strong>True probability</strong> might be to answer our question. In our experiment, we compute a so-called <strong>Empirical Probability</strong>. There is some uncertainty in the result of our experiment, because the <strong>Empirical Probability</strong> of getting head changed when we repeated the experiment.</p>
-<p>The <strong>True probability</strong> of an event is typically written as <span class="math notranslate nohighlight">\(P(A)\)</span>, while the <strong>Empirical probability</strong> is depicted as <span class="math notranslate nohighlight">\(\hat{P}(E)\)</span>, to make the distinction between the two.</p>
-</section>
-<section id="mathetmatical-functions-as-probability-distribution">
-<h2>Mathetmatical functions as probability distribution<a class="headerlink" href="#mathetmatical-functions-as-probability-distribution" title="Link to this heading">#</a></h2>
-<p>In the above examples, we can write the probability of each event one by one: <span class="math notranslate nohighlight">\(P(A=Head)=0.5, P(A=Tail)=0.5\)</span>, or <span class="math notranslate nohighlight">\(P(A=King of Spade)=1/52, P(A=King of Heart)=1/52...\)</span></p>
-<p>That is of course a bit cumbersome, and already for the probability of each event when pulling a card from the deck, I got too lazy to write all options. The field of probability theory aims at finding compact and easy formulae to precisely describe the probability of each event in a particular sample space (i.e. the probability of any possible outcome of a given experiment). These are mathematical function that describe the probability of any possible outcome of an experiment, and this kind of functions are called:</p>
+<p>So if we know <span class="math notranslate nohighlight">\(P(Head)\)</span>, we also know <span class="math notranslate nohighlight">\(P(Tail)\)</span>. So if we want to know if our coin is fair, we don’t need to figure out <span class="math notranslate nohighlight">\(P(Head)\)</span> <strong>and</strong> <span class="math notranslate nohighlight">\(P(Tail)\)</span>, only <span class="math notranslate nohighlight">\(P(Head)\)</span>.</p>
+<p>Note that I am writing Head and Tail directly in the equations. I’m just doing so to illustrate the concept simply, but in probability theory, we would instead replace each event by a number. We can simply define:</p>
 <ul class="simple">
-<li><p><strong>Probability distributions</strong>: a function that assigns a probability to each possible outcome in a sample space, representing the likelihood of each outcome occurring. It describes how probabilities are distributed over the set of possible outcomes, ensuring that all probabilities are non-negative and that their total sums to one.</p></li>
+<li><p><strong>Head</strong> is 1</p></li>
+<li><p><strong>Tail</strong> is 0</p></li>
 </ul>
-<p>These formulae aim to be general enough, so that for any system that follows a similar kind of random process, the same formula can apply. For example, the probability of getting head or tail is similar to the probability of passing or failing an exam. The probability of pulling a given card from the card deck is a similar thing as the probability of pulling a particular fish when one goes on a fishing trip at the sea…</p>
-<p>For that purpose, the words we have been using so far must be replace by numbers. For experiments in which there are only two possible outcome, the formulae that describe the probability distribution in such settings is called the Bernoulli distribution.</p>
+<p>In probability theory, we would typically write the probability of each event like so:</p>
+<ul class="simple">
+<li><p><span class="math notranslate nohighlight">\(P(X=1)\)</span>: probability of getting head (or often referred to as success)</p></li>
+<li><p><span class="math notranslate nohighlight">\(P(X=0)\)</span>: probability of getting tail (or often referred to as failure)</p></li>
+</ul>
+<p>The <span class="math notranslate nohighlight">\(X\)</span> inside the paranthesis symbolizes that we are dealing with a random variable, that can take any possible value in our sample space, and the whole reads ‘The probability that the random variable <span class="math notranslate nohighlight">\(X\)</span> takes the value <span class="math notranslate nohighlight">\(x\)</span>’. It’s important to not get confused: this notation is not only used when dealing with coin tosses but with any random variable. In our example with picking cards from a deck, we would can also write <span class="math notranslate nohighlight">\(P(X=3)\)</span>, where 3 could be a king of heart for example. When reading equations with <span class="math notranslate nohighlight">\(P(X=something)\)</span>, it’s important to know the context to not get confused.</p>
+</section>
+<section id="probability-distribution">
+<h2>Probability distribution<a class="headerlink" href="#probability-distribution" title="Link to this heading">#</a></h2>
+<p>Using numbers instead of arbitrary names also enables us to express the probability of any possible outcome of an experiment as a mathematical function. Such functions are called</p>
+<ul class="simple">
+<li><p><strong>Probability distributions</strong>: a function that assigns a probability to each possible outcome in a sample space. It describes how probabilities are distributed over the set of possible outcomes, ensuring that all probabilities are non-negative and that their total sums to one.</p></li>
+</ul>
+<p>Because our coin toss is a random process that can yield one of two possible outcome, we can write a function that takes in each possible outcome (head or tail) and return it’s probability. Similarly, when picking a card within a deck, we can write a function that takes in the value associated with each card and returns its probability. Both these functions are probability distribution for these two different random processes.</p>
+<p>All of this might seem a bit convoluted and uncessary. It’s important to understand that what we’ve done is simply a translation: what we wrote with words in the previous chapter we are now writing into mathematical terms, using some formalism and conventions, nothing more. It might seeem like we are overcomplicating things: we have only two outcomes, one probability each, is writing a function for that more necessary? And more importantly, how does that help us figuring out if our coin is biased or not? The answer is that in order to figure out the most probable values for <span class="math notranslate nohighlight">\(P(X=1)\)</span>, we need to express all parts of our experiments as mathematical formulae, so that we are ultimately able to calculate what is the most probable value for <span class="math notranslate nohighlight">\(P(X=1)\)</span> given the result of our experiment. So hang in there, it will soon make sense!</p>
 <section id="the-bernoulli-distribution-a-single-formulae-to-express-the-probability-of-each-event">
 <h3>The Bernoulli distribution: a single formulae to express the probability of each event<a class="headerlink" href="#the-bernoulli-distribution-a-single-formulae-to-express-the-probability-of-each-event" title="Link to this heading">#</a></h3>
-<p>We have described the probability of head and tail as:</p>
+<p>A probability distribution function must take in any possible event of the sample space and return its probability. So in our simple coin toss example, we have two possible outcome: 1 (head, or more generally referred to as success) and 0 (tail, or more generally failure). More mathematically, we need a function that returns <span class="math notranslate nohighlight">\(P(X=1)\)</span> when we give it 1, and <span class="math notranslate nohighlight">\(P(X=0)\)</span> if we give it 0.</p>
+<p>This function is called the Bernoulli distribution, and is written like so:</p>
 <div class="math notranslate nohighlight">
-\[P(Head) = 0.5\]</div>
+\[P(X=x)= P(X=1)^x(1-P(X=1))^{1-x}, \qquad x\in\{0, 1\}. \tag{Bernoulli}\]</div>
+<p>If we know the probability of getting head, this function gives us the probality associated with each event (head and tail), nothing more.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Notation clarification</strong>: We have written the formulae for the Bernoulli distribution using the notation that is traditional in probability theory. This is just a convention. We can write the same function using convention from traditional algebra:</p>
 <div class="math notranslate nohighlight">
-\[P(Tail) = 0.5\]</div>
-<p>We can however make this more general by saying something like this:</p>
+\[
+f(x) = p^x(1-p)^{1-x}, \qquad x \in \{0, 1\}. \tag{Bernoulli}
+\]</div>
+<p>Where <span class="math notranslate nohighlight">\(p = P(X-1)\)</span>. This is exactly the same thing just using conventions from different subfields in mathematics, don’t get confused.</p>
+</div>
+<p>It’s easy to see that this function behaves as we want it to:</p>
 <div class="math notranslate nohighlight">
-\[P(x) = 0.5\ if\ x\ =\ Head, P(x) = 0.5\ if\ x = Tail\]</div>
-<p>But we still have head and tail. Since we have only two outcomes, we can replace head by 1 and tail by 0, and rewrite the equation as:</p>
+\[f(1) = p^1(1-p)^{1-1}\]</div>
 <div class="math notranslate nohighlight">
-\[P(x=1) = 0.5,\ P(x=0) = 0.5\]</div>
-<p>So far, these are all the same way to write the same thing. But when we replace the words by numbers, we can find a function that takes in any possible value of x and returns the probability of x. It’s a bit confusing to illustrate if the probability of head and tail are the same, so let’s say for now that:</p>
+\[f(1) = p\]</div>
+<p>And</p>
 <div class="math notranslate nohighlight">
-\[P(x=1) = 0.8,\ P(x=0) = 0.2\]</div>
-<p>(Read Probability of getting head is 0.8, probability of getting tail is 0.2)</p>
-<p>So we need a function that does something like this:</p>
+\[f(0) = p^0(1-p)^{1-0}\]</div>
 <div class="math notranslate nohighlight">
-\[p(x) = 0.8\ if\ x = 1\ and\ p(x) = 0.2\ if\ x=0\]</div>
-<p>What about the following function:</p>
-<div class="math notranslate nohighlight">
-\[P(x) = P(X = 1)^x*P(X = 0)^{1-x}\]</div>
-<p>If you try it out. If x = 1, then you have <span class="math notranslate nohighlight">\(P(X=1)^1\)</span> times <span class="math notranslate nohighlight">\(P(X=0)^0\)</span>,  <span class="math notranslate nohighlight">\(P(X=1)^1 * 1\)</span>, so <span class="math notranslate nohighlight">\(P(X=1)\)</span>. And the opposite if x=0.</p>
-<p>This is the formulae of the <strong>Bernoulli distribution</strong>, which describes the outcome of a signle experiment that can have just two possible outcomes. Is it the only way to write a function such that the probability of the one event is switched off if the event isn’t equal to that event? Probably not, but it is nice and compact, and that’s what matters.</p>
-<p>Now at this point you might wonder: what’s the point of the Bernoulli distribution? It’s a function for which we need both <span class="math notranslate nohighlight">\(P(X = 1)\)</span> and <span class="math notranslate nohighlight">\(P(X = 0)\)</span> just so we can compute P(X = 1) or P(X = 0), what’s the point? On it’s own it is not very useful. It’s just a way to write the same information but as a function instead, such that you can enter each possible value of x and get its probability in return. It basically “switches on” P(X=1) and “switches off” P(X=0) when X = 1 and the other way around. And it is something that is very helpful for doing more complicated things, as we will see in a bit.</p>
-<p>Let’s just write some code to illustrate the Bernoulli distribution:</p>
+\[f(1) = p1-p\]</div>
+<p>Note that this is only one of the many functions that returns the probability associated with each event, there are many other functions one could come up with that would do the same. It is just a particularly simple and compact one, which is why it is used across the board. We can write the Bernoulli distribution using some simple python code and try a couple different values of <span class="math notranslate nohighlight">\(p\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
@@ -527,63 +610,92 @@ $<span class="math notranslate nohighlight">\(P(Head) = \frac{1}{2}\)</span>$</p
 </section>
 <section id="the-binomial-distribution-a-probability-distribution-for-the-number-of-success">
 <h2>The Binomial distribution: a probability distribution for the number of success<a class="headerlink" href="#the-binomial-distribution-a-probability-distribution-for-the-number-of-success" title="Link to this heading">#</a></h2>
-<section id="what-we-have-seen-so-far">
-<h3>What we have seen so far:<a class="headerlink" href="#what-we-have-seen-so-far" title="Link to this heading">#</a></h3>
-<p>To recap what we have seen so far: if we want to know whether a coin is biased, we need to figure out if the probability of head is 0.5:</p>
+<p>The Bernoulli distribution can be used to calculate the probability of getting head or tail (<span class="math notranslate nohighlight">\(P(X=1)\)</span> and <span class="math notranslate nohighlight">\(P(X=0)\)</span> respectively) when we throw the coin once, but again, we need to know hte probability of getting head to start with, so it does not enable us to solve our problem. In the previous chapter, we had the intuition that in order to figure out <span class="math notranslate nohighlight">\(P(X=1)\)</span>, we can try to throw the coin many many times, and that the number of head we get out of the total number of throw should give us some information about what <span class="math notranslate nohighlight">\(P(X=1)\)</span>.</p>
+<p>When we are throwing the coin once, we are dealing with probability: the occurence of one of the two <strong>events</strong> out of the <strong>sample space</strong> has a given <strong>probability</strong> of occuring, and we can use a probability distribution to ascribe the probability to each event. Importantly, when we are throwing the coin multiple time, we are also dealing with probability: we have a set of <strong>events</strong> which combined constitute the <strong>sample space</strong>, and each event has a given <strong>probability</strong> of occuring. And we can also write a probability distribution function to ascribe a probability to each possible outcome.</p>
+<p>However, when we throw the coin multiple time, things get more complicated, and the Bernoulli distribution is insufficient to ascribe probability of each event. It is easy to understand why. When we throw the coin multiple times, we don’t have two possible events anymore, and our sample space is therefore not two anymore. Say we throw the coin 2 times, here are all the possible outcomes:</p>
+<ul class="simple">
+<li><p>[head, head]</p></li>
+<li><p>[tail, tail]</p></li>
+<li><p>[head, tail]</p></li>
+<li><p>[tail, head]</p></li>
+</ul>
+<p>So we have 4 different outcomes. But now say we throw the coin 3 times:</p>
+<ul class="simple">
+<li><p>[head, head, head]</p></li>
+<li><p>[head, head, tail]</p></li>
+<li><p>[head, tail, tail]</p></li>
+<li><p>[tail, head, tail]</p></li>
+<li><p>[tail tail, tail]</p></li>
+<li><p>…</p></li>
+</ul>
+<p>There are many more possible outcomes when we throw the coin several times, and the more times we throw the coin, the more the number of possible outcomes increases!</p>
+<p>But what’s perhaps more interesting is that for such a random system, there are many different things we can define as an event. We could decide that we are interested in knowing the probability of obtaining a specific sequence of head and tails out of the number of tosses, such as the probability of getting [head, head, tail] in exactly that order. Alternatively we could also be interested in know what is the probability of getting twice head out of 3 tosses. We see above that we have at least 2 possible outcomes in which we get twice tail ([head, tail, tail] and [tail, head, tail]) and perhaps even more. Depending on how we define an event (what we are interested in knowing the proba)</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Notation clarification</strong>: Remember that an event is defined as “A subset of the sample space describing the outcome we care about”. It does not have to be just one specific outcome. This is why in the formulae:</p>
 <div class="math notranslate nohighlight">
-\[P(X=1) = 0.5\]</div>
-<p>And according to the Bernoulli formulae:</p>
+\[P(A) = \frac{|A|}{|\Omega|}\]</div>
+<p>We write <span class="math notranslate nohighlight">\(|A|\)</span> and not just <span class="math notranslate nohighlight">\(A\)</span>. When we throw the coin multiple times, we can be interested in knowing the probability of getting a particular sequence of head and tail, or in the probability of getting a particular number of head in a given number of throws. But we could also be interested in the probability of getting more than one head, less than two tails. Importantly, different events definition require different probability distribution functions.
+$$</p>
+</div>
+<p>Whatever the definition of our event is, we can come up with a probability definition function that will ascribe a probability to each event, but it will be a different function for each event definition. In the previous chapter, we had the intuition that calculating the number of heads (which we will call <span class="math notranslate nohighlight">\(k\)</span>) out of the total number of throws (which we will call <span class="math notranslate nohighlight">\(n\)</span>) should be informative about <span class="math notranslate nohighlight">\(P(X=1)\)</span>. So this is how we should define our event: getting <span class="math notranslate nohighlight">\(k\)</span> heads out of <span class="math notranslate nohighlight">\(n\)</span> tosses, the order of head and tails is irrelevant.</p>
+<p>So we need to figure out a probability distribution function that takes in a particular number of successes <span class="math notranslate nohighlight">\(k\)</span> (given a number of throws) and returns the probability of that. And as you will see, we can in fact come up with it ourselves.</p>
+<section id="multiple-tosses-as-a-series-of-bernoulli-trials">
+<h3>Multiple tosses as a series of Bernoulli trials<a class="headerlink" href="#multiple-tosses-as-a-series-of-bernoulli-trials" title="Link to this heading">#</a></h3>
+<p>When we throw the coin multiple time, the probability of each toss on their own is still characterized by the Bernoulli distribution. Accordingly, when we toss the coin multiple time, the probability of getting one particular outcome is obtained by multiplying the probability on each trial together. Say we want to know the probability of getting head, then tail, then tail again, we have something like this:</p>
 <div class="math notranslate nohighlight">
-\[P(X = x) = P(X = 1)^x*P(X = 0)^{1-x}\]</div>
-<p>The Bernoulli distribution describes the rules that control a single coin toss, so to speak. When we throw the coin a single time, we have <span class="math notranslate nohighlight">\(P(X=1)\)</span> chances that it lands on head and <span class="math notranslate nohighlight">\(P(X=0)\)</span> that it lands on tail. Importantly, we don’t know either, which is why we run an experiment. We decided to run an experiment to figure it out. And as we saw before, we had the intuition that for such an experiment, we should be more confident in our results when we increase the number of tosses, because it should be more probable to obtain something close to the true <span class="math notranslate nohighlight">\(P(X=1)\)</span> when we increase the number of throws</p>
-</section>
-<section id="the-probability-distribution-of-p-x-k">
-<h3>The probability distribution of <span class="math notranslate nohighlight">\(P(X=k)\)</span><a class="headerlink" href="#the-probability-distribution-of-p-x-k" title="Link to this heading">#</a></h3>
-<p>When we are trying to determine what the true probability of success is (<span class="math notranslate nohighlight">\(P(X=1)\)</span>), we ran an experiment in which we toss the coin several times to see how often it lands on head. If the coin is fair (i.e. if <span class="math notranslate nohighlight">\(P(X=1)=0.5\)</span>), then we would expect that the coin is most likely to fall on head half of the time when we toss the coin many times. The number of head we obtain out of a given number of throws also follows a probability distribution. When we toss the coin n times, we have a sample space of size n, because we can out of 10 throws, we can get 1, 2, 3, …, 10 heads. And each of these outcomes is associated with a probability, which depends on the fairness of our coin: if <span class="math notranslate nohighlight">\(P(X=1)=0.5\)</span>, then getting 5 head when throwing the coin 10 times is more likely than getting 10 times heads. And in this case again, if we sum the probability of getting 0 head, 1 head, 2 heads… we should get 1. That is because if we throw the coin 10 times, we will most definitely obtain a certain amount of heads: either 0, 10 or everything in between.</p>
-<p>We can also write a function that will describe the probability of getting a particular number of successes (i.e. heads) depending on the number of throw and on <span class="math notranslate nohighlight">\(P(X=1)=0.5\)</span>, similar to how the Bernoulli distribution describes the probability of getting a particular outcome (1 or 0) depending on <span class="math notranslate nohighlight">\(P(X=1)=0.5\)</span>. When you think about it, what we are doing when throwing the coin multiple times, we are actually conducting a series of independent Bernoulli trials. So the probability of getting <span class="math notranslate nohighlight">\(k\)</span> heads out of <span class="math notranslate nohighlight">\(n\)</span> tosses should follow something like this (assuming 5 throws):</p>
+\[P(X=[1, 0, 0]) = P(X=1)^1(1-P(X=1))^{1-1} * P(X=1)^0(1-P(X=1))^{1-0} * P(X=1)^0(1-P(X=1))^{1-0}\]</div>
 <div class="math notranslate nohighlight">
-\[P(X=2) = P(X = 1)^1*P(X = 0)^{1-1} * P(X = 1)^1*P(X = 0)^{1-1} * P(X = 1)^2*P(X = 0)^{1-0} * P(X = 1)^2*P(X = 0)^{1-0} * P(X = 1)^2*P(X = 0)^{1-0}\]</div>
-<p>That is, the probability of getting 2 heads out of 5 throws is the product of the probability of each event in each trials, so <span class="math notranslate nohighlight">\(P(X=Head) * P(X=Head) * P(X=Tail) * P(X=Tail) * P(X=Tail)\)</span>, which gives us:</p>
-<p>two times the Bernoulli distribution when <span class="math notranslate nohighlight">\(x=1\)</span> and three times the Bernoulli distribution when <span class="math notranslate nohighlight">\(x=0\)</span>. Assuming <span class="math notranslate nohighlight">\(P(X=1)=0.5\)</span> (i.e. our coin is fair):</p>
+\[P(X=[1, 0, 0]) = P(X=1) * (1-P(X=1))^2\]</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p><strong>Notation clarification</strong>: The formulae above are a bit confusing: on the left side of the equation, the <span class="math notranslate nohighlight">\(X\)</span> in <span class="math notranslate nohighlight">\(P(X=[1, 0, 0])\)</span> refers to the results of multiple tosses (so a random varialbe that has one value for each toss), but on the right side, the <span class="math notranslate nohighlight">\(X\)</span> in <span class="math notranslate nohighlight">\(P(X=1)\)</span> refers to the outcome of each coin toss. This is very confusing and makes for very inelegant formulae. To simplify things, we will say from here on out that <span class="math notranslate nohighlight">\(P(X=1) = p\)</span>, so <span class="math notranslate nohighlight">\(p\)</span> is the probability of getting head.</p>
+</div>
+<p>Now, say we do 4 throws, and we want to know the probability of getting twice head and then twice tail in that specific order:</p>
 <div class="math notranslate nohighlight">
-\[P(X=2) = 0.5 * 0.5 * 0.5 * 0.5 * 0.5\]</div>
+\[P(X=[1, 1, 0, 0]) = p^1(1-p)^{1-1} * p^1(1-p)^{1-1} * p^0(1-p)^{1-0} * p^0(1-p)^{1-0}\]</div>
 <div class="math notranslate nohighlight">
-\[P(X=2) = 0.03125\]</div>
-<p>We can try to make this a bit more general. It is a bit hard to see when we are dealing with a fair coin, because <span class="math notranslate nohighlight">\(P(X=1) = P(X=0)\)</span>, but what we have above is basically  <span class="math notranslate nohighlight">\(P(X=1)^k * P(X=0)^n-k\)</span> (where k is the number of success). If we imagine an unbalanced coin (<span class="math notranslate nohighlight">\(P(X=1) = 0.3\)</span> for example), this is easy to see:</p>
+\[P(X=[1, 1, 0, 0]) = p^2 * (1-p)^2\]</div>
+<p>And let’s say we want to know the probability of getting twice tail and twice head (so same as before, just reverse the order):</p>
 <div class="math notranslate nohighlight">
-\[P(X=2) = 0.3 * 0.3 * 0.7 * 0.7 * 0.7\]</div>
+\[P(X=[0, 0, 1, 1]) = p^0(1-p)^{1-0} p^1(1-p)^{1-0} * p^1(1-p)^{1-1} * p^0(1-p)^{1-1}\]</div>
 <div class="math notranslate nohighlight">
-\[P(X=2) = 0.3^2 * 0.7^3\]</div>
-<p>So a general formulae is the following:</p>
+\[P(X=[0, 0, 1, 1]) = p^2 * (1-p)^2\]</div>
+<p>From these simple examples, we can notice a few things:</p>
+<ul class="simple">
+<li><p>Sequences with the same number of heads and tails have the same probability regardless of their order of occurence. In other words, <span class="math notranslate nohighlight">\(P(X=[0, 0, 1, 1]) = P(X=[1, 1, 0, 0])\)</span></p></li>
+<li><p>A pattern seem to emerge: the exponents of each <span class="math notranslate nohighlight">\(p\)</span> and <span class="math notranslate nohighlight">\((1-p)\)</span> are just the number of success and failures each</p></li>
+</ul>
+<p>So now, let’s try to come up with something more general that would give us the probability of getting <span class="math notranslate nohighlight">\(k\)</span> successes out of <span class="math notranslate nohighlight">\(n\)</span> tosses, which we logically write <span class="math notranslate nohighlight">\(P(X=k)\)</span>:</p>
 <div class="math notranslate nohighlight">
-\[P(X=k) = P(X=1)^k * P(X=0)^(n-k)\]</div>
-<p>Which is the same as:</p>
+\[P(X=k) = p^k * (1-p)^{n-k}\]</div>
+<p>This formulae is however incomplete. Remember when we said above that we can define an event as getting a specific sequence as opposed to getting <span class="math notranslate nohighlight">\(k\)</span> out of <span class="math notranslate nohighlight">\(n\)</span> successes? Well the formulae above is the probability distribution for the former and not the latter. In other words, the probability of getting [0, 0, 1, 1] and [1, 1, 0, 0] have the same probability:</p>
 <div class="math notranslate nohighlight">
-\[P(X=k) = P(X=1)^k * (1-P(X=1))^(n-k)\]</div>
-<p>This seems like a simple enough formulae: if we know <span class="math notranslate nohighlight">\(P(X=1)\)</span>, we can figure out the exact probability of obtaining a certain number of head in our experiment. This is however not entirely accurate, something is missing from our formulae. What we have calculated above is the probability of getting the sequence [head head tail tail tail]. There are several other sequences that yield 2 out of 5 success. To obtain <span class="math notranslate nohighlight">\(P(X=k)\)</span>, we need to find all the combinations of heads and tails in which we have 2 heads and three tails. Thankfully, there is an easy formulae to do that:</p>
+\[P(X=[0, 0, 1, 1]) = P(X=[0, 0, 1, 1]) = p^2 * (1-p)^{4-2}\]</div>
+<p>In order to get the probability of getting <span class="math notranslate nohighlight">\(k\)</span> out of <span class="math notranslate nohighlight">\(n\)</span> success, we need to combine the probability of all outcomes in which there are <span class="math notranslate nohighlight">\(k\)</span> successes, which requires multiplying the property of each of these outcomes together. So say we want to know <span class="math notranslate nohighlight">\(P(X=2)\)</span> when <span class="math notranslate nohighlight">\(n=2\)</span>, we have:</p>
+<div class="math notranslate nohighlight">
+\[P(X=2) = P(X=[0, 0, 1, 1]) * P(X=[1, 1, 0, 0]) * P(X=[1, 0, 0, 1])...\]</div>
+<p>So in order to find <span class="math notranslate nohighlight">\(P(X=k)\)</span>, we need to know all the possible combinations that yield <span class="math notranslate nohighlight">\(k\)</span> heads in our sample space. Thankfully, there is an easy formulae to do that:</p>
 <div class="math notranslate nohighlight">
 \[\binom{n}{k} = \frac{n!}{k!(n-k)!}\]</div>
-<p>Which reads n takes k, which is called the binomial coefficient. So if our case, when we want to figure out how many sequences we have that yield 2 heads and 5 tails:</p>
+<p>Which reads n takes k, which is called the binomial coefficient. So if our case, when we want to figure out how many sequences we have that yield 2 heads out of 4 throws:</p>
 <div class="math notranslate nohighlight">
-\[\binom{5}{2} = \frac{5!}{2!(5-2)!}\]</div>
+\[\binom{4}{2} = \frac{4!}{2!(4-2)!}\]</div>
 <div class="math notranslate nohighlight">
-\[\binom{5}{2} = \frac{120}{2*6}\]</div>
+\[\binom{4}{2} = \frac{24}{2*2}\]</div>
 <div class="math notranslate nohighlight">
-\[\binom{5}{2} = 10\]</div>
-<p>So we have 10 possible combinations. You can try it easily per hand: if you write per hand all the possible sequences, you will also see that there are only 10 that yield 2 heads and three tails. We know that for a given sequence in which we have 2 success, we have the following:</p>
+\[\binom{4}{2} = 6\]</div>
+<p>Which is 6. Accordingly:</p>
 <div class="math notranslate nohighlight">
-\[P(X=2) = P(X=1)^2 * (1-P(X=1))^3\]</div>
-<p>This is true for any sequences in which we have 2 successes, accordingly the probability of getting 2 out of 5 success is:</p>
+\[P(X=2) = 6 * p^2 * (1-p)^2\]</div>
+<p>So more generally, we have:</p>
 <div class="math notranslate nohighlight">
-\[P(X=2) = \binom{5}{2} P(X=1)^2 * (1-P(X=1))^3\]</div>
-<p>And so more generally, we have:</p>
-<div class="math notranslate nohighlight">
-\[P(X=k) = \binom{n}{k} P(X=1)^k * (1-P(X=1))^(n-k)\]</div>
-<p>With this formulae, we can now compute the probabilty for getting any number of heads out of the number of throws we made, given <span class="math notranslate nohighlight">\(P(X=1)\)</span>. But we can also do the reverse: for any values of <span class="math notranslate nohighlight">\(P(X=1)\)</span>, we can calculate the probability of our observed number of heads. This formulae is called the <strong>binomial distribution</strong>.</p>
+\[P(X=k) = \binom{n}{k} p^k * (1-p)^{(n-k)}.\tag{Binomial}\]</div>
+<p>This formulae is called the <strong>binomial distribution</strong>. It is important to understand what this forumlae tells us: provided that we know the probability of success on a given try <span class="math notranslate nohighlight">\(P(X=1)\)</span> or <span class="math notranslate nohighlight">\(p\)</span> (which in our particular case translates to the probability of the coin landing on head when we throw it once), we can know the probability of getting <span class="math notranslate nohighlight">\(k\)</span> head out of <span class="math notranslate nohighlight">\(n\)</span> coin tosses! So once again, this formulae does not tell us what <span class="math notranslate nohighlight">\(P(X=1)\)</span> is! However, as we will see below, this formulae is required to make a guess about what <span class="math notranslate nohighlight">\(P(X=1)\)</span> might be based on our experiment.</p>
 </section>
 <section id="relating-the-binomial-distribution-to-our-intuition">
 <h3>Relating the binomial distribution to our intuition<a class="headerlink" href="#relating-the-binomial-distribution-to-our-intuition" title="Link to this heading">#</a></h3>
-<p>With the binomial distribution, we can validate several of the intuition we had in the previous chapter. For that, we will write a little python function implementing the binomial distribution, thereby illustrating that is nothing terribly complicated!</p>
+<p>It is also a formal mathematical description of what happens when we throw the coin multiple times, and it can be useful to prove some of the intuitions we had before. For that, we will write a little python function implementing the binomial distribution, thereby illustrating that is nothing terribly complicated!</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">math</span>
@@ -608,12 +720,11 @@ $<span class="math notranslate nohighlight">\(P(Head) = \frac{1}{2}\)</span>$</p
 </div>
 </div>
 </div>
-<p>With that simple function, we can obtain the probability for each value of y, while modulating the number of toss we make and the true probability of success.</p>
-<p>Logically enough, in the previous chapter, we thought that to figure out whether our coin is biased, we can throw the coin several time. If the coin isn’t biased, then we should be observe head on half of our tosses. This can be simply validated with the formulae above. Let’s look at the probability of each outcomes when we throw the coin 10 times (with <span class="math notranslate nohighlight">\(P(X=1)=0.5\)</span>):</p>
+<p>With that simple function, we can obtain the probability for each value of y, while modulating the number of toss we make as well as <span class="math notranslate nohighlight">\(P(X=1)\)</span>. In the previous chapter, we had the intuition that if the coin coin isn’t biased, then we should be observe head on half of our tosses. Pushing this intuition a bit further, it seems logical that the number of heads  <span class="math notranslate nohighlight">\(k\)</span> divided by the number of tosses <span class="math notranslate nohighlight">\(n\)</span> should be equal to <span class="math notranslate nohighlight">\(P(X=1)\)</span>. In other words, if the probability of the coin landing on head is of 0.4, we expect to get 4 head out of 10 tosses. So if we plug in 0.5 and 10 in the formulae above, <span class="math notranslate nohighlight">\(P(X=5)\)</span> should be higher than any other event:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">n_throw</span> <span class="o">=</span> <span class="mi">10</span>  <span class="c1"># Number of throw</span>
-<span class="n">theta</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># Probability of obtaining head</span>
+<span class="n">theta</span> <span class="o">=</span> <span class="mf">0.4</span>  <span class="c1"># Probability of obtaining head</span>
 <span class="n">n_head</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_throw</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># We want to know the probability of getting 0 heads, 2 heads... up to a 1000 heads out of our 1000 throws</span>
 
 
@@ -623,28 +734,30 @@ $<span class="math notranslate nohighlight">\(P(Head) = \frac{1}{2}\)</span>$</p
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;k&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;P(X = k)&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Binomial probability distribution at P(X=1) = 0.5&quot;</span><span class="p">)</span>
-<span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
-</pre></div>
-</div>
-</div>
-</div>
-<p>Just as we would expect: we are most likely to observe 5 heads than anything else. But none of the other options are exactly 0. Even observing 0 heads or 10 heads don’t have a probability of 0, which means that eventhough they are unlikely to happen, they still might:</p>
-<div class="cell docutils container">
-<div class="cell_input docutils container">
-<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(X=0) = </span><span class="si">{</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n_throw</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">theta</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(X=10) = </span><span class="si">{</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n_throw</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">theta</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 </pre></div>
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(X=0) = 0.0009765625
-P(X=10) = 0.0009765625
+<img alt="_images/706ace9570d4d4b5cd20b238c7c1c7feb430fa334fc50e1334533d13cc8e6185.png" src="_images/706ace9570d4d4b5cd20b238c7c1c7feb430fa334fc50e1334533d13cc8e6185.png" />
+</div>
+</div>
+<p>Just as expected. But also, none of the other events have a probability of 0, just some are more likely than others. The most extreme outcomes (0 heads or 10 heads) have the lowest probability, but it’s still not 0:</p>
+<div class="cell docutils container">
+<div class="cell_input docutils container">
+<div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(k=0) = </span><span class="si">{</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n_throw</span><span class="p">,</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="n">theta</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;P(k=10) = </span><span class="si">{</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n_throw</span><span class="p">,</span><span class="w"> </span><span class="mi">10</span><span class="p">,</span><span class="w"> </span><span class="n">theta</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="cell_output docutils container">
+<div class="output stream highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>P(k=0) = 0.006046617599999997
+P(k=10) = 0.00010485760000000006
 </pre></div>
 </div>
 </div>
 </div>
-<p>If we were to repeat the experiment a 10000 times or more, then we might see a couple of times in which we get 0 heads out of 10 throws, so not very likely.</p>
-<p>We also had the intuition before that if instead of tossing the coin 10 times to compute <span class="math notranslate nohighlight">\(\hat{P}(X=1)\)</span>, we should get more reliable estimates if we toss the coin a 1000 times. That is because we thought the probability of getting <span class="math notranslate nohighlight">\(\hat{P}(X=1)\)</span> that are very different from the true value of the true <span class="math notranslate nohighlight">\({P}(X=1)\)</span> decreases when we increase the number of throws. And we validated this intuition by repeating the same experiment multiple times, as we saw that the values are more constrained in the experiment where we throw the coin a 1000 times compared to when we throw it 1000 times. We can once again prove that this is true by using the binomial formulae. We can compare the probability of obtained <span class="math notranslate nohighlight">\(k/n\)</span> when we throw the coin 10 times or a 1000 times:</p>
+<p>In addition, we had the intuition in the previous chapter that if we throw the coin more times, we should have a more reliable estimate of what <span class="math notranslate nohighlight">\(P(X=1)\)</span> is. When we translate this assumption in more mathematical terms, what we would expect is that as we increase <span class="math notranslate nohighlight">\(n\)</span>, the probability of values far away from <span class="math notranslate nohighlight">\(P(X=1)\)</span> should decrease. This can also be illustrated nicely with the binomial formulae: we can compare the probability of each <span class="math notranslate nohighlight">\(k\)</span> successes relative to the number of throws, while keeping <span class="math notranslate nohighlight">\(P(X=1)\)</span> fixed at 0.5:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="n">theta</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># Probability of obtaining head</span>
@@ -673,7 +786,7 @@ P(X=10) = 0.0009765625
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="n">k</span><span class="o">/</span><span class="n">n_throw</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">n_throw</span><span class="o">+</span><span class="mi">1</span><span class="p">))],</span> <span class="n">distribution_10_throw</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;n=</span><span class="si">{</span><span class="n">n_throw</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
 
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;k/n&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;P(X = k)&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;P(k)&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;Binomial probability distribution at P(X=1) = 0.5&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
@@ -682,19 +795,22 @@ P(X=10) = 0.0009765625
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/faf52f5d0f249482db62b80b425f1f76270effc952518859b43dd958cae9c49b.png" src="_images/faf52f5d0f249482db62b80b425f1f76270effc952518859b43dd958cae9c49b.png" />
+<img alt="_images/97c82989e892f6445beff9f176021c5caf99329b6b03f161b0e9579bb0bb40eb.png" src="_images/97c82989e892f6445beff9f176021c5caf99329b6b03f161b0e9579bb0bb40eb.png" />
 </div>
 </div>
-<p>This seems to fit our intuition: the more tosses we do, the more centered on the true value of <span class="math notranslate nohighlight">\(P(X=1)\)</span> the distribution is. Indeed, <span class="math notranslate nohighlight">\(P(X=0.8)\)</span> is largest when <span class="math notranslate nohighlight">\(n=10\)</span> and smallest when <span class="math notranslate nohighlight">\(n=1000\)</span>. But you probably also noticed that for any values of <span class="math notranslate nohighlight">\(k/n\)</span>, <span class="math notranslate nohighlight">\(P(X=k)\)</span> is lower when we perform more tosses. That is also logical. When we throw the coin a 1000 times, we have a probability for any values between 0 and a 1000, while when we do 10 throws, we have only a value for <span class="math notranslate nohighlight">\(k=1\)</span> to <span class="math notranslate nohighlight">\(k=10\)</span>. And because the probability distribution must sum up to 1, it would make sense that the probability of any event is lower when we throw the coin many times. Another way to put it is that when we throw the coin a 1000 times, there are many more possible outcomes (anything from 0 to 1000), so the probability of getting any single value is overall lower compared to when we do only 10 tosses.</p>
+<p>As expected, the probability of <span class="math notranslate nohighlight">\(k/n\)</span> for values far away from <span class="math notranslate nohighlight">\(0.5\)</span> decreases as we increase <span class="math notranslate nohighlight">\(n\)</span>. Indeed, <span class="math notranslate nohighlight">\(P(k/n=0.8)\)</span> is largest when <span class="math notranslate nohighlight">\(n=10\)</span> and smallest when <span class="math notranslate nohighlight">\(n=1000\)</span>. Something less intuitive is that for any values of <span class="math notranslate nohighlight">\(k/n\)</span>, <span class="math notranslate nohighlight">\(P(X=k)\)</span> is lower when we perform more tosses. That is also logical. When we throw the coin a 1000 times, we have a probability for any values between 0 and a 1000, while when we do 10 throws, we have only a value for <span class="math notranslate nohighlight">\(k=1\)</span> to <span class="math notranslate nohighlight">\(k=10\)</span>. And because the probability distribution must sum up to 1, it would make sense that the probability of any event is lower when we throw the coin many times. Another way to put it is that when we throw the coin a 1000 times, there are many more possible outcomes (anything from 0 to 1000), so the probability of getting any single value is overall lower compared to when we do only 10 tosses.</p>
 </section>
 </section>
 <section id="the-likelihood-function-p-k-p-x-1">
 <h2>The likelihood function: <span class="math notranslate nohighlight">\(P(k|P(X=1))\)</span><a class="headerlink" href="#the-likelihood-function-p-k-p-x-1" title="Link to this heading">#</a></h2>
-<p>At this stage, you should understand the concept of probability distribution and how we can build mathematic formulae to describe the probability of any possible outcomes. But at that point, that might seem like abstract mathetmatical concepts and wonder “How does that help us answering whether our coin is biased”? In the graphs just above, I showed the probability associated with each possible outcome in a given experiment. But of course, when you run a given experiment, you don’t really care about all possible outcomes. What you want to know is how much can you trust the outcome of your experiment to infer whether or not your coin is biased. As we said before, what you really want to know is <strong>How probable the value of <span class="math notranslate nohighlight">\({P}(X=1)\)</span> is given the data?</strong>, so that you can give a principle answer to your colleague.</p>
-<p>The binomial distribution is necessary to obtain the probability of the parameter of interest (<span class="math notranslate nohighlight">\({P}(X=1)\)</span>), given the data you have observed. With the binomial distribution, you can not only compute how probable a given value of k is given the number of toss and a given value of <span class="math notranslate nohighlight">\({P}(X=1)\)</span>, you can also compute for a single observation how likely that value is under different values of <span class="math notranslate nohighlight">\({P}(X=1)\)</span>. This is written as:</p>
+<p>With the binomial distribution, we can know, given <span class="math notranslate nohighlight">\(P(X=1)\)</span> and the number of tosses we make, what the probability of getting any numbers of heads ranging from 0 to the number of tosses we make. But when we run our experiment, we don’t know the true value of <span class="math notranslate nohighlight">\(P(X=1)\)</span>, this is what we are looking for. We can, however, compute something else based on the result of our experiment. With the number of heads you’ve obtained, you can calculate how likely it is to have obtained that value based on any possible value of <span class="math notranslate nohighlight">\(P(X=1)\)</span>. In other word, say you have obtained 5 heads out of 10 throws. You can calculate how likely it is to obtain such a value for different values of <span class="math notranslate nohighlight">\(P(X=1)\)</span>. The way you do it is simple: you take the binomial distribution function, keep <span class="math notranslate nohighlight">\(k\)</span> the same, but change <span class="math notranslate nohighlight">\(P(X=1)\)</span> each time, like so:</p>
 <div class="math notranslate nohighlight">
-\[P(k|P(X=1))\]</div>
-<p>The vertical bar means <strong>given</strong>. So with the binomial distribution you can compute the likelihood of a value of k (i.e. number of success), given a value of <span class="math notranslate nohighlight">\(P(X=1)\)</span> (i.e. probability of head). Say you run an experiment in which you throw the coin 10 times and you obtain 4 heads. You can test what the likelihood of that value is under different <span class="math notranslate nohighlight">\({P}(X=1)\)</span></p>
+\[P(X=5) = \binom{n}{k} 0^k * (1-0)^{(10-5)}\]</div>
+<div class="math notranslate nohighlight">
+\[P(X=5) = \binom{n}{k} 0.1^k * (1-0.1)^{(10-5)}\]</div>
+<div class="math notranslate nohighlight">
+\[P(X=5) = \binom{n}{k} 0.2^k * (1-0.2)^{(10-5)}\]</div>
+<p>and so on. We can illustrate this with code very easily to get a graphical intuition (say we throw the coin 10 times and get head 4 times):</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
@@ -707,7 +823,7 @@ P(X=10) = 0.0009765625
 <span class="n">k_likelihood</span> <span class="o">=</span> <span class="p">[</span><span class="n">binomial_distribution</span><span class="p">(</span><span class="n">n_throw</span><span class="p">,</span> <span class="n">k_success</span><span class="p">,</span> <span class="n">theta</span><span class="p">)</span> <span class="k">for</span> <span class="n">theta</span> <span class="ow">in</span> <span class="n">thetas</span><span class="p">]</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">thetas</span><span class="p">,</span> <span class="n">k_likelihood</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_xlabel</span><span class="p">(</span><span class="s2">&quot;$P(X=1)$&quot;</span><span class="p">)</span>
-<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(k=4|P(X=1)$&quot;</span><span class="p">)</span>
+<span class="n">ax</span><span class="o">.</span><span class="n">set_ylabel</span><span class="p">(</span><span class="s2">&quot;$P(k=4)|P(X=1)$&quot;</span><span class="p">)</span>
 <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s2">&quot;$P(k=4)$ given $P(X=1)$&quot;</span><span class="p">)</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
 <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
@@ -715,10 +831,10 @@ P(X=10) = 0.0009765625
 </div>
 </div>
 <div class="cell_output docutils container">
-<img alt="_images/9eba262553bcb402557f3ebff8ba6140c4d2cf683e8b7436970ba020fce5bcf2.png" src="_images/9eba262553bcb402557f3ebff8ba6140c4d2cf683e8b7436970ba020fce5bcf2.png" />
+<img alt="_images/3719889f81ff0610af5cd5ea346cd09c93e3193fd00be7ff9b2e8a8d66eca975.png" src="_images/3719889f81ff0610af5cd5ea346cd09c93e3193fd00be7ff9b2e8a8d66eca975.png" />
 </div>
 </div>
-<p>It is crucial to understand what this graph represents. The x axis represents different values for <span class="math notranslate nohighlight">\(P(X=1)\)</span>, and the y axis represents the probability of observing 4 out of 10 heads (i.e. <span class="math notranslate nohighlight">\(P(k=4)\)</span>) for each of these values of <span class="math notranslate nohighlight">\(P(X=1)\)</span>. Logically, we are most likely to observe 4 heads out of 10 throws if the true value of <span class="math notranslate nohighlight">\(P(X=1)\)</span> is 0.4. This is why the binomial function can be used as the likelihood function: it enables to calculate the likelihood of our observation given any values of <span class="math notranslate nohighlight">\(P(X=1)\)</span>.</p>
+<p>It is crucial to understand what this graph represents. The x axis represents different values for <span class="math notranslate nohighlight">\(P(X=1)\)</span>, and the y axis represents the probability of observing 4 out of 10 heads (i.e. <span class="math notranslate nohighlight">\(P(k=4)\)</span>) for each of these values of <span class="math notranslate nohighlight">\(P(X=1)\)</span>. Unsurprisingly perhaps, we are most likely to observe 4 heads out of 10 throws if the true value of <span class="math notranslate nohighlight">\(P(X=1)\)</span> is 0.4.</p>
 <p>Our intuition that increasing the number of tosses gives us a more reliable estimate of the true value of <span class="math notranslate nohighlight">\(P(X=1)\)</span> can also be seen here. We can compare the probability of observing 4/10 heads against the probability of observing 400/1000 tosses for different values of <span class="math notranslate nohighlight">\(P(X=1)\)</span>:</p>
 <div class="cell docutils container">
 <div class="cell_input docutils container">
@@ -744,12 +860,16 @@ P(X=10) = 0.0009765625
 </div>
 </div>
 <p>When we throw the coin a 1000 times, many more values of <span class="math notranslate nohighlight">\(P(X=1)\)</span> are very unlikely, which means that uncertainty regarding the true value of <span class="math notranslate nohighlight">\(P(X=1)\)</span> is reduced.</p>
-<p>The quantity P(k=4∣P(X=1))P(k=4∣P(X=1)) is directly related to our problem because it tells us how likely our observation is given a specific value of P(X=1)P(X=1). If we find that our observed data is highly unlikely under P(X=1)=0.5P(X=1)=0.5 but much more likely under P(X=1)=0.1P(X=1)=0.1, this suggests that our hypothesis that P(X=1)=0.5P(X=1)=0.5 (i.e., that the coin is fair) might be incorrect. In other words, our confidence in whether the coin is biased depends on how probable our data is under the assumed value of P(X=1)P(X=1).</p>
-<p>However, <span class="math notranslate nohighlight">\(P(k=4∣P(X=1))\)</span> <strong>is not</strong> the quantity we are interested in. We are instead interested in the probability of <span class="math notranslate nohighlight">\(P(X=1)=0.5\)</span>, given the data we have observed. In other words, the quantity that we want to calculate is this:</p>
+<p>What we are calculating when checking the probability of <span class="math notranslate nohighlight">\(k\)</span> given each value of <span class="math notranslate nohighlight">\(P(X=1)\)</span> so is the <strong>likelihood</strong> of a value of <span class="math notranslate nohighlight">\(k\)</span>, given any possible value of <span class="math notranslate nohighlight">\(P(X=1)\)</span>, which is written like so:</p>
 <div class="math notranslate nohighlight">
-\[P(P(X=1)|y)\]</div>
-<p>Once again, we can illustrate the difference between <span class="math notranslate nohighlight">\(P(y∣P(X=1))\)</span> and <span class="math notranslate nohighlight">\(P(P(X=1)|y)\)</span> with the same example as before. Say you want to know if it is raining outside, you look out the sky and see that it is cloudy. What you want to know is <span class="math notranslate nohighlight">\(P(P(X=Rain)|y)\)</span> (where y is ‘is cloudy’). This not the same as <span class="math notranslate nohighlight">\(P(y|P(X=Rain))\)</span>. The probability of the sky being cloudy when it rains is pretty high, but the probability of rain when the sky is cloudy is not quite as high. Which means we need to add a few additional things to be able to go from  <span class="math notranslate nohighlight">\(P(y∣P(X=1))\)</span> to <span class="math notranslate nohighlight">\(P(P(X=1)|y)\)</span>.</p>
-<p>This is what the <strong>Bayes Theorem</strong> enables, and this will be the focus of the next chapter</p>
+\[P(k|P(X=1))\]</div>
+<p>The vertical bar means <strong>given</strong>. Once again, this is a probability which is characterize by a particular function which attributes a <strong>probability</strong> to each <strong>event</strong> in our <strong>sample space</strong>. In this case, an <strong>event</strong> is a value of <span class="math notranslate nohighlight">\(k\)</span> given a value of <span class="math notranslate nohighlight">\(P(X=1)\)</span>, and the sample space is each possible pairing between our value <span class="math notranslate nohighlight">\(k\)</span> and the possible values of <span class="math notranslate nohighlight">\(P(X=1)\)</span>. And once again, this can be characterized by a probability distribution function. The <em>type</em> of function that provides the likelihood of an observation, given the value of a parameter of interest (in our case <span class="math notranslate nohighlight">\(P(X=1)\)</span>) are referred to as likelihood functions. It is important to understand that a <strong>likelyhood function</strong> is not a specific function, but rather a type of function that yields the probability of an observation given each possible value of the parameter of interest, in our case <span class="math notranslate nohighlight">\(P(X=1)\)</span>. For our specific problem, we have a specific function (as we will see shortly something related to the Binomial distribution but not quite, I’ve just used it so far to keep things simple), but for another kind of random process, we will have a different likelihood function.</p>
+<p>The <strong>likelyhood function</strong> may sound at first like it is answering our question. But in fact, it is the mirror image of what we want to know. What we want to know is what is the most probable value of <span class="math notranslate nohighlight">\(P(X=1)\)</span>, given the number of success we have observed. To know which is the most probable values, we need to know the probability of each <span class="math notranslate nohighlight">\(P(X=1)\)</span> value given our results to find the highest one. So what we need to know is the probability of each <span class="math notranslate nohighlight">\(P(X=1)\)</span>, given our results, which we can write as:</p>
+<div class="math notranslate nohighlight">
+\[P(P(X=1)|k)\]</div>
+<p>But the likelihood function enables us to calculate the opposite: the probability of <span class="math notranslate nohighlight">\(k\)</span>, given <span class="math notranslate nohighlight">\(P(X=1)\)</span> or <span class="math notranslate nohighlight">\(P(k|P(X=1))\)</span>. These two quantities are intimately related; if we find that our observed data is highly unlikely under <span class="math notranslate nohighlight">\(P(X=1)=0.5\)</span> but much more likely under <span class="math notranslate nohighlight">\(P(X=1)=0.1\)</span>, this suggests that our hypothesis that <span class="math notranslate nohighlight">\(P(X=1)=0.5\)</span> (i.e., that the coin is fair) might be incorrect. In other words, our confidence in whether the coin is biased depends on how probable our data is under the assumed value of <span class="math notranslate nohighlight">\(P(X=1)\)</span>. But this <strong>is not</strong> the quantity that we are interested in. We can illustrate the difference between the two with the same example as before. Say you want to know if it is raining outside, you look out the sky and see that it is cloudy. What you want to know is <span class="math notranslate nohighlight">\(P(P(X=Rain)|y)\)</span> (where y is ‘is cloudy’). This not the same as <span class="math notranslate nohighlight">\(P(y|P(X=Rain))\)</span>. The probability of the sky being cloudy when it rains is pretty high, but the probability of rain when the sky is cloudy is not quite as high.</p>
+<p>So finally, in order to answer our question, we need to be able to go from <span class="math notranslate nohighlight">\(P(k|P(X=1))\)</span> to <span class="math notranslate nohighlight">\(P(P(X=1)|k)\)</span>.
+This is what the <strong>Bayes Theorem</strong> enables, and this will be the focus of the next chapter</p>
 </section>
 </section>
 
@@ -818,15 +938,21 @@ P(X=10) = 0.0009765625
   </div>
   <nav class="bd-toc-nav page-toc">
     <ul class="visible nav section-nav flex-column">
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions">Definitions:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#true-vs-observed-probabilities">True vs. Observed Probabilities:</a></li>
-<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#mathetmatical-functions-as-probability-distribution">Mathetmatical functions as probability distribution</a><ul class="nav section-nav flex-column">
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#definitions-and-properties">Definitions and properties:</a><ul class="nav section-nav flex-column">
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#sample-spaces">Sample spaces</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#events">Events</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#probability">Probability</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#mini-recap">Mini recap</a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-axioms">Probability axioms</a></li>
+</ul>
+</li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#a-fair-coin-in-mathematical-terms">A fair coin in mathematical terms:</a></li>
+<li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#probability-distribution">Probability distribution</a><ul class="nav section-nav flex-column">
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-bernoulli-distribution-a-single-formulae-to-express-the-probability-of-each-event">The Bernoulli distribution: a single formulae to express the probability of each event</a></li>
 </ul>
 </li>
 <li class="toc-h2 nav-item toc-entry"><a class="reference internal nav-link" href="#the-binomial-distribution-a-probability-distribution-for-the-number-of-success">The Binomial distribution: a probability distribution for the number of success</a><ul class="nav section-nav flex-column">
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#what-we-have-seen-so-far">What we have seen so far:</a></li>
-<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#the-probability-distribution-of-p-x-k">The probability distribution of <span class="math notranslate nohighlight">\(P(X=k)\)</span></a></li>
+<li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#multiple-tosses-as-a-series-of-bernoulli-trials">Multiple tosses as a series of Bernoulli trials</a></li>
 <li class="toc-h3 nav-item toc-entry"><a class="reference internal nav-link" href="#relating-the-binomial-distribution-to-our-intuition">Relating the binomial distribution to our intuition</a></li>
 </ul>
 </li>

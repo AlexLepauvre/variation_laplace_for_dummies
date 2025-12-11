@@ -63,6 +63,7 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'VariationalLaplace';</script>
+    <link rel="icon" href="_static/logo.png"/>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
     <link rel="next" title="Jensen inequality: from an intractable integral to an optimization problem" href="VL/JensenInequality.html" />
@@ -107,6 +108,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -148,8 +152,8 @@
       
     
     
-    <img src="_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
-    <img src="_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+    <img src="_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
   
   
 </a></div>
@@ -185,6 +189,10 @@
 </details></li>
 <li class="toctree-l1 current active has-children"><a class="current reference internal" href="#">Variational Laplace</a><details open="open"><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="VL/WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
 </ul>
 </details></li>
 </ul>
@@ -241,7 +249,7 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -258,7 +266,24 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FVariationalLaplace.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/VariationalLaplace.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FVariationalLaplace.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -392,10 +417,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="alert alert-info"><h4>Note</h4><p> 
-    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
-</p></div>
-<section class="tex2jax_ignore mathjax_ignore" id="variational-laplace">
+  <section class="tex2jax_ignore mathjax_ignore" id="variational-laplace">
 <h1>Variational Laplace<a class="headerlink" href="#variational-laplace" title="Link to this heading">#</a></h1>
 <p>We have finally made it to the main topic of the book: <strong>variational Laplace</strong>.</p>
 <p>We have seen in the previous section that if we want to answer a question of the kind “Is there a relationship between penguins flipper length and their weights”, we can use a linear model. In order to answer our question in Bayesian term, we want to obtain the <strong>posterior probability distribution</strong>, that tells us the likelihood of the true value of the parameter of our model given the data we have measured in our experiment. If it is highly unlikely that the parameter that relates penguin flipper lengths to their weight in the model (<span class="math notranslate nohighlight">\(\beta_1\)</span>) is equal to 0 (or close thereof), then we can answer our question and say ‘yes, there is a relationship between penguin flipper lengths and their weights”, or even better, we can say “I am 95% confident that the relationship between the 2 is between this value and that value”. Following the Bayes Theorem, to compute the <strong>posterior</strong>, we need to multiply the <strong>likelihood</strong> of the data under all values of our parameters by our <strong>prior</strong> belief of the likelihood of each parameter and divide the whole by the <strong>marginal likelihood</strong>, also called <strong>model evidence</strong>, which is the likelihood of the data after marginalizing all possible values of the parameters of our model. Because we are dealing with a linear model, the likelihood of our data is a multivariate normal distribution, due to the assumption that the error of our model is normally distributed.</p>
@@ -407,21 +429,21 @@
 <h3>The linear model:<a class="headerlink" href="#the-linear-model" title="Link to this heading">#</a></h3>
 <p>To answer our question ‘Is there a relationship between penguins flipper lengths and their weights’, we can use a linear model:</p>
 <div class="math notranslate nohighlight">
-\[y = \bold{X}\bold{\beta} + \epsilon\]</div>
+\[y = \boldsymbol{X}\boldsymbol{\beta} + \epsilon\]</div>
 <p>Where:</p>
 <ul class="simple">
 <li><p><span class="math notranslate nohighlight">\(y= \begin{bmatrix}y_1\\y_2\\...\end{bmatrix}\)</span>: is a vector containing each data point we are trying to model (i.e. penguin weight)</p></li>
-<li><p><span class="math notranslate nohighlight">\(\bold{X}= \begin{bmatrix}x_{0, 1},\ x_{1, 1},\ ...\\x_{0, 2},\ x_{1, 2},\ ...\\...,\ ...,\ ...\end{bmatrix}\)</span>: is a matrix containing the regressor, also called the <strong>design matrix</strong>. Each column contains all the value of one regressor, each row the value of all regressor associated with each data point. In our example, <span class="math notranslate nohighlight">\(x_0\)</span> is the intercept, so it’s the same in each row: <span class="math notranslate nohighlight">\(x_{0_1} = x_{0_2} = 1\)</span>, while <span class="math notranslate nohighlight">\(x_1\)</span> is the weight of our penguins, so <span class="math notranslate nohighlight">\(x_{1, 1}\)</span> is the weight of the first penguin whose weight is <span class="math notranslate nohighlight">\(y_1\)</span> and so on for all our penguins</p></li>
-<li><p><span class="math notranslate nohighlight">\(\bold{\beta}=\begin{bmatrix}\beta_0\\\beta_1\\...\end{bmatrix}\)</span>: the weight of our regressors. We don’t know the true values, but can estimate the <strong>observed values</strong> of these parameters that generate a line that fits the data the best, i.e. that minimize the residuals sum of square (RSS) by using OLS (see below). The values found by the OLS are the maximum likelihood estimates (MLE), which means that the likelihood of the data is maximized under these parameter (see likelihood function below)</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{X}= \begin{bmatrix}x_{0, 1},\ x_{1, 1},\ ...\\x_{0, 2},\ x_{1, 2},\ ...\\...,\ ...,\ ...\end{bmatrix}\)</span>: is a matrix containing the regressor, also called the <strong>design matrix</strong>. Each column contains all the value of one regressor, each row the value of all regressor associated with each data point. In our example, <span class="math notranslate nohighlight">\(x_0\)</span> is the intercept, so it’s the same in each row: <span class="math notranslate nohighlight">\(x_{0_1} = x_{0_2} = 1\)</span>, while <span class="math notranslate nohighlight">\(x_1\)</span> is the weight of our penguins, so <span class="math notranslate nohighlight">\(x_{1, 1}\)</span> is the weight of the first penguin whose weight is <span class="math notranslate nohighlight">\(y_1\)</span> and so on for all our penguins</p></li>
+<li><p><span class="math notranslate nohighlight">\(\boldsymbol{\beta}=\begin{bmatrix}\beta_0\\\beta_1\\...\end{bmatrix}\)</span>: the weight of our regressors. We don’t know the true values, but can estimate the <strong>observed values</strong> of these parameters that generate a line that fits the data the best, i.e. that minimize the residuals sum of square (RSS) by using OLS (see below). The values found by the OLS are the maximum likelihood estimates (MLE), which means that the likelihood of the data is maximized under these parameter (see likelihood function below)</p></li>
 <li><p><span class="math notranslate nohighlight">\(\epsilon \sim \mathcal{N}(0, \sigma^2)\)</span>: the error term follows a normal distribution of mean 0 and of variance <span class="math notranslate nohighlight">\(\sigma^2\)</span>. It is an assumption, meaning that if this is not true, we shouldn’t use this kind of model.  We assume that the mean of the distribution is 0, which means that negative errors (underestimations) are equally likely as positive errors (overestimations). The <span class="math notranslate nohighlight">\(\sigma^2\)</span> on the other hands is not assumed and depends on the data. The variance parameter of the distribution controls its spread, meaning that large <span class="math notranslate nohighlight">\(\sigma^2\)</span> implies that large error are more likely compared to when <span class="math notranslate nohighlight">\(\sigma^2\)</span> is small. and we can also find the MLE for this parameters, i.e. the value of <span class="math notranslate nohighlight">\(\sigma^2\)</span> under which the data are the most likely</p></li>
 </ul>
-<p>In this model, the <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(\bold{X}\)</span> are fixed: it is the data we observed (i.e. measured, collected…). The likelihood of observing these values depends on the value of the parameters <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span>. Accordingly, we can try to find the <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> under which the data are most likely, which is what we do when we <strong>fit the model</strong> to the data. The formula for finding the MLE for the <span class="math notranslate nohighlight">\(\beta\)</span> is know as the <strong>optimal least square (OLS)</strong>:</p>
+<p>In this model, the <span class="math notranslate nohighlight">\(y\)</span> and <span class="math notranslate nohighlight">\(\boldsymbol{X}\)</span> are fixed: it is the data we observed (i.e. measured, collected…). The likelihood of observing these values depends on the value of the parameters <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span>. Accordingly, we can try to find the <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma^2\)</span> under which the data are most likely, which is what we do when we <strong>fit the model</strong> to the data. The formula for finding the MLE for the <span class="math notranslate nohighlight">\(\beta\)</span> is know as the <strong>optimal least square (OLS)</strong>:</p>
 <div class="math notranslate nohighlight">
-\[\hat{\beta} = (\bold{X}^T\bold{X})^-1\bold{X}^Ty\]</div>
+\[\hat{\beta} = (\boldsymbol{X}^T\boldsymbol{X})^-1\boldsymbol{X}^Ty\]</div>
 <p>This formula looks a bit different to the OLS formulae we saw before for calculating <span class="math notranslate nohighlight">\(\hat{\beta_1}\)</span> and <span class="math notranslate nohighlight">\(\hat{\beta_0}\)</span>, beacuse it is in vector format and it general to calculate all the <span class="math notranslate nohighlight">\(\beta\)</span> even if you have more than 2.</p>
 <p>The MLE of the variance term of the <span class="math notranslate nohighlight">\(\epsilon\)</span> distribution is:</p>
 <div class="math notranslate nohighlight">
-\[\hat{\sigma}^2 = \frac{(y-\bold{X}\bold{\hat{\beta}})^2}{n}\]</div>
+\[\hat{\sigma}^2 = \frac{(y-\boldsymbol{X}\boldsymbol{\hat{\beta}})^2}{n}\]</div>
 <p>In the case of the <span class="math notranslate nohighlight">\(\epsilon\)</span> of our model, we don’t write that it is equal to the normal distribution, because the error follows a distribution or <strong>probability density function</strong> but it is not equal to it.</p>
 </section>
 <section id="bayes-theorem-applied-to-the-linear-model">
@@ -435,7 +457,7 @@
 <p>Where <span class="math notranslate nohighlight">\(\beta\)</span> is a vector containing the values of the various beta of our model. So in our penguin example, it contains both <span class="math notranslate nohighlight">\(\beta_0\)</span> and <span class="math notranslate nohighlight">\(\beta_1\)</span></p>
 <p>The likelihood of the data is a multivariate normal distribution (because the error is normally distrubuted around 0), defined as:</p>
 <div class="math notranslate nohighlight">
-\[P(y|\beta, \sigma^2) = \frac{1}{(2\pi\sigma^2)^{n/2}}exp(-\frac{1}{2\sigma^2}(y-\bold{X}\beta)^T(y-\bold{X}\beta))\]</div>
+\[P(y|\beta, \sigma^2) = \frac{1}{(2\pi\sigma^2)^{n/2}}exp(-\frac{1}{2\sigma^2}(y-\boldsymbol{X}\beta)^T(y-\boldsymbol{X}\beta))\]</div>
 <p>The prior distribution is:</p>
 <div class="math notranslate nohighlight">
 \[P(\beta, \sigma^2) = P(\beta) \times P(\sigma^2)\]</div>
@@ -455,9 +477,9 @@
 <h3>We can’t compute the marginal likelihood…<a class="headerlink" href="#we-can-t-compute-the-marginal-likelihood" title="Link to this heading">#</a></h3>
 <p>The reason the book isn’t finished already is because we have a problem: we can’t compute the marginal likelihood. The marginal likelihood is:</p>
 <div class="math notranslate nohighlight">
-\[P(y) = \int P(y|\bold{\beta}, \sigma^2)P(\bold{\beta}, \sigma^2)d\beta d\sigma^2 = \int P(y|\bold{\beta}, \sigma^2) \times P(\bold{\beta}) \times P(\sigma^2)d\beta d\sigma^2\]</div>
+\[P(y) = \int P(y|\boldsymbol{\beta}, \sigma^2)P(\boldsymbol{\beta}, \sigma^2)d\beta d\sigma^2 = \int P(y|\boldsymbol{\beta}, \sigma^2) \times P(\boldsymbol{\beta}) \times P(\sigma^2)d\beta d\sigma^2\]</div>
 <div class="math notranslate nohighlight">
-\[P(y) = \int \frac{1}{(2\pi\sigma^2)^{n/2}}exp(-\frac{1}{2\sigma^2}(y-\bold{X}\beta)^T)(y-\bold{X}\beta) \times  \frac{1}{(2\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu})) \times \frac{b^\alpha}{\Gamma(\alpha)}(\sigma^2)^{-\alpha-1}exp(-\frac{b}{\sigma^2})\ d\beta d\sigma^2\]</div>
+\[P(y) = \int \frac{1}{(2\pi\sigma^2)^{n/2}}exp(-\frac{1}{2\sigma^2}(y-\boldsymbol{X}\beta)^T)(y-\boldsymbol{X}\beta) \times  \frac{1}{(2\pi)^{p/2}|\mathcal{\Sigma}|^{1/2}}exp(-\frac{1}{2}(\mathcal{\beta} - \mathcal{\mu})^T\Sigma^{-1}(\mathcal{\beta}-\mathcal{\mu})) \times \frac{b^\alpha}{\Gamma(\alpha)}(\sigma^2)^{-\alpha-1}exp(-\frac{b}{\sigma^2})\ d\beta d\sigma^2\]</div>
 <p>The marginal likelihood requires to integrate over all possible values of <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>, which is impossible because there is literally an infinity of possible values. This is a fact which we have to accept it.</p>
 </section>
 </section>

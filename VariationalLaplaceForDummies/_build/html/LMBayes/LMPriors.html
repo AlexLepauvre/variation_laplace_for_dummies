@@ -63,6 +63,7 @@
     <script>window.MathJax = {"options": {"processHtmlClass": "tex2jax_process|mathjax_process|math|output_area"}}</script>
     <script defer="defer" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <script>DOCUMENTATION_OPTIONS.pagename = 'LMBayes/LMPriors';</script>
+    <link rel="icon" href="../_static/logo.png"/>
     <link rel="index" title="Index" href="../genindex.html" />
     <link rel="search" title="Search" href="../search.html" />
     <link rel="next" title="Intermediary recap" href="LMIntermediaryRecap.html" />
@@ -107,6 +108,9 @@
   <div class="pst-async-banner-revealer d-none">
   <aside id="bd-header-version-warning" class="d-none d-print-none" aria-label="Version warning"></aside>
 </div>
+<aside class="bd-header-announcement" aria-label="Announcement">
+  <div class="bd-header-announcement__content">This notebook is still work in progress and the content has not been fact checked!</div>
+</aside>
 
   
     <header class="bd-header navbar navbar-expand-lg bd-navbar d-print-none">
@@ -148,8 +152,8 @@
       
     
     
-    <img src="../_static/logo.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
-    <img src="../_static/logo.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-light" alt="Variational Laplace For Dummies - Home"/>
+    <img src="../_static/Cover.png" class="logo__image only-dark pst-js-only" alt="Variational Laplace For Dummies - Home"/>
   
   
 </a></div>
@@ -185,6 +189,10 @@
 </details></li>
 <li class="toctree-l1 has-children"><a class="reference internal" href="../VariationalLaplace.html">Variational Laplace</a><details><summary><span class="toctree-toggle" role="presentation"><i class="fa-solid fa-chevron-down"></i></span></summary><ul>
 <li class="toctree-l2"><a class="reference internal" href="../VL/JensenInequality.html">Jensen inequality: from an intractable integral to an optimization problem</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/LaplaceApproximatePosterior.html">Approximating the log posterior using quadratic approximation and the Laplace approximation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/LogJointApprox.html">Approximating the Expectation of the log of the joint probabilitiy</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/BackToPenguins.html">Back to our penguins</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../VL/WorkedOutExample.html">Calculating the free energy for a simple linear regression</a></li>
 </ul>
 </details></li>
 </ul>
@@ -241,7 +249,7 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git" target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies" target="_blank"
    class="btn btn-sm btn-source-repository-button dropdown-item"
    title="Source repository"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -258,7 +266,24 @@
       
       
       
-      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies.git/issues/new?title=Issue%20on%20page%20%2FLMBayes/LMPriors.html&body=Your%20issue%20content%20here." target="_blank"
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/edit/main/VariationalLaplaceForDummies/LMBayes/LMPriors.ipynb" target="_blank"
+   class="btn btn-sm btn-source-edit-button dropdown-item"
+   title="Suggest edit"
+   data-bs-placement="left" data-bs-toggle="tooltip"
+>
+  
+
+<span class="btn__icon-container">
+  <i class="fas fa-pencil-alt"></i>
+  </span>
+<span class="btn__text-container">Suggest edit</span>
+</a>
+</li>
+      
+      
+      
+      
+      <li><a href="https://github.com/AlexLepauvre/variation_laplace_for_dummies/issues/new?title=Issue%20on%20page%20%2FLMBayes/LMPriors.html&body=Your%20issue%20content%20here." target="_blank"
    class="btn btn-sm btn-source-issues-button dropdown-item"
    title="Open an issue"
    data-bs-placement="left" data-bs-toggle="tooltip"
@@ -392,10 +417,7 @@
 <div id="searchbox"></div>
                 <article class="bd-article">
                   
-  <div class="alert alert-info"><h4>Note</h4><p> 
-    This notebook is still work in progress and the content has not been fact checked! <a href="url">here</a>.
-</p></div>
-<section class="tex2jax_ignore mathjax_ignore" id="the-prior-of-the-linear-model">
+  <section class="tex2jax_ignore mathjax_ignore" id="the-prior-of-the-linear-model">
 <h1>The prior of the linear model<a class="headerlink" href="#the-prior-of-the-linear-model" title="Link to this heading">#</a></h1>
 <p>Now that we have the likelihood, let’s have a look at the prior. We have three parameters in our model and likelihood function: <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span> and <span class="math notranslate nohighlight">\(\sigma\)</span>. Again, the prior reflect the belief we have about which values are most likely for each parameters. So you might already think about what that could look like. If you have some knowledge about what values <span class="math notranslate nohighlight">\(\beta_0\)</span>, <span class="math notranslate nohighlight">\(\beta_1\)</span> could look like, you can imagine that the prior should be a distribution centered around those values for those parameters, with max likelihood around those values and decreasing when you go lower or higher than that.</p>
 <p>So yeah, some sort of a normal distribution of sorts. Typically, you wouldn’t have a guess about the precise value of the parameters, but you’d know that there are some values that are more realistic than others. So you can specify the priors for these parameters with some mean and variance parameters that kind of make sense. For our particular example, since you are wonder whether there is a relationship between penguin flipper length and their weight, you can imagine that the values around 0 should be quite likely and that very large values are less likely. And for the <span class="math notranslate nohighlight">\(\beta_0\)</span> parameter, even if you don’t know the actual mean weight of penguin, you know it’s probably not 500g and probably not 750Kg , so something in between. So you can play around with the normal distribution to find parameters that seem reasonable (that’s how I got the parameters below):</p>
@@ -488,7 +510,7 @@
 <div class="cell_input docutils container">
 <div class="highlight-ipython3 notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="kn">import</span> <span class="n">invgamma</span>
 
-<span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># Define values of x</span>
+<span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mf">0.001</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1000</span><span class="p">)</span>  <span class="c1"># Define values of x</span>
 <span class="n">mu</span> <span class="o">=</span> <span class="mi">0</span>
 <span class="n">sigma</span> <span class="o">=</span> <span class="mi">1</span>
 <span class="n">fig</span><span class="p">,</span> <span class="n">ax</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">subplots</span><span class="p">()</span>
@@ -503,15 +525,7 @@
 </div>
 </div>
 <div class="cell_output docutils container">
-<div class="output stderr highlight-myst-ansi notranslate"><div class="highlight"><pre><span></span>C:\Users\alexander.lepauvre\AppData\Local\Temp\ipykernel_11440\4003415159.py:27: RuntimeWarning: divide by zero encountered in scalar power
-  return (x ** (-alpha-1) / gamma(alpha)) * np.exp(-1 / x)
-C:\Users\alexander.lepauvre\AppData\Local\Temp\ipykernel_11440\4003415159.py:27: RuntimeWarning: divide by zero encountered in scalar divide
-  return (x ** (-alpha-1) / gamma(alpha)) * np.exp(-1 / x)
-C:\Users\alexander.lepauvre\AppData\Local\Temp\ipykernel_11440\4003415159.py:27: RuntimeWarning: invalid value encountered in scalar multiply
-  return (x ** (-alpha-1) / gamma(alpha)) * np.exp(-1 / x)
-</pre></div>
-</div>
-<img alt="../_images/140c93195142e8096925de707cd86260aba38214f2be3ca6920267a7a00c0db2.png" src="../_images/140c93195142e8096925de707cd86260aba38214f2be3ca6920267a7a00c0db2.png" />
+<img alt="../_images/feff08072007cf926b0bc25d77838f774bb014758844e6a8043abb63fe3e5f5d.png" src="../_images/feff08072007cf926b0bc25d77838f774bb014758844e6a8043abb63fe3e5f5d.png" />
 </div>
 </div>
 <p>I ended up with 1 and 1, seems about reasonable: small variance values are most likely, but larger ones are also not too unlikely. It feels right to me and that is what matters. Typically, you would not just randomly pick values that seem to make sense for this one, but instead base these parameters following some standards and conventions (which I will discuss later in the book), but for now, given we are just trying to illustrate how things work, that’s good enough.</p>
@@ -554,7 +568,7 @@ C:\Users\alexander.lepauvre\AppData\Local\Temp\ipykernel_11440\4003415159.py:27:
 <p>If we believe that all parameters are independent, where <span class="math notranslate nohighlight">\(\beta_i \sim \mathcal{N}(\mu_i, \sigma_i)\)</span></p>
 <p>Or, if you believe that the beta parameter are related somehow:</p>
 <div class="math notranslate nohighlight">
-\[\Beta \sim \mathcal{N}(\mu, \Sigma)\]</div>
+\[\boldsymbol{\beta} \sim \mathcal{N}(\mu, \Sigma)\]</div>
 <p>Where <span class="math notranslate nohighlight">\(\mu\)</span> is the prior of the mean of each <span class="math notranslate nohighlight">\(\beta\)</span> and <span class="math notranslate nohighlight">\(\Sigma\)</span> (which is capital <span class="math notranslate nohighlight">\(\sigma\)</span>) is a matrix reflecting the prior <span class="math notranslate nohighlight">\(\sigma^2\)</span> (or variance) estimate for each <span class="math notranslate nohighlight">\(\beta\)</span> as well as the covariance between each pairs of <span class="math notranslate nohighlight">\(\beta\)</span>.</p>
 <p>Eventhough you have the choice between the two in theories, we will always go for option 2. The main reason is that it is more general: if you believe that the <span class="math notranslate nohighlight">\(\beta\)</span> are independent from each other, you can use the second approach and specify that the covariance between the <span class="math notranslate nohighlight">\(\beta\)</span> is 0, which is equivalent to saying that they are independent and therefore is equivalent to multiplying the prior probablity of each <span class="math notranslate nohighlight">\(\beta\)</span> together. So you can use option 2 to express option 1, but you can’t use option 1 to express option 2.</p>
 <p>Now let’s dig a bit more in the details of the prior probability of the <span class="math notranslate nohighlight">\(\beta\)</span></p>
